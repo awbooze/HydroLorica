@@ -18896,24 +18896,30 @@ Example: rainfall.asc can look like:
 
         private void start_run(object sender, System.EventArgs e)
         {
-            if(StartThread != null)
-            {
-                StartThread = Task.Factory.StartNew(() => {
+            //if(StartThread != null)
+            //{
+            //    StartThread = Task.Factory.StartNew(() => {
                     main_loop(sender, e);
                     StartThread = null;
-                });
-            }
+            //    });
+            //}
 
             End_button.Enabled = true;
             start_button.Enabled = false;
+            
         }
 
         private void main_loop(object sender, System.EventArgs e)
         {
-            this.InfoStatusPanel.Text = "Entered main program";
+            this.Invoke(new MethodInvoker(() => {
+                InfoStatusPanel.Text = "Entered main program";
+                }
+            ));
+
             stopwatch = Stopwatch.StartNew();
             try
             {
+                #region Fast Setup
                 //foreach (string dtmfilename in Directory.EnumerateFiles(this.dtm_input_filename_textbox.Text, "*.txt", SearchOption.TopDirectoryOnly)) //"*.asc"
                 //{
                 string dtmfilename = dtm_input_filename_textbox.Text;
@@ -19039,6 +19045,8 @@ Example: rainfall.asc can look like:
                 if (Sensitivity_button.Checked == true)
                 { //dev needed
                 }
+                #endregion
+
                 //parallelization possible here?
                 for (run_number = 0; run_number < maxruns; run_number++)
                 {
@@ -19276,7 +19284,8 @@ Example: rainfall.asc can look like:
                         dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
                     }
                     catch { Debug.WriteLine(" failed to initialise dtm "); }
-
+                    
+                    //LARGEST THING IN HERE. RUNS FOREVER (very long time)
                     if (input_data_error == false)
                     {
                         try
@@ -19365,6 +19374,7 @@ Example: rainfall.asc can look like:
                                 t_intervene = 0;
                                 if (t_intervene > 0) { read_soil_elevation_distance_from_output(t_intervene, workdir); }
 
+                                //begining of looping
                                 for (t = t_intervene; t < end_time; t++)
                                 {
 
@@ -19538,8 +19548,8 @@ Example: rainfall.asc can look like:
             {
                 //Debug.WriteLine("before WE1");
 
-                initialise_every();
-                comb_sort();
+                initialise_every(); //fast
+                comb_sort();        //fast
 
                 if (daily_water.Checked)
                 {
