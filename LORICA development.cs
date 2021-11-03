@@ -50,6 +50,7 @@ namespace LORICA4
         [DllImport("msvcrt")]
         static extern int _getch();
 
+        private Task StartThread;
 
         #region global interface parameters
         private TabControl Process_tabs;
@@ -820,10 +821,7 @@ namespace LORICA4
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                dailyT_max.Text = openFileDialog1.FileName;
-            }
+            dailyT_max.Text = GetDialogFileName(openFileDialog1);
 
         }
 
@@ -835,10 +833,7 @@ namespace LORICA4
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                dailyT_min.Text = openFileDialog1.FileName;
-            }
+            dailyT_min.Text = GetDialogFileName(openFileDialog1);
 
         }
 
@@ -850,10 +845,7 @@ namespace LORICA4
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                dailyT_avg.Text = openFileDialog1.FileName;
-            }
+            dailyT_avg.Text = GetDialogFileName(openFileDialog1);
 
         }
 
@@ -2322,7 +2314,7 @@ namespace LORICA4
             this.start_button.Size = new System.Drawing.Size(88, 27);
             this.start_button.TabIndex = 146;
             this.start_button.Text = "Start";
-            this.start_button.Click += new System.EventHandler(this.main_loop);
+            this.start_button.Click += new System.EventHandler(this.start_run);
             // 
             // End_button
             // 
@@ -18543,6 +18535,47 @@ Example: rainfall.asc can look like:
             }
         }
 
+        private string GetDialogFileName()
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            string FileName = "";
+            var t = new Thread((ThreadStart)(() => {
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    FileName = openFileDialog1.FileName;
+                    //return FileName;
+                }
+                else return;
+
+            }));
+
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+
+            return filename;
+        }
+        private string GetDialogFileName(OpenFileDialog openFileDialog1)
+        {
+            string FileName = "";
+
+            var t = new Thread((ThreadStart)(() => {
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    FileName = openFileDialog1.FileName;
+                    //return FileName;
+                }
+                else return;
+
+            }));
+
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+
+            return FileName;
+        }
         private void dtm_input_filename_textbox_Click(object sender, EventArgs e)
         {
             /*FolderBrowserDialog arnaudsdialog = new FolderBrowserDialog();
@@ -18557,11 +18590,8 @@ Example: rainfall.asc can look like:
             openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                dtm_input_filename_textbox.Text = openFileDialog1.FileName;
-            }
+                     
+            dtm_input_filename_textbox.Text = GetDialogFileName(openFileDialog1);
         }
 
         private void soildepth_input_filename_textbox_TextChanged(object sender, EventArgs e)
@@ -18573,10 +18603,8 @@ Example: rainfall.asc can look like:
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                soildepth_input_filename_textbox.Text = openFileDialog1.FileName;
-            }
+
+            soildepth_input_filename_textbox.Text = GetDialogFileName(openFileDialog1);
         }
 
         private void landuse_input_filename_textbox_TextChanged(object sender, EventArgs e)
@@ -18588,10 +18616,8 @@ Example: rainfall.asc can look like:
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                landuse_input_filename_textbox.Text = openFileDialog1.FileName;
-            }
+
+            landuse_input_filename_textbox.Text = GetDialogFileName(openFileDialog1);
         }
 
         private void tillfields_input_filename_textbox_TextChanged(object sender, EventArgs e)
@@ -18603,10 +18629,8 @@ Example: rainfall.asc can look like:
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                tillfields_input_filename_textbox.Text = openFileDialog1.FileName;
-            }
+
+            tillfields_input_filename_textbox.Text = GetDialogFileName(openFileDialog1);
         }
 
         private void rain_input_filename_textbox_TextChanged(object sender, EventArgs e)
@@ -18617,10 +18641,7 @@ Example: rainfall.asc can look like:
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                rain_input_filename_textbox.Text = openFileDialog1.FileName;
-            }
+            rain_input_filename_textbox.Text = GetDialogFileName(openFileDialog1);
         }
 
         private void infil_input_filename_textbox_TextChanged(object sender, EventArgs e)
@@ -18632,10 +18653,7 @@ Example: rainfall.asc can look like:
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                infil_input_filename_textbox.Text = openFileDialog1.FileName;
-            }
+            infil_input_filename_textbox.Text = GetDialogFileName(openFileDialog1); 
         }
 
         private void evap_input_filename_textbox_TextChanged(object sender, EventArgs e)
@@ -18646,10 +18664,7 @@ Example: rainfall.asc can look like:
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                evap_input_filename_textbox.Text = openFileDialog1.FileName;
-            }
+            evap_input_filename_textbox.Text = GetDialogFileName(openFileDialog1);
         }
 
         private void dailyP_TextChanged(object sender, EventArgs e)
@@ -18660,10 +18675,7 @@ Example: rainfall.asc can look like:
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                dailyP.Text = openFileDialog1.FileName;
-            }
+            dailyP.Text = GetDialogFileName(openFileDialog1);
         }
 
         private void dailyET0_TextChanged(object sender, EventArgs e)
@@ -18674,10 +18686,7 @@ Example: rainfall.asc can look like:
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                dailyET0.Text = openFileDialog1.FileName;
-            }
+            dailyET0.Text = GetDialogFileName(openFileDialog1);
         }
 
         private void dailyD_TextChanged(object sender, EventArgs e)
@@ -18688,10 +18697,7 @@ Example: rainfall.asc can look like:
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                dailyD.Text = openFileDialog1.FileName;
-            }
+            dailyD.Text = GetDialogFileName(openFileDialog1);
         }
 
         private void trackBar1_Scroll(object sender, EventArgs e)
@@ -18887,6 +18893,20 @@ Example: rainfall.asc can look like:
 #endregion
 
 #region top level code
+
+        private void start_run(object sender, System.EventArgs e)
+        {
+            if(StartThread != null)
+            {
+                StartThread = Task.Factory.StartNew(() => {
+                    main_loop(sender, e);
+                    StartThread = null;
+                });
+            }
+
+            End_button.Enabled = true;
+            start_button.Enabled = false;
+        }
 
         private void main_loop(object sender, System.EventArgs e)
         {
