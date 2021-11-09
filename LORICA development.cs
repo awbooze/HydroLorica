@@ -50,7 +50,7 @@ namespace LORICA4
         [DllImport("msvcrt")]
         static extern int _getch();
 
-        private Task StartThread;
+        private Task StartThread; //Added by Parallelization Team
 
         #region global interface parameters
         private TabControl Process_tabs;
@@ -12902,7 +12902,7 @@ namespace LORICA4
                                     total_young_som_kg += young_SOM_kg[row, col, layer];
                                     total_old_som_kg += old_SOM_kg[row, col, layer];
                                 }
-                            }
+                            } //can parallelize -PT
 
                             //LUX: in the lux case study, we need to know how much litter is hornbeam, i.e. palatable.
                             if (version_lux_checkbox.Checked)
@@ -17289,6 +17289,8 @@ namespace LORICA4
             // vegetation coefficients for ET
             for (int vrow = 0; vrow < nr; vrow++)
             {
+
+                //open threads 
                 for (int vcol = 0; vcol < nc; vcol++)
                 {
                     if (dtm[vrow, vcol] != -9999)
@@ -17299,6 +17301,8 @@ namespace LORICA4
 
                     }
                 }
+
+                //join threads
             }
 
             //// bioturbation andd creep depth, same parameter
@@ -18913,7 +18917,7 @@ Example: rainfall.asc can look like:
         {
             this.Invoke(new MethodInvoker(() => {
                 InfoStatusPanel.Text = "Entered main program";
-                }
+            }
             ));
 
             stopwatch = Stopwatch.StartNew();
@@ -20277,7 +20281,10 @@ Example: rainfall.asc can look like:
                     {
                         if (dtm[row, col] != -9999)
                         {
-                            index[i] = dtm[row, col]; row_index[i] = row; col_index[i] = col; rowcol_index[i] = row.ToString() + "." + col.ToString();
+                            index[i] = dtm[row, col]; 
+                            row_index[i] = row; 
+                            col_index[i] = col; 
+                            rowcol_index[i] = row.ToString() + "." + col.ToString();
                             i++;
                         }
                     }
