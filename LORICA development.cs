@@ -18925,7 +18925,68 @@ Example: rainfall.asc can look like:
             this.Invoke(new MethodInvoker(() => {
                 InfoStatusPanel.Text = guiVariables.InfoStatusPanel;
                 dtm_input_filename_textbox.Text = guiVariables.DTM_input_filename_textbox;
-                }
+                Number_runs_textbox.Text = guiVariables.Number_runs_textbox;
+                this.ProcessStatusPanel.Text = guiVariables.ProcessStatusPanel;
+                calibration_ratios_textbox.Text = guiVariables.Calibration_ratios_textbox;
+                googAnimationSaveInterval.Text = guiVariables.GoogAnimationSaveInterval;
+                UTMzonebox.Text = guiVariables.UTMzonebox;
+                saveintervalbox.Text = guiVariables.Saveintervalbox;
+                parameter_m_textbox.Text = guiVariables.Parameter_m_textbox;
+                parameter_n_textbox.Text = guiVariables.Parameter_n_textbox;
+                parameter_K_textbox.Text = guiVariables.Parameter_K_textbox;
+
+                bio_protection_constant_textbox.Text = guiVariables.Bio_protection_constant_textbox;
+                rock_protection_constant_textbox.Text = guiVariables.Rock_protection_constant_textbox;
+                selectivity_constant_textbox.Text = guiVariables.Selectivity_constant_textbox;
+                erosion_threshold_textbox.Text = guiVariables.Erosion_threshold_textbox;
+                parameter_ploughing_depth_textbox.Text = guiVariables.Parameter_ploughing_depth_textbox;
+                parameter_tillage_constant_textbox.Text = guiVariables.Parameter_tillage_constant_textbox;
+                parameter_diffusivity_textbox.Text = guiVariables.Parameter_diffusivity_textbox;
+                parameter_P0_textbox.Text = guiVariables.Parameter_P0_textbox;
+                parameter_k1_textbox.Text = guiVariables.Parameter_k1_textbox;
+                parameter_k2_textbox.Text = guiVariables.Parameter_k2_textbox;
+                parameter_Pa_textbox.Text = guiVariables.Parameter_Pa_textbox;
+                Tilting_rate_textbox.Text = guiVariables.Tilting_rate_textbox;
+                text_lift_row_less.Text = guiVariables.Text_lift_row_less;
+                text_lift_row_more.Text = guiVariables.Text_lift_row_more;
+                text_lift_col_less.Text = guiVariables.Text_lift_col_less;
+                text_lift_col_more.Text = guiVariables.Text_lift_col_more;
+                Uplift_rate_textbox.Text = guiVariables.Uplift_rate_textbox;
+                tf_W.Text = guiVariables.Tf_W;
+                tf_D.Text = guiVariables.Tf_D;
+                tf_growth.Text = guiVariables.Tf_growth;
+                tf_age.Text = guiVariables.Tf_age;
+                tf_freq.Text = guiVariables.Tf_freq;
+                Physical_weath_C1_textbox.Text = guiVariables.Physical_weath_C1_textbox;
+                physical_weath_constant1.Text = guiVariables.Physical_weath_constant1;
+                physical_weath_constant2.Text = guiVariables.Physical_weath_constant2;
+                chem_weath_rate_constant_textbox.Text = guiVariables.Chem_weath_rate_constant_textbox;
+                chem_weath_depth_constant_textbox.Text = guiVariables.Chem_weath_depth_constant_textbox;
+                chem_weath_specific_coefficient_textbox.Text = guiVariables.Chem_weath_specific_coefficient_textbox;
+                specific_area_coarse_textbox.Text = guiVariables.Specific_area_coarse_textbox;
+                specific_area_sand_textbox.Text = guiVariables.Specific_area_sand_textbox;
+                specific_area_silt_textbox.Text = guiVariables.Specific_area_silt_textbox;
+                specific_area_clay_textbox.Text = guiVariables.Specific_area_clay_textbox;
+                specific_area_fine_clay_textbox.Text = guiVariables.Specific_area_fine_clay_textbox;
+                clay_neoform_constant_textbox.Text = guiVariables.Clay_neoform_constant_textbox;
+                clay_neoform_C1_textbox.Text = guiVariables.Clay_neoform_C1_textbox;
+                clay_neoform_C2_textbox.Text = guiVariables.Clay_neoform_C2_textbox;
+                maximum_eluviation_textbox.Text = guiVariables.Maximum_eluviation_textbox;
+                eluviation_coefficient_textbox.Text = guiVariables.Eluviation_coefficient_textbox;
+                ct_depth_decay.Text = guiVariables.Ct_depth_decay;
+                potential_bioturbation_textbox.Text = guiVariables.Potential_bioturbation_textbox;
+                bioturbation_depth_decay_textbox.Text = guiVariables.Bioturbation_depth_decay_textbox;
+                carbon_input_textbox.Text = guiVariables.Carbon_input_textbox;
+                carbon_depth_decay_textbox.Text = guiVariables.Carbon_depth_decay_textbox;
+                carbon_humification_fraction_textbox.Text = guiVariables.Carbon_humification_fraction_textbox;
+                carbon_y_decomp_rate_textbox.Text = guiVariables.Carbon_y_decomp_rate_textbox;
+                carbon_o_decomp_rate_textbox.Text = guiVariables.Carbon_o_decomp_rate_textbox;
+                carbon_y_depth_decay_textbox.Text = guiVariables.Carbon_y_depth_decay_textbox;
+                carbon_o_twi_decay_textbox.Text = guiVariables.Carbon_o_twi_decay_textbox;
+                carbon_o_depth_decay_textbox.Text = guiVariables.Carbon_o_depth_decay_textbox;
+                carbon_y_twi_decay_textbox.Text = guiVariables.Carbon_y_twi_decay_textbox;
+
+            }
             ));
         }
         private void UpdateStatusPannel()
@@ -18947,6 +19008,65 @@ Example: rainfall.asc can look like:
             this.Invoke(new MethodInvoker(() => {
                 guiVariables.InfoStatusPanel = InfoStatusPanel.Text;
                 guiVariables.DTM_input_filename_textbox = dtm_input_filename_textbox.Text;
+                guiVariables.Number_runs_textbox = Number_runs_textbox.Text;
+                guiVariables.ProcessStatusPanel = this.ProcessStatusPanel.Text;
+                guiVariables.Calibration_ratios_textbox = calibration_ratios_textbox.Text;
+                guiVariables.GoogAnimationSaveInterval = googAnimationSaveInterval.Text;
+                guiVariables.UTMzonebox = UTMzonebox.Text;
+                guiVariables.Saveintervalbox = saveintervalbox.Text;
+                guiVariables.Parameter_m_textbox = parameter_m_textbox.Text;
+                guiVariables.Parameter_K_textbox = parameter_K_textbox.Text;
+                guiVariables.Bio_protection_constant_textbox = bio_protection_constant_textbox.Text;
+                guiVariables.Rock_protection_constant_textbox = rock_protection_constant_textbox.Text;
+                guiVariables.Selectivity_constant_textbox = selectivity_constant_textbox.Text;
+                guiVariables.Erosion_threshold_textbox = erosion_threshold_textbox.Text;
+                guiVariables.Parameter_ploughing_depth_textbox = parameter_ploughing_depth_textbox.Text;
+                guiVariables.Parameter_tillage_constant_textbox = parameter_tillage_constant_textbox.Text;
+                guiVariables.Parameter_diffusivity_textbox = parameter_diffusivity_textbox.Text;
+                guiVariables.Parameter_P0_textbox = parameter_P0_textbox.Text;
+                guiVariables.Parameter_k1_textbox = parameter_k1_textbox.Text;
+                guiVariables.Parameter_k2_textbox = parameter_k2_textbox.Text;
+                guiVariables.Parameter_Pa_textbox = parameter_Pa_textbox.Text;
+                guiVariables.Tilting_rate_textbox = Tilting_rate_textbox.Text;
+                guiVariables.Text_lift_row_less = text_lift_row_less.Text;
+                guiVariables.Text_lift_row_more = text_lift_row_more.Text;
+                guiVariables.Text_lift_col_less = text_lift_col_less.Text;
+                guiVariables.Text_lift_col_more = text_lift_col_more.Text;
+                guiVariables.Uplift_rate_textbox = Uplift_rate_textbox.Text;
+                guiVariables.Tf_W = tf_W.Text;
+                guiVariables.Tf_D = tf_D.Text;
+                guiVariables.Tf_growth = tf_growth.Text;
+                guiVariables.Tf_age = tf_age.Text;
+                guiVariables.Tf_freq = tf_freq.Text;
+                guiVariables.Physical_weath_C1_textbox = Physical_weath_C1_textbox.Text;
+                guiVariables.Physical_weath_constant1 = physical_weath_constant1.Text;
+                guiVariables.Physical_weath_constant2 = physical_weath_constant2.Text;
+                guiVariables.Chem_weath_rate_constant_textbox = chem_weath_rate_constant_textbox.Text;
+                guiVariables.Chem_weath_depth_constant_textbox = chem_weath_depth_constant_textbox.Text;
+                guiVariables.Chem_weath_specific_coefficient_textbox = chem_weath_specific_coefficient_textbox.Text;
+                guiVariables.Specific_area_coarse_textbox = specific_area_coarse_textbox.Text;
+                guiVariables.Specific_area_sand_textbox = specific_area_sand_textbox.Text;
+                guiVariables.Specific_area_silt_textbox = specific_area_silt_textbox.Text;
+                guiVariables.Specific_area_clay_textbox = specific_area_clay_textbox.Text;
+                guiVariables.Specific_area_fine_clay_textbox = specific_area_fine_clay_textbox.Text;
+                guiVariables.Clay_neoform_constant_textbox = clay_neoform_constant_textbox.Text;
+                guiVariables.Clay_neoform_C1_textbox = clay_neoform_C1_textbox.Text;
+                guiVariables.Clay_neoform_C2_textbox = clay_neoform_C2_textbox.Text;
+                guiVariables.Maximum_eluviation_textbox = maximum_eluviation_textbox.Text;
+                guiVariables.Eluviation_coefficient_textbox = eluviation_coefficient_textbox.Text;
+                guiVariables.Ct_depth_decay = ct_depth_decay.Text;
+                guiVariables.Potential_bioturbation_textbox = potential_bioturbation_textbox.Text;
+                guiVariables.Bioturbation_depth_decay_textbox = bioturbation_depth_decay_textbox.Text;
+                guiVariables.Carbon_input_textbox = carbon_input_textbox.Text;
+                guiVariables.Carbon_depth_decay_textbox = carbon_depth_decay_textbox.Text;
+                guiVariables.Carbon_humification_fraction_textbox = carbon_humification_fraction_textbox.Text;
+                guiVariables.Carbon_y_decomp_rate_textbox = carbon_y_decomp_rate_textbox.Text;
+                guiVariables.Carbon_o_decomp_rate_textbox = carbon_o_decomp_rate_textbox.Text;
+                guiVariables.Carbon_y_depth_decay_textbox = carbon_y_depth_decay_textbox.Text;
+                guiVariables.Carbon_o_twi_decay_textbox = carbon_o_twi_decay_textbox.Text;
+                guiVariables.Carbon_o_depth_decay_textbox = carbon_o_depth_decay_textbox.Text;
+                guiVariables.Carbon_y_twi_decay_textbox = carbon_y_twi_decay_textbox.Text;
+
             }
             ));
 

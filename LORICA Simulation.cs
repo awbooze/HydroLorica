@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Numerics;
 using MathNet.Numerics;
 using MathNet.Numerics.IntegralTransforms;
+using System.Windows.Forms;
 
 namespace LORICA4
 {
@@ -56,7 +57,7 @@ namespace LORICA4
                 System.IO.Directory.CreateDirectory(workdir);
                 input_data_error = false;
 
-                try { end_time = int.Parse(Number_runs_textbox.Text); }
+                try { end_time = int.Parse(guiVariables.Number_runs_textbox); }
                 catch { input_data_error = true; MessageBox.Show("Invalid number of years"); }
                 try { ntr = System.Convert.ToInt32(end_time); }     // WVG initialise ntr: number of rows in timeseries matrix   
                 catch (OverflowException)
@@ -65,71 +66,71 @@ namespace LORICA4
                 }
                 //WVG initialise ntr, nr of timesteps, can be changed to nr of output timesteps
                 numfile = 1;
-                this.ProcessStatusPanel.Text = "";
-                if (Water_ero_checkbox.Checked)
+                guiVariables.ProcessStatusPanel = "";
+                if (guiVariables.Water_ero_checkbox)
                 {
-                    water_ero_active = true;
-                    this.ProcessStatusPanel.Text += "WE ";
+                    water_ero_active = true; //Replace with guiVariables...
+                    guiVariables.ProcessStatusPanel += "WE ";
                 }
-                if (Tillage_checkbox.Checked)
+                if (guiVariables.Tillage_checkbox)
                 {
-                    tillage_active = true;
-                    this.ProcessStatusPanel.Text += "TI ";
+                    tillage_active = true;  //Replace with guiVariables...
+                    guiVariables.ProcessStatusPanel += "TI ";
                 }
-                if (Landslide_checkbox.Checked)
+                if (guiVariables.Landslide_checkbox)
                 {
-                    landslide_active = true;
-                    this.ProcessStatusPanel.Text += "LS ";
+                    landslide_active = true;  //Replace with guiVariables...
+                    guiVariables.ProcessStatusPanel += "LS ";
                 }
-                if (creep_active_checkbox.Checked)
+                if (guiVariables.Creep_active_checkbox)
                 {
-                    creep_active = true;
-                    this.ProcessStatusPanel.Text += "CR ";
+                    creep_active = true;  //Replace with guiVariables...
+                    guiVariables.ProcessStatusPanel += "CR ";
                 }
-                if (Biological_weathering_checkbox.Checked)
+                if (guiVariables.Biological_weathering_checkbox)
                 {
-                    bedrock_weathering_active = true;
-                    this.ProcessStatusPanel.Text += "BW ";
+                    bedrock_weathering_active = true;  //Replace with guiVariables...
+                    guiVariables.ProcessStatusPanel += "BW ";
                 }
-                if (Frost_weathering_checkbox.Checked)
+                if (guiVariables.Frost_weathering_checkbox)
                 {
-                    frost_weathering_active = true;
-                    this.ProcessStatusPanel.Text += "FW ";
+                    frost_weathering_active = true;  //Replace with guiVariables...
+                    guiVariables.ProcessStatusPanel += "FW ";
                 }
-                if (tilting_active_checkbox.Checked)
+                if (guiVariables.Tilting_active_checkbox)
                 {
-                    tilting_active = true;
-                    this.ProcessStatusPanel.Text += "TL ";
+                    tilting_active = true;  //Replace with guiVariables...
+                    guiVariables.ProcessStatusPanel += "TL ";
                 }
-                if (uplift_active_checkbox.Checked)
+                if (guiVariables.Uplift_active_checkbox)
                 {
-                    uplift_active = true;
-                    this.ProcessStatusPanel.Text += "UP ";
+                    uplift_active = true;  //Replace with guiVariables...
+                    guiVariables.ProcessStatusPanel += "UP ";
                 }
-                if (soil_phys_weath_checkbox.Checked)
+                if (guiVariables.Soil_phys_weath_checkbox)
                 {
-                    soil_phys_weath_active = true;
-                    this.ProcessStatusPanel.Text += "PW ";
+                    soil_phys_weath_active = true;  //Replace with guiVariables...
+                    guiVariables.ProcessStatusPanel += "PW ";
                 }
-                if (soil_chem_weath_checkbox.Checked)
+                if (guiVariables.Soil_chem_weath_checkbox)
                 {
-                    soil_chem_weath_active = true;
-                    this.ProcessStatusPanel.Text += "CW ";
+                    soil_chem_weath_active = true;  //Replace with guiVariables...
+                    guiVariables.ProcessStatusPanel += "CW ";
                 }
-                if (soil_bioturb_checkbox.Checked)
+                if (guiVariables.Soil_bioturb_checkbox)
                 {
-                    soil_bioturb_active = true;
-                    this.ProcessStatusPanel.Text += "BT ";
+                    soil_bioturb_active = true;  //Replace with guiVariables...
+                    guiVariables.ProcessStatusPanel += "BT ";
                 }
-                if (soil_clay_transloc_checkbox.Checked)
+                if (guiVariables.Soil_clay_transloc_checkbox)
                 {
-                    soil_clay_transloc_active = true;
-                    this.ProcessStatusPanel.Text += "CT ";
+                    soil_clay_transloc_active = true;  //Replace with guiVariables...
+                    guiVariables.ProcessStatusPanel += "CT ";
                 }
-                if (soil_carbon_cycle_checkbox.Checked) //:)
+                if (guiVariables.soil_carbon_cycle_checkbox) //:)
                 {
-                    soil_carbon_active = true;
-                    this.ProcessStatusPanel.Text += "CC ";
+                    soil_carbon_active = true;  //Replace with guiVariables...
+                    guiVariables.ProcessStatusPanel += "CC ";
                 }
 
 
@@ -139,14 +140,14 @@ namespace LORICA4
                 maxruns = 1;
                 int currentlevel = 0;
 
-                if (Calibration_button.Checked == true)
+                if (guiVariables.Calibration_button)
                 {
                     int runs_per_level = 0;
                     //CALIB_USER INPUT NEEDED NEXT LINE IN THE CODE :
                     user_specified_number_of_calibration_parameters = 1;
                     best_error = 99999999999; //or any other absurdly high number
                     best_parameters = new double[user_specified_number_of_calibration_parameters];
-                    user_specified_number_of_ratios = calibration_ratios_textbox.Text.Split(';').Length;
+                    user_specified_number_of_ratios = guiVariables.Calibration_ratios_textbox.Split(';').Length;   //String made multiple times... Maybe single variable?
                     runs_per_level = Convert.ToInt32(Math.Pow(user_specified_number_of_ratios, user_specified_number_of_calibration_parameters));
                     calib_ratios = new double[user_specified_number_of_calibration_parameters, user_specified_number_of_ratios];
                     original_ratios = new double[user_specified_number_of_ratios];
@@ -154,10 +155,10 @@ namespace LORICA4
                     {
                         try
                         {
-                            original_ratios[rat] = Convert.ToDouble(calibration_ratios_textbox.Text.Split(';')[rat]);
+                            original_ratios[rat] = Convert.ToDouble(guiVariables.Calibration_ratios_textbox.Split(';')[rat]);
                             for (int par = 0; par < user_specified_number_of_calibration_parameters; par++)
                             {
-                                calib_ratios[par, rat] = Convert.ToDouble(calibration_ratios_textbox.Text.Split(';')[rat]);
+                                calib_ratios[par, rat] = Convert.ToDouble(guiVariables.Calibration_ratios_textbox.Split(';')[rat]);
                             }
                         }
                         catch { Debug.WriteLine(" problem setting original parameter ratios for calibration "); }
@@ -168,7 +169,7 @@ namespace LORICA4
                     //CALIB_USER: set the number of parameters and their initial value
 
                 }
-                if (Sensitivity_button.Checked == true)
+                if (guiVariables.Sensitivity_button == true)
                 { //dev needed
                 }
                 #endregion
@@ -178,55 +179,55 @@ namespace LORICA4
                 {
                     Debug.WriteLine(" maxruns is " + maxruns);
 
-                    try { save_interval2 = System.Convert.ToInt32(googAnimationSaveInterval.Text); }
+                    try { save_interval2 = System.Convert.ToInt32(guiVariables.GoogAnimationSaveInterval); }
                     catch { input_data_error = true; MessageBox.Show("value for google save interval is not valid"); }
 
-                    if (UTMgridcheckbox.Checked)
+                    if (guiVariables.UTMgridcheckbox)
                     {
-                        try { test = System.Convert.ToInt32(UTMzonebox.Text); }
+                        try { test = System.Convert.ToInt32(guiVariables.UTMzonebox); }
                         catch { input_data_error = true; MessageBox.Show("value for UTM zone is not valid"); }
                     }
 
-                    if (end_time < save_interval2 && googleAnimationCheckbox.Checked == true) { input_data_error = true; MessageBox.Show("value for google save interval cannot be larger than number of runs "); }
-                    if (end_time < int.Parse(saveintervalbox.Text) && checkBoxGenerateAVIFile.Checked == true) { input_data_error = true; MessageBox.Show("value for video interval cannot be larger than number of runs "); }
+                    if (end_time < save_interval2 && guiVariables.GoogleAnimationCheckbox) { input_data_error = true; MessageBox.Show("value for google save interval cannot be larger than number of runs "); }
+                    if (end_time < int.Parse(guiVariables.Saveintervalbox) && guiVariables.CheckBoxGenerateAVIFile) { input_data_error = true; MessageBox.Show("value for video interval cannot be larger than number of runs "); }
 
 
                     //WATER EROSION AND DEPOSITION PARAMETERS
                     if (water_ero_active)
                     {
-                        try { m = double.Parse(parameter_m_textbox.Text); }
+                        try { m = double.Parse(guiVariables.Parameter_m_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter m is not valid"); }                      // Kirkby's m and n factors for increasing
-                        try { n = double.Parse(parameter_n_textbox.Text); }
+                        try { n = double.Parse(guiVariables.Parameter_n_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter n is not valid"); }                   // sheet, wash, overland, gully to river flow
-                        try { conv_fac = double.Parse(parameter_conv_textbox.Text); }
+                        try { conv_fac = double.Parse(guiVariables.Parameter_m_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter p is not valid"); }
-                        try { advection_erodibility = double.Parse(parameter_K_textbox.Text); }
+                        try { advection_erodibility = double.Parse(guiVariables.Parameter_K_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter K is not valid"); }
-                        try { bio_protection_constant = double.Parse(bio_protection_constant_textbox.Text); }
+                        try { bio_protection_constant = double.Parse(guiVariables.Bio_protection_constant_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter P is not valid"); }
-                        try { rock_protection_constant = double.Parse(rock_protection_constant_textbox.Text); }
+                        try { rock_protection_constant = double.Parse(guiVariables.Rock_protection_constant_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter P is not valid"); }
-                        try { constant_selective_transcap = double.Parse(selectivity_constant_textbox.Text); }
+                        try { constant_selective_transcap = double.Parse(guiVariables.Selectivity_constant_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter P is not valid"); }
-                        try { erosion_threshold_kg = double.Parse(erosion_threshold_textbox.Text); }
+                        try { erosion_threshold_kg = double.Parse(guiVariables.Erosion_threshold_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter P is not valid"); }
                     }
 
                     //TILLAGE PARAMETERS
                     if (tillage_active)
                     {
-                        try { plough_depth = double.Parse(parameter_ploughing_depth_textbox.Text); }
+                        try { plough_depth = double.Parse(guiVariables.Parameter_ploughing_depth_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter plough depth is not valid"); }
-                        try { tilc = double.Parse(parameter_tillage_constant_textbox.Text); }
+                        try { tilc = double.Parse(guiVariables.Parameter_tillage_constant_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter tillage constant is not valid"); }
                     }
 
                     //CREEP PARAMETER
                     if (creep_active)
                     {
-                        try { conv_fac = double.Parse(parameter_conv_textbox.Text); }
+                        try { conv_fac = double.Parse(guiVariables.Parameter_m_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter p is not valid"); }
-                        try { diffusivity_creep = double.Parse(parameter_diffusivity_textbox.Text); }
+                        try { diffusivity_creep = double.Parse(guiVariables.Parameter_diffusivity_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter diffusivity is not valid"); }
                     }
 
@@ -239,66 +240,66 @@ namespace LORICA4
                     //Bio Weathering PARAMETERS
                     if (bedrock_weathering_active)
                     {
-                        try { P0 = double.Parse(parameter_P0_textbox.Text); }
+                        try { P0 = double.Parse(guiVariables.Parameter_P0_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter P0 is not valid"); }
-                        try { k1 = double.Parse(parameter_k1_textbox.Text); }
+                        try { k1 = double.Parse(guiVariables.Parameter_k1_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter k1 is not valid"); }
-                        try { k2 = double.Parse(parameter_k2_textbox.Text); }
+                        try { k2 = double.Parse(guiVariables.Parameter_k2_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter k2 is not valid"); }
-                        try { Pa = double.Parse(parameter_Pa_textbox.Text); }
+                        try { Pa = double.Parse(guiVariables.Parameter_Pa_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter Pa is not valid"); }
                     }
 
                     //Tilting parameters
                     if (tilting_active)
                     {
-                        if (radio_tilt_col_zero.Checked) { tilt_location = 0; }
-                        if (radio_tilt_row_zero.Checked) { tilt_location = 1; }
-                        if (radio_tilt_col_max.Checked) { tilt_location = 2; }
-                        if (radio_tilt_row_max.Checked) { tilt_location = 3; }
-                        try { tilt_intensity = double.Parse(Tilting_rate_textbox.Text); }
+                        if (guiVariables.Radio_tilt_col_zero) { tilt_location = 0; }
+                        if (guiVariables.Radio_tilt_row_zero) { tilt_location = 1; }
+                        if (guiVariables.Radio_tilt_col_max) { tilt_location = 2; }
+                        if (guiVariables.Radio_tilt_row_max) { tilt_location = 3; }
+                        try { tilt_intensity = double.Parse(guiVariables.Tilting_rate_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
                     }
 
                     //Uplift parameters
                     if (uplift_active)
                     {
-                        if (radio_lift_row_less_than.Checked) { lift_type = 0; }
-                        if (radio_lift_row_more_than.Checked) { lift_type = 1; }
-                        if (radio_lift_col_less_than.Checked) { lift_type = 2; }
-                        if (radio_lift_row_more_than.Checked) { lift_type = 3; }
+                        if (guiVariables.Radio_lift_row_less_than) { lift_type = 0; }
+                        if (guiVariables.Radio_lift_row_more_than) { lift_type = 1; }
+                        if (guiVariables.Radio_lift_col_less_than) { lift_type = 2; }
+                        if (guiVariables.Radio_lift_col_more_than) { lift_type = 3; }
                         if (lift_type == 0)
                         {
-                            try { lift_location = int.Parse(text_lift_row_less.Text); }
+                            try { lift_location = int.Parse(guiVariables.Text_lift_row_less); }
                             catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
                         }
                         if (lift_type == 1)
                         {
-                            try { lift_location = int.Parse(text_lift_row_more.Text); }
+                            try { lift_location = int.Parse(guiVariables.Text_lift_row_more); }
                             catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
                         }
                         if (lift_type == 2)
                         {
-                            try { lift_location = int.Parse(text_lift_col_less.Text); }
+                            try { lift_location = int.Parse(guiVariables.Text_lift_col_less); }
                             catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
                         }
                         if (lift_type == 3)
                         {
-                            try { lift_location = int.Parse(text_lift_col_more.Text); }
+                            try { lift_location = int.Parse(guiVariables.Text_lift_col_more); }
                             catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
                         }
-                        try { lift_intensity = double.Parse(Uplift_rate_textbox.Text); }
+                        try { lift_intensity = double.Parse(guiVariables.Uplift_rate_textbox); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
                     }
 
                     // TREE FALL PARAMETERS
-                    if (treefall_checkbox.Checked)
+                    if (guiVariables.Treefall_checkbox)
                     {
-                        W_m_max = System.Convert.ToDouble(tf_W.Text);
-                        D_m_max = System.Convert.ToDouble(tf_D.Text);
-                        growth_a_max = System.Convert.ToInt32(tf_growth.Text);
-                        age_a_max = System.Convert.ToInt32(tf_age.Text);
-                        tf_frequency = System.Convert.ToDouble(tf_freq.Text);
+                        W_m_max = System.Convert.ToDouble(guiVariables.Tf_W);
+                        D_m_max = System.Convert.ToDouble(guiVariables.Tf_D);
+                        growth_a_max = System.Convert.ToInt32(guiVariables.Tf_growth);
+                        age_a_max = System.Convert.ToInt32(guiVariables.Tf_age);
+                        tf_frequency = System.Convert.ToDouble(guiVariables.Tf_freq);
                     }
 
                     //SOIL PHYSICAL WEATHERING PARAMETERS
@@ -306,9 +307,9 @@ namespace LORICA4
                     {
                         try
                         {
-                            physical_weathering_constant = Convert.ToDouble(Physical_weath_C1_textbox.Text);
-                            Cone = Convert.ToDouble(physical_weath_constant1.Text);
-                            Ctwo = Convert.ToDouble(physical_weath_constant2.Text);
+                            physical_weathering_constant = Convert.ToDouble(guiVariables.Physical_weath_C1_textbox);
+                            Cone = Convert.ToDouble(guiVariables.Physical_weath_constant1);
+                            Ctwo = Convert.ToDouble(guiVariables.Physical_weath_constant2);
                             //the upper sizes of particle for the different fractions are declared in initialise_soil because they are always needed
                             Debug.WriteLine("succesfully read parameters for pysical weathering");
                         }
@@ -348,19 +349,19 @@ namespace LORICA4
                     {
                         try
                         {
-                            max_eluviation = Convert.ToDouble(maximum_eluviation_textbox.Text);
-                            Cclay = Convert.ToDouble(eluviation_coefficient_textbox.Text);
+                            max_eluviation = Convert.ToDouble(guiVariables.Maximum_eluviation_textbox);
+                            Cclay = Convert.ToDouble(guiVariables.Eluviation_coefficient_textbox);
                             Debug.WriteLine("succesfully read parameters for  clay dynamics");
                         }
                         catch
                         {
                             input_data_error = true; Debug.WriteLine("problem reading parameters for clay dynamics");
                         }
-                        if (CT_depth_decay_checkbox.Checked)
+                        if (guiVariables.CT_depth_decay_checkbox)
                         {
                             try
                             {
-                                ct_depthdec = Convert.ToDouble(ct_depth_decay.Text);
+                                ct_depthdec = Convert.ToDouble(guiVariables.Ct_depth_decay);
                             }
                             catch
                             {
@@ -374,8 +375,8 @@ namespace LORICA4
                     {
                         try
                         {
-                            potential_bioturbation_kg = Convert.ToDouble(potential_bioturbation_textbox.Text);
-                            bioturbation_depth_decay_constant = Convert.ToDouble(bioturbation_depth_decay_textbox.Text);
+                            potential_bioturbation_kg = Convert.ToDouble(guiVariables.Potential_bioturbation_textbox);
+                            bioturbation_depth_decay_constant = Convert.ToDouble(guiVariables.Bioturbation_depth_decay_textbox);
                         }
                         catch
                         {
@@ -388,15 +389,15 @@ namespace LORICA4
                     {
                         try
                         {
-                            potential_OM_input = Convert.ToDouble(carbon_input_textbox.Text);
-                            OM_input_depth_decay_constant = Convert.ToDouble(carbon_depth_decay_textbox.Text);
-                            humification_fraction = Convert.ToDouble(carbon_humification_fraction_textbox.Text);
-                            potential_young_decomp_rate = Convert.ToDouble(carbon_y_decomp_rate_textbox.Text);
-                            potential_old_decomp_rate = Convert.ToDouble(carbon_o_decomp_rate_textbox.Text);
-                            young_depth_decay_constant = Convert.ToDouble(carbon_y_depth_decay_textbox.Text);
-                            old_CTI_decay_constant = Convert.ToDouble(carbon_o_twi_decay_textbox.Text);
-                            old_depth_decay_constant = Convert.ToDouble(carbon_o_depth_decay_textbox.Text);
-                            young_CTI_decay_constant = Convert.ToDouble(carbon_y_twi_decay_textbox.Text);
+                            potential_OM_input = Convert.ToDouble(guiVariables.Carbon_input_textbox);
+                            OM_input_depth_decay_constant = Convert.ToDouble(guiVariables.Carbon_depth_decay_textbox);
+                            humification_fraction = Convert.ToDouble(guiVariables.Carbon_humification_fraction_textbox);
+                            potential_young_decomp_rate = Convert.ToDouble(guiVariables.Carbon_y_decomp_rate_textbox);
+                            potential_old_decomp_rate = Convert.ToDouble(guiVariables.Carbon_o_decomp_rate_textbox);
+                            young_depth_decay_constant = Convert.ToDouble(guiVariables.Carbon_y_depth_decay_textbox);
+                            old_CTI_decay_constant = Convert.ToDouble(guiVariables.Carbon_o_twi_decay_textbox);
+                            old_depth_decay_constant = Convert.ToDouble(guiVariables.Carbon_o_depth_decay_textbox);
+                            young_CTI_decay_constant = Convert.ToDouble(guiVariables.Carbon_y_twi_decay_textbox);
                         }
                         catch
                         {
@@ -564,7 +565,7 @@ namespace LORICA4
                                 //CALIB_USER INPUT NEEDED HERE IN CODE
                                 //check whether the best run was on the edge of parameter space or inside, shift to that place and zoom out or in
                                 calib_shift_and_zoom(0, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_K_textbox.Text));
-                                //calib_shift_and_zoom(1, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_conv_textbox.Text));
+                                //calib_shift_and_zoom(1, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(guiVariables.Parameter_m_textbox));
                             }
                         }
                         else
