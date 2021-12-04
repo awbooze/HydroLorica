@@ -28,6 +28,10 @@ namespace LORICAVariables
         DelUpdateTimePannel updateTimePannel;
         DelUpdateVariables updateVariables;
 
+
+        //public delegate double Delbulk_Density_Calc(double, double , double, double, double, double, double, double); //Pulls Values from GUI
+        //public Delbulk_Density_Calc bulk_density_calc;
+
         //if none of these fields get additional instructions, remove and rename the delegates
         //Ex: updateAllFields becomes UpdateAllFields
         protected void UpdateAllFields()
@@ -47,6 +51,167 @@ namespace LORICAVariables
             updateVariables();
         }
 
+
+
+
+
+        ReaderWriterLock P_allRWL = new ReaderWriterLock();
+        protected int[] p_all;
+        public int[] P_all
+        {
+            get
+            {
+                P_allRWL.AcquireReaderLock(Timeout.Infinite);
+                int[] temp = p_all;
+                P_allRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                P_allRWL.AcquireWriterLock(Timeout.Infinite);
+                p_all = value;
+                P_allRWL.ReleaseWriterLock();
+
+                UpdateStatusPannel();
+            }
+        }
+
+        ReaderWriterLock ET0_allRWL = new ReaderWriterLock();
+        protected int[] eT0_all;
+        public int[] ET0_all
+        {
+            get
+            {
+                ET0_allRWL.AcquireReaderLock(Timeout.Infinite);
+                int[] temp = eT0_all;
+                ET0_allRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                ET0_allRWL.AcquireWriterLock(Timeout.Infinite);
+                eT0_all = value;
+                ET0_allRWL.ReleaseWriterLock();
+
+                UpdateStatusPannel();
+            }
+        }
+
+        ReaderWriterLock D_allRWL = new ReaderWriterLock();
+        protected int[] d_all;
+        public int[] D_all
+        {
+            get
+            {
+                D_allRWL.AcquireReaderLock(Timeout.Infinite);
+                int[] temp = d_all;
+                D_allRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                D_allRWL.AcquireWriterLock(Timeout.Infinite);
+                d_all = value;
+                D_allRWL.ReleaseWriterLock();
+
+                UpdateStatusPannel();
+            }
+        }
+
+        ReaderWriterLock Tavg_allRWL = new ReaderWriterLock();
+        protected int[] tavg_all;
+        public int[] Tavg_all
+        {
+            get
+            {
+                Tavg_allRWL.AcquireReaderLock(Timeout.Infinite);
+                int[] temp = tavg_all;
+                Tavg_allRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Tavg_allRWL.AcquireWriterLock(Timeout.Infinite);
+                tavg_all = value;
+                Tavg_allRWL.ReleaseWriterLock();
+
+                UpdateStatusPannel();
+            }
+        }
+
+        ReaderWriterLock Tmin_allRWL = new ReaderWriterLock();
+        protected int[] tmin_all;
+        public int[] Tmin_all
+        {
+            get
+            {
+                Tmin_allRWL.AcquireReaderLock(Timeout.Infinite);
+                int[] temp = tmin_all;
+                Tmin_allRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Tmin_allRWL.AcquireWriterLock(Timeout.Infinite);
+                tmin_all = value;
+                Tmin_allRWL.ReleaseWriterLock();
+
+                UpdateStatusPannel();
+            }
+        }
+
+        ReaderWriterLock Tmax_allRWL = new ReaderWriterLock();
+        protected int[] tmax_all;
+        public int[] Tmax_all
+        {
+            get
+            {
+                Tmax_allRWL.AcquireReaderLock(Timeout.Infinite);
+                int[] temp = tmax_all;
+                Tmax_allRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Tmax_allRWL.AcquireWriterLock(Timeout.Infinite);
+                tmax_all = value;
+                Tmax_allRWL.ReleaseWriterLock();
+
+                UpdateStatusPannel();
+            }
+        }
+
+        ReaderWriterLock OFy_mRWL = new ReaderWriterLock();
+        protected double[,,] oFy_m;
+        public double[,,] OFy_m
+        {
+            get
+            {
+                OFy_mRWL.AcquireReaderLock(Timeout.Infinite);
+                double[,,] temp = oFy_m;
+                OFy_mRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                OFy_mRWL.AcquireWriterLock(Timeout.Infinite);
+                oFy_m = value;
+                OFy_mRWL.ReleaseWriterLock();
+
+                UpdateStatusPannel();
+            }
+        }
+
+
+
+        //String Text Boxes
 
 
         ReaderWriterLock InfoStatusPanelRWL = new ReaderWriterLock();
@@ -1273,6 +1438,127 @@ namespace LORICAVariables
             }
         }
 
+        ReaderWriterLock Landuse_constant_value_boxRWL = new ReaderWriterLock();
+        protected string landuse_constant_value_box = "";
+        public string Landuse_constant_value_box
+        {
+            get
+            {
+                Landuse_constant_value_boxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = landuse_constant_value_box;
+                Landuse_constant_value_boxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Landuse_constant_value_boxRWL.AcquireWriterLock(Timeout.Infinite);
+                landuse_constant_value_box = value;
+                Landuse_constant_value_boxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Evap_constant_value_boxRWL = new ReaderWriterLock();
+        protected string evap_constant_value_box = "";
+        public string Evap_constant_value_box
+        {
+            get
+            {
+                Evap_constant_value_boxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = evap_constant_value_box;
+                Evap_constant_value_boxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Evap_constant_value_boxRWL.AcquireWriterLock(Timeout.Infinite);
+                evap_constant_value_box = value;
+                Evap_constant_value_boxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Infil_constant_value_boxRWL = new ReaderWriterLock();
+        protected string infil_constant_value_box = "";
+        public string Infil_constant_value_box
+        {
+            get
+            {
+                Infil_constant_value_boxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = infil_constant_value_box;
+                Infil_constant_value_boxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Infil_constant_value_boxRWL.AcquireWriterLock(Timeout.Infinite);
+                infil_constant_value_box = value;
+                Infil_constant_value_boxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Rainfall_constant_value_boxRWL = new ReaderWriterLock();
+        protected string rainfall_constant_value_box = "";
+        public string Rainfall_constant_value_box
+        {
+            get
+            {
+                Rainfall_constant_value_boxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = rainfall_constant_value_box;
+                Rainfall_constant_value_boxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Rainfall_constant_value_boxRWL.AcquireWriterLock(Timeout.Infinite);
+                rainfall_constant_value_box = value;
+                Rainfall_constant_value_boxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Temp_constant_value_boxRWL = new ReaderWriterLock();
+        protected string temp_constant_value_box = "";
+        public string Temp_constant_value_box
+        {
+            get
+            {
+                Temp_constant_value_boxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = temp_constant_value_box;
+                Temp_constant_value_boxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Temp_constant_value_boxRWL.AcquireWriterLock(Timeout.Infinite);
+                temp_constant_value_box = value;
+                Temp_constant_value_boxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Calibration_ratio_reduction_parameter_textboxRWL = new ReaderWriterLock();
+        protected string calibration_ratio_reduction_parameter_textbox = "";
+        public string Calibration_ratio_reduction_parameter_textbox
+        {
+            get
+            {
+                Calibration_ratio_reduction_parameter_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = calibration_ratio_reduction_parameter_textbox;
+                Calibration_ratio_reduction_parameter_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Calibration_ratio_reduction_parameter_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                calibration_ratio_reduction_parameter_textbox = value;
+                Calibration_ratio_reduction_parameter_textboxRWL.ReleaseWriterLock();
+            }
+        }
+
+
 
 
 
@@ -1852,6 +2138,207 @@ namespace LORICAVariables
                 CT_depth_decay_checkboxRWL.ReleaseWriterLock();
             }
         }
+
+        ReaderWriterLock Check_space_soildepthRWL = new ReaderWriterLock();
+        protected bool check_space_soildepth = false;
+        public bool Check_space_soildepth
+        {
+            get
+            {
+                Check_space_soildepthRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = check_space_soildepth;
+                Check_space_soildepthRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Check_space_soildepthRWL.AcquireWriterLock(Timeout.Infinite);
+                check_space_soildepth = value;
+                Check_space_soildepthRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Check_space_landuseRWL = new ReaderWriterLock();
+        protected bool check_space_landuse = false;
+        public bool Check_space_landuse
+        {
+            get
+            {
+                Check_space_landuseRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = check_space_landuse;
+                Check_space_landuseRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Check_space_landuseRWL.AcquireWriterLock(Timeout.Infinite);
+                check_space_landuse = value;
+                Check_space_landuseRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Check_time_landuseRWL = new ReaderWriterLock();
+        protected bool check_time_landuse = false;
+        public bool Check_time_landuse
+        {
+            get
+            {
+                Check_time_landuseRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = check_time_landuse;
+                Check_time_landuseRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Check_time_landuseRWL.AcquireWriterLock(Timeout.Infinite);
+                check_time_landuse = value;
+                Check_time_landuseRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Check_space_evapRWL = new ReaderWriterLock();
+        protected bool check_space_evap = false;
+        public bool Check_space_evap
+        {
+            get
+            {
+                Check_space_evapRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = check_space_evap;
+                Check_space_evapRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Check_space_evapRWL.AcquireWriterLock(Timeout.Infinite);
+                check_space_evap = value;
+                Check_space_evapRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Check_time_evapRWL = new ReaderWriterLock();
+        protected bool check_time_evap = false;
+        public bool Check_time_evap
+        {
+            get
+            {
+                Check_time_evapRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = check_time_evap;
+                Check_time_evapRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Check_time_evapRWL.AcquireWriterLock(Timeout.Infinite);
+                check_time_evap = value;
+                Check_time_evapRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Check_space_infilRWL = new ReaderWriterLock();
+        protected bool check_space_infil = false;
+        public bool Check_space_infil
+        {
+            get
+            {
+                Check_space_infilRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = check_space_infil;
+                Check_space_infilRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Check_space_infilRWL.AcquireWriterLock(Timeout.Infinite);
+                check_space_infil = value;
+                Check_space_infilRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Check_time_infilRWL = new ReaderWriterLock();
+        protected bool check_time_infil = false;
+        public bool Check_time_infil
+        {
+            get
+            {
+                Check_time_infilRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = check_time_infil;
+                Check_time_infilRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Check_time_infilRWL.AcquireWriterLock(Timeout.Infinite);
+                check_time_infil = value;
+                Check_time_infilRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Check_space_rainRWL = new ReaderWriterLock();
+        protected bool check_space_rain = false;
+        public bool Check_space_rain
+        {
+            get
+            {
+                Check_space_rainRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = check_space_rain;
+                Check_space_rainRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Check_space_rainRWL.AcquireWriterLock(Timeout.Infinite);
+                check_space_rain = value;
+                Check_space_rainRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Check_time_rainRWL = new ReaderWriterLock();
+        protected bool check_time_rain = false;
+        public bool Check_time_rain
+        {
+            get
+            {
+                Check_time_rainRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = check_time_rain;
+                Check_time_rainRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Check_time_rainRWL.AcquireWriterLock(Timeout.Infinite);
+                check_time_rain = value;
+                Check_time_rainRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Check_time_TRWL = new ReaderWriterLock();
+        protected bool check_time_T = false;
+        public bool Check_time_T
+        {
+            get
+            {
+                Check_time_TRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = check_time_T;
+                Check_time_TRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Check_time_TRWL.AcquireWriterLock(Timeout.Infinite);
+                check_time_T = value;
+                Check_time_TRWL.ReleaseWriterLock();
+            }
+        }
+
 
 
 
