@@ -90,6 +90,7 @@
       <DependentUpon>About_LAPSUS.cs</DependentUpon>
     </Compile>
     <Compile Include="AVIWriter.cs" />
+    <Compile Include="GlobalMethods.cs" />
     <Compile Include="Landuse_determinator.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -323,7 +323,7 @@ namespace LORICA4
         #endregion
 
         #region global model parameters
-        AviWriter aw; // <JMW 20041018>
+        //AviWriter aw; // <JMW 20041018>
         private Bitmap bmp;  // <JMW 20041018>
         private Graphics mygraphics;
         private Label label87;
@@ -349,7 +349,6 @@ namespace LORICA4
         private TextBox ini_CaCO3_content;
         private TabPage treefall;
         private CheckBox treefall_checkbox;
-        private bool merely_calculating_derivatives;
         private Label label98;
         private TextBox temp_input_filename_textbox;
         private TextBox temp_constant_value_box;
@@ -412,7 +411,7 @@ namespace LORICA4
         private Label label120;
         private CheckBox version_lux_checkbox;
         private Button button4;
-        private System.Drawing.Bitmap m_objDrawingSurface;
+        private System.Drawing.Bitmap m_objDrawingSurface;// = new Bitmap(FILENAMENEEDED);
         [System.Runtime.InteropServices.DllImport("gdi32.dll")]
         public static extern long BitBlt(IntPtr hdcDest, int nXDest, int nYDest, int nWidth,
             int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, int dwROP);
@@ -424,11 +423,8 @@ namespace LORICA4
         private double contrastMultiplier = 1;
         public int imageCount = 1;
         public int imageCount2 = 1;
-        int coordinateDone = 0;
-        double urfinalLati, urfinalLongi, llfinalLati, llfinalLongi, yurcorner, xurcorner = 0;
         public string kml = "";
         public string KML_FILE_NAME;
-        int save_time2, save_interval2 = 0;
         public string startDate, kmlTime;
         public DateTime googleTime;
         public string[] DateArray;
@@ -436,9 +432,6 @@ namespace LORICA4
 
 
         private System.ComponentModel.IContainer components;
-        TimeSpan geo_t, pedo_t, hydro_t, ponding_t;
-        double[,,,]    //4D matrix for soil texture masses in different x,y and z for t texture classes (x,y,z,t)
-                    texture_kg;                //mass in kg (per voxel = layer * thickness)
 
         double[,,]     //3D matrices for properties of soil layers in different x y (x,y,z)
                     layerthickness_m,         // : thickness in m 
@@ -447,249 +440,68 @@ namespace LORICA4
                     bulkdensity;            // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
 
 
-        double[,,] sediment_in_transport_kg,         // sediment mass in kg in transport per texture class
-                    litter_kg;                     // Litter contents (Luxembourg case study)
-
-        double[,]   // double matrices - these are huge memory-eaters and should be minimized 
-                    // they only get that memory later, and only when needed
-                    original_dtm,       //where sealevel interactions are used
-                    dtm,                //altitude matrix
-                    dtmchange,  	    //change in altitude matrix
-                    dtmfill_A,
-                    dz_soil,
-                    waterflow_m3,        //discharge matrix
-                    K_fac,
-                    P_fac,
-                    infil,              //infiltration matrix
-                    dz_ero_m,             //altitude change due to erosion  (negative values)
-                    dz_sed_m,             //altitude change due to sedimentation   (positive values)
-                    soildepth_m,
-                    young_SOM_in_transport_kg,
-                    old_SOM_in_transport_kg,
-                    creep,
-                    bedrock_weathering_m,
-                    frost_weathering,
-                    solif,
-                    till_result,
-                    dz_till_bd,
-                    dz_treefall,        // elevation change by tree fall
-                    aspect,             //aspect for calculation of hillshade
-                    slopeAnalysis,      //for calculation of hillshade
-                    Tau,                //for graphics
-                    hillshade,          //for graphics
-                    sum_water_erosion,
-                    sum_biological_weathering,
-                    sum_frost_weathering,
-                    sum_creep_grid,
-                    sum_solifluction,
-                    sum_tillage,
-                    sum_landsliding,
-                    sum_uplift,
-                    sum_tilting,
-                    veg,
-                    evapotranspiration,
-                    correct_dtm,        // for calibration purposes
-                    paleo_dtm,          // for calibration purposes
-                    stslope,		    // matrix with steepest descent local slope [rad]
-                    crrain,             // matrix with critical steady state rainfall for landsliding [m/d]
-                    camf,               // matrix with number of contributing draining cells, multiple flow [-]
-                    T_fac,              // matrix with transmissivity [m/d] values
-                    C_fac,              // matrix with combined cohesion [-] values
-                    Cs_fac,             // matrix with soil cohesion [kPa] values
-                    bulkd,              // matrix with bulk density values [g/cm3]
-                    intfr,              // matrix with angle of internal friction values [rad]
-                    reserv,
-                    ero_slid,
-                    cel_dist,
-                    sed_slid,
-                    sed_bud,
-                    sink_sed,
-                    olddem,
-                    dtm_epsilon,
-                    dh_slid,
-                    lake_sed_m,         //the thickness of lake sediment
-                    rain,
-                    timeseries_matrix,
-                    profile_dtm1,       //WVG profile timeseries matrices
-                    profile_dtm2,
-                    profile_dtm3,
-                    profile_wat1,
-                    profile_wat2,
-                    profile_wat3,
-                    lessivage_errors, // for calibration of lessivage
-                    tpi,            //topographic position index
-                    hornbeam_cover_fraction;   //hornbeam fraction 
-
+        
 
         int[,]  // integer matrices
-                    status_map,         //geeft aan of een cel een sink, een zadel, een flat of een top is
-                    depression,         //geeft aan of een cel bij een meer hoort, en welk meer
                     zones,
                     mask,
                     error_m,            // To store error locations as integer
                     sinkmap,
-                    slidemap,
                     soilmap,            // integer numbers for soil map
-                    watsh,              // watershed;
-                    landuse,            //landuse in classes
-                    tillfields,         //fields for tillage 
-                    treefall_count,     // count number of tree falls
                     vegetation_type;
-        int[,] OSL_age;            // keeps track of the last moment of surfacing: dim1: [nr * nc * nlayers * ngrains]; dim2: [5] row, col, layer, depo age, stab age
-                                   // Memory restrictions: length of each dimension cannot exceed 2^31 - 1 units (~2.15*10^9). 
-                                   // Limits on memory size depends on properties of system and settings for simulations
 
 
-        int[,]
-        drainingoutlet_row = new int[numberofsinks, 5],
-        drainingoutlet_col = new int[numberofsinks, 5];
 
-        int[] row_index, col_index;  // for sorting the DEM from high to low
-        string[] rowcol_index;
         int calibration_length; // to assess if a process has to be calibrated mvdm, >1 is more runs
-        double[] index;
 
         //sinks and depression parameters:
         //the constant values below may have to be increased for large or strange landscapes and studies
         const int numberofsinks = 10000;           // run the program once to find out the number of sinks. The exact number and any higher number will do....
-        const int maximumdepressionsize = 1500;  // run the program once to find out the SIZE OF the largest depression. Any higher number will do....
-        const double tangent_of_delta = 0.005;
-        const double tangent_for_outlet = 0.1;
-        const int maxlowestnbs = 100000;
-        const double epsilon = 0.000001;
+        
         const double root = 7.07;
-        int max_soil_layers = 5;
-        int ngrains = 100; // For OSL calculations
-        double[] local_s_i_t_kg = new double[] { 0, 0, 0, 0, 0 };
 
-        // for constant layer thicknesses
-        double dz_standard = 0.1;
-        double tolerance = 0.55;
-
-        int n_texture_classes = 5;
-
-        double soildepth_error, dtm00;
-
-        int[] rainfall_record, evap_record, infil_record, till_record, temp_record;
-        int[] rainfall_record_d, evap_record_d, duration_record_d;
-        int[] zonesize = new int[22], zoneprogress = new int[22];
-        int[]
-        iloedge = new int[numberofsinks],
-        jloedge = new int[numberofsinks],
-        iupedge = new int[numberofsinks],
-        jupedge = new int[numberofsinks],
-        depressionsize = new int[numberofsinks],
-        depressionconsidered = new int[numberofsinks],
-        rowlowestnb = new int[maxlowestnbs],
-        collowestnb = new int[maxlowestnbs];
-        double available_for_delta_kg = 0;
-        double available_for_delta_m = 0;
-
-
-        int t, t_intervene, scenario, number_of_data_cells, run_number;
-        bool crashed,
-            creep_active,
-            water_ero_active,
-            tillage_active,
-            landslide_active,
-            bedrock_weathering_active,
-            frost_weathering_active,
-            tilting_active,
-            uplift_active,
-            soil_phys_weath_active,
-            soil_chem_weath_active,
-            soil_bioturb_active,
-            soil_clay_transloc_active,
-            soil_carbon_active,
-            input_data_error,
-            memory_records,
-            memory_records_d;
-
-        int num_out,
-                ntr,				//WVG 22-10-2010 number of rows (timesteps) in profile timeseries matrices			
-                cross1, 			//WVG 22-10-2010 rows (or in the future columns) of which profiles are wanted
-                cross2,
-                cross3,
-                test,
-                numfile,
-                nr,
-                nc,
-                row,
-                col,
-                i,
+        int     i,
                 j,
-                matrixresult,
-                er_ifile,
-                flat,
-                low,
-                high,
-                equal,
-                alpha,
-                beta,
-                temp,
-                num_str,
-                numsinks,
-                nb_ok,
-                direct,
+                ii,
+                jj,
+                z,
+                graphics_scale = 2; /*
+                
+                tel1,
+                tel2,
+                tel3,
+                tel4,
+                twoequals,      // the -equals are counters for different types of sinks
+                threeequals,
+                moreequals,
+                nb_check,
                 round,
                 s_ch,
                 numtel,
                 S1_error,
                 S2_error,
                 cell_lock,
-                tel1,
-                tel2,
-                tel3,
-                tel4,
-                depressions_delta,
-                depressions_alone,
-                depressions_filled,  //counters for logging and reporting # of depressions filled/sedimented into/left alone
-                rr,
-                rrr,
-                cc,
-                ccc,
-                ii,
-                jj,
-                twoequals,      // the -equals are counters for different types of sinks
-                threeequals,
-                moreequals,
-                nb_check,
-                depressionnumber = 0,
-                maxdepressionnumber,
-                depressionready,
-                iloradius, iupradius,
-                jloradius, jupradius,
-                nbismemberofdepression,
-                z,
-                otherdepression,
-                otherdepressionsize,
-                totaldepressions,
-                totaldepressionsize,
-                maxsize,
-                lowestneighbourcounter,
-                numberoflowestneighbours,
+                nb_ok,
+                temp,
+                num_str,
+                matrixresult,
+                er_ifile,
+                flat,
                 depressionreallyready,
-                depressiondrainsout,
-                largestdepression,
                 rememberrow,
                 remembercol,
                 search,
                 twice_dtm_fill,
                 once_dtm_fill,
                 three_dtm_fill,
-                xrow, xcol, xxrow, xxcol,
-                landuse_value,
-                graphics_scale = 2,
-                number_of_outputs = 0,
-                wet_cells, eroded_cells, deposited_cells,
-                P_scen;
-        //calibration globals
-        int maxruns, best_run, calib_levels, user_specified_number_of_calibration_parameters, user_specified_number_of_ratios;
-        double reduction_factor, best_error;
-        //USER INPUT NEEDED: establish best versions of parameters varied in calibration:
-        double[] best_parameters;
-        double[,] calib_ratios;
-        double[] original_ratios;
+                num_out,
+                //ntr,				//WVG 22-10-2010 number of rows (timesteps) in profile timeseries matrices			//unused
+                cross1, 			//WVG 22-10-2010 rows (or in the future columns) of which profiles are wanted
+                cross2,
+                cross3,
+                GlobalMethods.nr,
+                GlobalMethods.nc,
+                P_scen;*/
 
         private void rain_input_filename_textbox_TextChanged_1(object sender, EventArgs e)
         {
@@ -712,9 +524,7 @@ namespace LORICA4
         }
 
         // tectonics
-        int lift_type, lift_location, tilt_location;
         int[] timeseries_order = new int[26];
-        long scan_lon, scan_cnt, NRO, NCO;
 
         private void soil_chem_weath_checkbox_CheckedChanged(object sender, EventArgs e)
         {
@@ -736,57 +546,6 @@ namespace LORICA4
 
         }
 
-        double
-                diffusivity_creep,
-                plough_depth,
-                annual_weathering,
-                dh, diff, dh1, dh_maxi,
-                scan_do, dcount, powered_slope_sum,
-                dmax, dmin,
-                max_allowed_erosion,			// maximum erosion down to neighbour
-                maximum_allowed_deposition, dhtemp,
-                CSIZE,
-                transport_capacity_kg,			// Capacity 
-                detachment_rate,
-                settlement_rate,
-                frac_sed,   // fraction of landslide deposition into lower grids
-                frac_bud,
-                startsed,
-                strsed,     // sediment delivered to streams
-                T_act,         // Transmissivity
-                bulkd_act,     // Bulk Density
-                intfr_act,     // Internal Friction
-                C_act,         // Combined Cohesion
-                erotot,      // total landslide erosion
-                sedtot,     // total landslide deposition;
-                a_ifr, a_coh, a_bd, a_T,  // parameters parent material 1
-                b_coh, b_ifr, b_bd, b_T,  // parameters parent material 2
-                c_coh, c_ifr, c_bd, c_T,  // parameters parent material 3
-                d_coh, d_ifr, d_bd, d_T,  // parameters parent material 4
-                e_coh, e_ifr, e_bd, e_T,  // parameters parent material 5
-                slopelim,       // slope limit for landslide erosion                          FACTOR 1
-                celfrac,        // fraction used in calculation of celdistance (0.4 default)  FACTOR 2
-                streamca,       // contributing area, number of cells, for stream development FACTOR 3
-                rainfall_intensity,      // threshold critical rainfall value for landslide scenario   FACTOR 4
-                slide_tot,
-                dh_tot,
-                tra_di,
-                set_di,
-                dx, dy,	  		// grid size in both row and col
-                xcoord, ycoord,
-                d_x, dh_tol,
-                dt = 1,				// time step
-                actual_t,      // Time counter for loop
-                end_time,      // Total end time of loop
-                out_t,
-                total_altitude,
-                total_average_altitude,
-                total_rain, total_evap, total_infil, total_outflow,
-                //WVG
-                total_sed_export_up, total_sed_export_mid, total_sed_export_low,
-                total_sed_prod_up, total_sed_prod_mid, total_sed_prod_low,
-                total_sed_dep_up, total_sed_dep_mid, total_sed_dep_low;  // counters for logging and reporting through time
-
         private void label11_Click(object sender, EventArgs e)
         {
 
@@ -800,8 +559,8 @@ namespace LORICA4
         private void button4_Click(object sender, EventArgs e)
         {
             Debug.Write(" merely_calculating_derivatives");
-            merely_calculating_derivatives = true;
-            try { calculate_terrain_derivatives(); MessageBox.Show("terrain derivatives calculation succeeded"); }
+            GlobalMethods.merely_calculating_derivatives = true;
+            try { GlobalMethods.calculate_terrain_derivatives(); MessageBox.Show("terrain derivatives calculation succeeded"); }
             catch { MessageBox.Show("terrain derivatives calculation failed"); }
         }
 
@@ -820,7 +579,7 @@ namespace LORICA4
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
@@ -832,7 +591,7 @@ namespace LORICA4
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
@@ -844,7 +603,7 @@ namespace LORICA4
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
@@ -907,119 +666,7 @@ namespace LORICA4
         }
 
 
-        //soil timeseries_variables
-        double total_average_soilthickness_m,
-            total_phys_weathered_mass_kg,
-            total_chem_weathered_mass_kg,
-            total_fine_neoformed_mass_kg,
-            total_fine_eluviated_mass_kg,
-            total_mass_bioturbed_kg,
-            total_OM_input_kg,
-        local_soil_depth_m,
-        local_soil_mass_kg;
-        int number_soil_thicker_than,
-        number_soil_coarser_than;
-
-
-
-        // Water erosion and deposition parameters
-        double
-        advection_erodibility,
-        P_act,
-        m, n,				        // capacity slope and discharge exponents
-        erosion_threshold_kg,
-        rock_protection_constant,
-        bio_protection_constant,
-        constant_selective_transcap,
-        Slope,			            // Gradient
-        conv_fac,		            // convergence/divergence factor
-        dS, desired_change, dztot,	// Difference in sediment/deposition/erosion
-        sedtr_loc,                  // Local sediment transport rate
-        all_grids,
-        fraction,	                // fraction slope by slopesum
-        frac_dis,	                // fraction of discharge into lower grid
-        sediment_transported,		// fraction of transport rate
-        water_out,
-        unfulfilled_change, dz_left1, actual_change, 	// unfulfilled sedimentation
-        dz_min, mmin,
-        dz_max, maxx,		        // maximum lowest neighbour, steepest descent
-        dz_bal, dz_bal2,		    // dz balans counter
-        sedbal, sedbal2,
-        erobal, erobal2,
-        erobalto, sedbalto,
-        erocnt,
-        sedcnt,
-        sediment_exported,		        // sediment out of our system
-        total_Bolsena_sed_influx,
-
-        // Biological weathering parameters  see Minasny and McBratney 2006 Geoderma 133
-        P0,                         // m t-1  // weathering rate constant
-        k1,                         // t-1
-        k2,                         // t-1
-        Pa,                         // m t-1  // weathering rate when soildepth = 0
-
-        // Tilting and Uplift parameters
-        tilt_intensity, lift_intensity,
-
-        // Tillage parameter
-        tilc;
-
-        // Tree fall parameters
-        double W_m_max, D_m_max, W_m, D_m, tf_frequency;
-        int growth_a_max, age_a_max;
-
-        //Soil physical weathering parameters
-        double physical_weathering_constant, weathered_mass_kg, Cone, Ctwo;
-        double[] upper_particle_size = new double[5];
-
-        //Soil chemical weathering parameters
-        double chemical_weathering_constant, Cthree, Cfour, Cfive, Csix, neoform_constant;
-        double[] specific_area = new double[5];
-
-        //Clay translocation parameters
-        double max_eluviation, Cclay, ct_depthdec;
-
-        //Bioturbation parameters
-        double potential_bioturbation_kg;
-        double bioturbation_depth_decay_constant;
-
-        //Carbon cycle parameters
-        double potential_OM_input,
-               OM_input_depth_decay_constant,
-               humification_fraction,
-               potential_young_decomp_rate,
-               potential_old_decomp_rate,
-               young_depth_decay_constant,
-               old_CTI_decay_constant,
-               old_depth_decay_constant,
-               young_CTI_decay_constant;
-
-        // Decalcification parameters
-        double[,,] CO3_kg;   // CaCO3, to track decalcification speed. Does not contribute to texture or soil mass (yet) MM
-        double ini_CO3_content_frac;
-
-
-
-        double noval,
-        sediment_filled_m, depressionvolume_filled_m, sediment_delta_m,   // counters for logging and reporting the filling of depressions
-        altidiff, minaltidiff,
-        totaldepressionvolume,
-        infil_value_m, evap_value_m, rain_value_m, soildepth_value,
-        volume_eroded, volume_deposited,
-        sum_normalweathered, sum_frostweathered, sum_soildepth, sum_creep, sum_solif, avg_solif, avg_creep, avg_soildepth,
-        sum_ls, total_sum_tillage, total_sum_uplift, total_sum_tilting, total_sed_export;  // counters for logging and reporting through time
-
-        int temp_value_C;
-
-        double depressionsum_sediment_m, depressionsum_water_m, depressionsum_YOM_kg, depressionsum_OOM_kg;
-        double[] depressionsum_texture_kg;
-        double needed_to_fill_depression_m, dhoblique, dhobliquemax1, dhobliquemax2, firstalt, secondalt, dtmlowestnb;
-        int dhmax_errors, readynum = 0, memberdepressionnotconsidered, depressionnum = 0, currentdepression;
-        int lower_nb_exists, breaker = 0, rowlowestobnb, collowestobnb, II = 0, JJ = 0;
-        int startrow, startcol, iloradius2, iupradius2, jupradius2, jloradius2, deltasize;
-        int readysearching, iloradius3, iupradius3, jupradius3, jloradius3, couldbesink, omikron, omega;
-        int tempx, tempy, obnbchanged;
-        double sed_delta_size1 = 0, sed_delta_size2 = 0, sed_delta_size3 = 0;
+        
 
         //  variables for displaying purposes // straight from Tom Coulthard
         double hue = 360.0;		// Ranges between 0 and 360 degrees
@@ -1031,12 +678,10 @@ namespace LORICA4
 
         string basetext = "LORICA Landscape Evolution Model";
         string cfgname = null;  //Config file name
-        // string workdir = "D:\\PhD\\projects\\1g_basic LORICA development\\";
-        string workdir = "D:\\PhD\\projects\\2g_clorpt effects on soil landscape diversity\\";
+        // string GlobalMethods.Workdir = "D:\\PhD\\projects\\1g_basic LORICA development\\";
         string timeseries_string = null;
 
-        double[] depressionlevel = new double[numberofsinks],
-                    depressionvolume_m = new double[numberofsinks];
+        double[] depressionvolume_m = new double[numberofsinks];
         //double SuperMEF = 0, SuperMEF2 = 0;
         double s_tempfactor, s_D, V_factor;
         double c_D;
@@ -1045,9 +690,8 @@ namespace LORICA4
 
         double mem_m;  //the height by which all cells of a current delta need to be raised in order to get rid of the remaining amount of sediment for that delta
 
-        string str, filename, logname, recordname, outfile, f_name, ch, chs;
+        string str, logname, recordname, outfile, f_name, ch, chs;
 
-        string[] inputheader = new string[6];
         double[,] climate_data;
 
         int diagnostic_mode = 0;
@@ -1087,6 +731,9 @@ namespace LORICA4
         /// </summary>
         private void InitializeComponent()
         {
+            guiVariables = new GUIVariables(UpdateAllFields, UpdateStatusPannel, UpdateTimePannel, DelUpdateVariables);
+            GlobalMethods.Workdir = "D:\\PhD\\projects\\2g_clorpt effects on soil landscape diversity\\";
+
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.Label label6;
             System.Windows.Forms.TabPage Landsliding;
@@ -5657,1195 +5304,7 @@ namespace LORICA4
         LORICA4.About_LORICA aboutbox = new LORICA4.About_LORICA();
         public LORICA4.Soil_specifier soildata = new LORICA4.Soil_specifier();
 
-
-        void calculate_terrain_derivatives()
-        {
-            //takes the DTM and calculates key derivatives and writes these to ASCII files
-            try { dtm_file(dtm_input_filename_textbox.Text); }
-            catch { Debug.WriteLine("could not read DEM for derivative calculation"); }
-
-            //declare rasters and memory
-            double[,] ledges, nedges, hedges, hhcliff, hlcliff, slhcliff, sllcliff, terruggedindex, ledgeheight;
-            int[,] ledgenames;
-            terruggedindex = new double[nr, nc];
-            ledges = new double[nr, nc];
-            nedges = new double[nr, nc];
-            hedges = new double[nr, nc];
-            hhcliff = new double[nr, nc];
-            hlcliff = new double[nr, nc];
-            slhcliff = new double[nr, nc];
-            sllcliff = new double[nr, nc];
-            ledgeheight = new double[nr, nc];
-            ledgenames = new int[nr, nc];
-            int runner = 0;
-
-            //Topographic Ruggedness Index (Riley, S.J., DeGloria, S.D., Elliot, R., 1999. A terrain ruggedness index that quantifies topographic heterogeneity. Intermt. J. Sci. 5, 23–27.)
-            double sum_squared_difference = 0; int num_nbs = 0;
-            try
-            {
-                for (row = 0; row < nr; row++)
-                {
-                    for (col = 0; col < nc; col++)
-                    {
-                        if (dtm[row, col] != -9999)
-                        {
-                            sum_squared_difference = 0;
-                            num_nbs = 0;
-                            for (i = (-1); i <= 1; i++)
-                            {
-                                for (j = (-1); j <= 1; j++)
-                                {
-                                    if (!(i == 0 && j == 0) && (row + i) >= 0 && (col + j) >= 0 && (row + i) < nr && (col + j) < nc)
-                                    {
-                                        if (dtm[row + i, col + j] != -9999)
-                                        {
-                                            sum_squared_difference += Math.Pow((dtm[row, col] - dtm[row + i, col + j]), 2);
-                                            num_nbs++;
-                                        }
-                                    }
-                                }
-                            }
-                            if (num_nbs == 0) { terruggedindex[row, col] = -9999; }
-                            else { terruggedindex[row, col] = Math.Sqrt(sum_squared_difference) * (8 / num_nbs); }
-                        }
-                    }
-                }
-                out_double("ruggednessindex.asc", terruggedindex);
-                Debug.WriteLine("terrain ruggedness index calculation and storage successfull");
-            }
-            catch { Debug.WriteLine("terrain ruggedness index calculation or storage failed"); }
-
-
-            // Properties of possible ledges on the hillslope above and below each cell.
-            //We need to ingest ledge positions
-            try { read_integer("ledgenames.asc", ledgenames); Debug.WriteLine("ledgenames read successfully"); }
-            catch { Debug.WriteLine("ledgenames not found"); }
-
-            //then calculate local properties of the landscape around ledges. We expect that ledge positions may be up to 1 cell wrong.
-            double maxcliffheight = 0;
-            for (row = 0; row < nr; row++)
-            {
-                for (col = 0; col < nc; col++)
-                {
-                    ledges[row, col] = -9999;
-                    nedges[row, col] = -9999;
-                    hedges[row, col] = -9999;
-                    hhcliff[row, col] = -9999;
-                    hlcliff[row, col] = -9999;
-                    slhcliff[row, col] = -9999;
-                    sllcliff[row, col] = -9999;
-                    ledgeheight[row, col] = -9999;
-                    if (dtm[row, col] != -9999)
-                    {
-                        ledges[row, col] = 0;
-                        nedges[row, col] = 0;
-                        hedges[row, col] = 0;
-                        hhcliff[row, col] = 0;
-                        hlcliff[row, col] = 0;
-                        slhcliff[row, col] = 0;
-                        sllcliff[row, col] = 0;
-                        ledgeheight[row, col] = 0;
-                        if (ledgenames[row, col] != -9999)
-                        {
-                            try
-                            {
-                                maxcliffheight = 0;
-                                for (i = (-1); i <= 1; i++)
-                                {
-                                    for (j = (-1); j <= 1; j++)
-                                    {
-                                        if (!(i == 0 && j == 0) && row + i >= 0 && col + j >= 0 && row + i < nr && col + j < nc)
-                                        {
-                                            if (dtm[row + i, col + j] != -9999)
-                                            {
-                                                for (ii = (-1); ii <= 1; ii++)
-                                                {
-                                                    for (jj = (-1); jj <= 1; jj++)
-                                                    {
-                                                        if (!(i + ii == 0 && j + jj == 0) && row + i + ii >= 0 && col + j + jj >= 0 && row + i + ii < nr && col + j + jj < nc)
-                                                        {
-                                                            if (dtm[row + i + ii, col + j + jj] != -9999)
-                                                            {
-                                                                if (Math.Abs(dtm[row + i + ii, col + j + jj] - dtm[row + i, col + j]) > maxcliffheight) { maxcliffheight = Math.Abs(dtm[row + i + ii, col + j + jj] - dtm[row + i, col + j]); }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                ledgeheight[row, col] = maxcliffheight;
-                            }
-                            catch { }
-                        }
-                    }
-                }
-            }
-            Debug.WriteLine("ledgeheights determined");
-
-            for (row = 0; row < nr; row++)
-            {
-                for (col = 0; col < nc; col++)
-                {
-                    if (dtm[row, col] != -9999)
-                    {
-                        if (ledgeheight[row, col] == -9999)
-                        {
-                            double highestledgeheight = 0;
-                            int besti = -4, bestj = -4;
-                            for (i = (-1); i <= 1; i++)
-                            {
-                                for (j = (-1); j <= 1; j++)
-                                {
-                                    if (!(i == 0 && j == 0) && row + i >= 0 && col + j >= 0 && row + i < nr && col + j < nc)
-                                    {
-                                        if (ledgeheight[row + i, col + j] > highestledgeheight)
-                                        {
-                                            highestledgeheight = ledgeheight[row + i, col + j];
-                                        }
-
-
-                                    }
-                                }
-                            }
-                            ledgeheight[row + i, col + j] = highestledgeheight;
-                        }
-                    }
-                }
-            }
-
-            //now, we sort the dtm from high to low and walk through it from high to low to assign ledge properties to 
-            comb_sort();
-            for (runner = number_of_data_cells - 1; runner >= 0; runner--)
-            {     // the index is sorted from low to high values, but flow goes from high to low
-                if (index[runner] != -9999)
-                {
-                    row = row_index[runner]; col = col_index[runner];
-                    //Debug.WriteLine("now at row " + row + " col " + col + " alt " + dtm[row, col]);
-                    if (ledgenames[row, col] != -9999)
-                    {
-                        //we are on a ledge. Setting and resetting time
-                        hhcliff[row, col] = ledgeheight[row, col];
-                        slhcliff[row, col] = hhcliff[row, col] / dx;
-                        hedges[row, col]++;
-                    }
-                    else
-                    {
-                        double tempslhcliff = 0, steepest = 0, steepness, distance, steepdist = 0;
-                        for (i = (-1); i <= 1; i++)
-                        {
-                            for (j = (-1); j <= 1; j++)
-                            {
-                                if (!(i == 0 && j == 0) && (row + i >= 0) && (col + j >= 0) && (row + i < nr) && (col + j < nc))
-                                {
-                                    if (dtm[row + i, col + j] != -9999)
-                                    {
-                                        if (dtm[row + i, col + j] > dtm[row, col])
-                                        {
-                                            if (i == 0 || j == 0) { distance = dx; } else { distance = dx * 1.414; }
-                                            steepness = (dtm[row + i, col + j] - dtm[row, col]) / distance;
-                                            if (steepness > steepest)
-                                            {
-                                                //we copy the cliffheight from the steepest neighbour cell
-                                                steepdist = distance;
-                                                steepest = steepness;
-                                                hhcliff[row, col] = hhcliff[row + i, col + j]; tempslhcliff = slhcliff[row + i, col + j];
-                                                hedges[row, col] = hedges[row + i, col + j];
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        //we now have an updated hhcliff, so we can also update slhcliff
-                        slhcliff[row, col] = hhcliff[row, col] / (steepdist + hhcliff[row, col] / tempslhcliff);
-                    }
-                }
-            }
-            Debug.WriteLine("downslope variables calculated");
-
-            //now, we walk the other way (from low to high in the DTM). 
-            for (runner = 0; runner < number_of_data_cells; runner++)
-            {
-                if (index[runner] != -9999)
-                {
-                    row = row_index[runner]; col = col_index[runner];
-                    if (ledgenames[row, col] != -9999)
-                    {
-                        //we are on a ledge. Setting and resetting time
-                        hlcliff[row, col] = ledgeheight[row, col];
-                        sllcliff[row, col] = hlcliff[row, col] / dx;
-                        ledges[row, col]++;
-                    }
-                    else
-                    {
-                        double tempsllcliff = 0, steepest = 0, steepness = 0, distance = 0, steepdist = 0;
-                        for (i = (-1); i <= 1; i++)
-                        {
-                            for (j = (-1); j <= 1; j++)
-                            {
-                                if (!(i == 0 && j == 0) && row + i >= 0 && col + j >= 0 && row + i < nr && col + j < nc)
-                                {
-                                    if (dtm[row + i, col + j] != -9999)
-                                    {
-                                        if (dtm[row + i, col + j] < dtm[row, col])
-                                        {
-                                            if (i == 0 || j == 0) { distance = dx; } else { distance = dx * 1.414; }
-                                            steepness = -(dtm[row + i, col + j] - dtm[row, col]) / distance;
-                                            if (steepness > steepest)
-                                            {
-                                                //we copy the cliffheight from the steepest neighbour cell
-                                                steepdist = distance;
-                                                steepest = steepness;
-                                                hlcliff[row, col] = hlcliff[row + i, col + j]; tempsllcliff = sllcliff[row + i, col + j];
-                                                ledges[row, col] = ledges[row + i, col + j];
-                                            }
-                                        }
-
-
-                                    }
-                                }
-                            }
-                        }
-                        //we now have an updated hhcliff, so we can also update slhcliff
-                        sllcliff[row, col] = hlcliff[row, col] / (steepdist + hlcliff[row, col] / tempsllcliff);
-                    }
-                }
-            }
-            Debug.WriteLine("upslope variables calculated");
-
-            //finally, add up ledges and hedges to get nedges
-            for (row = 0; row < nr; row++)
-            {
-                for (col = 0; col < nc; col++)
-                {
-                    if (dtm[row, col] != -9999)
-                    {
-                        nedges[row, col] = ledges[row, col] + hedges[row, col];
-                    }
-                }
-            }
-
-            //now write all these rasters to ascii:
-            out_double("ledgeheights.asc", ledgeheight);
-            out_double("nedges.asc", nedges);
-            out_double("hedges.asc", hedges);
-            out_double("ledges.asc", ledges);
-            out_double("hhcliff.asc", hhcliff);
-            out_double("hlcliff.asc", hlcliff);
-            out_double("slhcliff.asc", slhcliff);
-            out_double("sllcliff.asc", sllcliff);
-            Debug.WriteLine("variables exported to ASCII");
-        }
-
         #region memory, reading and writing utilities
-
-        private void timeseries_output()
-        {
-            int step;
-            string FILENAME = workdir + "\\timeseries.log";
-            using (StreamWriter sw = new StreamWriter(FILENAME))
-            {
-                //geomprph centred
-                if (timeseries.timeseries_cell_waterflow_check.Checked) { sw.Write("cell_waterflow "); }
-                if (timeseries.timeseries_cell_altitude_check.Checked) { sw.Write("cell_altitude "); }
-                if (timeseries.timeseries_net_ero_check.Checked) { sw.Write("net_erosion "); }
-                if (timeseries.timeseries_number_dep_check.Checked) { sw.Write("deposited_cells "); }
-                if (timeseries.timeseries_number_erosion_check.Checked) { sw.Write("eroded_cells "); }
-                if (timeseries.timeseries_number_waterflow_check.Checked) { sw.Write("wet_cells "); }
-                if (timeseries.timeseries_SDR_check.Checked) { sw.Write("SDR "); }
-                if (timeseries.timeseries_total_average_alt_check.Checked) { sw.Write("average_alt "); }
-                if (timeseries.timeseries_total_dep_check.Checked) { sw.Write("total_dep "); }
-                if (timeseries.timeseries_total_ero_check.Checked) { sw.Write("total_ero "); }
-                if (timeseries.timeseries_total_evap_check.Checked) { sw.Write("total_evap "); }
-                if (timeseries.timeseries_total_infil_check.Checked) { sw.Write("total_infil "); }
-                if (timeseries.timeseries_total_outflow_check.Checked) { sw.Write("total_outflow "); }
-                if (timeseries.timeseries_total_rain_check.Checked) { sw.Write("total_rain "); }
-                //soil_centred
-                if (timeseries.total_phys_weath_checkbox.Checked) { sw.Write("phys_weath "); }
-                if (timeseries.total_chem_weath_checkbox.Checked) { sw.Write("chem_weath "); }
-                if (timeseries.total_fine_formed_checkbox.Checked) { sw.Write("fine_clay_formed "); }
-                if (timeseries.total_fine_eluviated_checkbox.Checked) { sw.Write("fine_clay_eluviated "); }
-                if (timeseries.total_mass_bioturbed_checkbox.Checked) { sw.Write("mass_bioturbed "); }
-                if (timeseries.total_OM_input_checkbox.Checked) { sw.Write("OM_input "); }
-                if (timeseries.total_average_soilthickness_checkbox.Checked) { sw.Write("average_soilthickness "); }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_thicker "); }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_coarser "); }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_thickness "); }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_mass "); }
-                sw.Write("\r\n");
-                for (step = 0; step <= end_time - 1; step++)
-                {
-                    if (timeseries.timeseries_cell_waterflow_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[1]]); sw.Write(" "); }
-                    if (timeseries.timeseries_cell_altitude_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[2]]); sw.Write(" "); }
-                    if (timeseries.timeseries_net_ero_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[3]]); sw.Write(" "); }
-                    if (timeseries.timeseries_number_dep_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[4]]); sw.Write(" "); }
-                    if (timeseries.timeseries_number_erosion_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[5]]); sw.Write(" "); }
-                    if (timeseries.timeseries_number_waterflow_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[6]]); sw.Write(" "); }
-                    if (timeseries.timeseries_SDR_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[7]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_average_alt_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[8]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_dep_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[9]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_ero_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[10]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_evap_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[11]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_infil_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[12]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_outflow_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[13]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_rain_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[14]]); sw.Write(" "); }
-                    //soil_centred
-                    if (timeseries.total_phys_weath_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[15]]); sw.Write(" "); }
-                    if (timeseries.total_chem_weath_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[16]]); sw.Write(" "); }
-                    if (timeseries.total_fine_formed_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[17]]); sw.Write(" "); }
-                    if (timeseries.total_fine_eluviated_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[18]]); sw.Write(" "); }
-                    if (timeseries.total_mass_bioturbed_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[19]]); sw.Write(" "); }
-                    if (timeseries.total_OM_input_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[20]]); sw.Write(" "); }
-                    if (timeseries.total_average_soilthickness_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[21]]); sw.Write(" "); }
-                    if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[22]]); sw.Write(" "); }
-                    if (timeseries.timeseries_coarser_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[23]]); sw.Write(" "); }
-                    if (timeseries.timeseries_soil_depth_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[24]]); sw.Write(" "); }
-                    if (timeseries.timeseries_soil_mass_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[25]]); }
-                    sw.Write("\r\n");
-                }
-            }
-        }
-
-        int makematrices()
-        {
-            // Debug.WriteLine("assigning memory");
-            // status grids
-            if (this.Ik_ben_Marijn.Checked == true) { original_dtm = new double[nr, nc]; }
-            dtm = new double[nr, nc];
-            if (merely_calculating_derivatives == false) 
-            {
-                OSL_age = new int[nr * nc * max_soil_layers * ngrains, 5];
-                soildepth_m = new double[nr, nc];
-                dtmchange = new double[nr, nc];
-                dz_soil = new double[nr, nc];
-                // climate grids
-                if (check_space_evap.Checked == true) { evapotranspiration = new double[nr, nc]; }
-                if (check_space_infil.Checked == true) { infil = new double[nr, nc]; }
-                if (check_space_rain.Checked == true) { rain = new double[nr, nc]; }
-                veg = new double[nr, nc];
-                // categorical grids
-                if (check_space_landuse.Checked == true) { landuse = new int[nr, nc]; }
-            }
-            status_map = new int[nr, nc];
-            //sorting arrays
-            index = new double[nr * nc];
-            row_index = new int[nr * nc];
-            col_index = new int[nr * nc];
-            rowcol_index = new string[nr * nc];
-            //others
-            depression = new int[nr, nc];
-            dtmfill_A = new double[nr, nc];
-            if (merely_calculating_derivatives == false)
-            {
-                if (1 == 1)
-                {
-                    texture_kg = new double[nr, nc, max_soil_layers, n_texture_classes];    //: mass in kg (per voxel = layer * thickness)
-                    layerthickness_m = new double[nr, nc, max_soil_layers];        // : thickness in m 
-                    young_SOM_kg = new double[nr, nc, max_soil_layers];         // : OM mass in kg (per voxel = layer * thickness)
-                    old_SOM_kg = new double[nr, nc, max_soil_layers];
-                    bulkdensity = new double[nr, nc, max_soil_layers];            // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
-                }
-
-                if (Water_ero_checkbox.Checked)
-                {
-                    //doubles
-                    waterflow_m3 = new double[nr, nc];
-                    if (only_waterflow_checkbox.Checked == false)
-                    {
-                        K_fac = new double[nr, nc];
-                        P_fac = new double[nr, nc];
-                        sediment_in_transport_kg = new double[nr, nc, n_texture_classes];
-                        young_SOM_in_transport_kg = new double[nr, nc];
-                        old_SOM_in_transport_kg = new double[nr, nc];
-                        sum_water_erosion = new double[nr, nc];
-                        dz_ero_m = new double[nr, nc];
-                        dz_sed_m = new double[nr, nc];
-                        lake_sed_m = new double[nr, nc];
-                        depressionsum_texture_kg = new double[n_texture_classes];
-
-                    }
-
-                }
-                if (Tillage_checkbox.Checked)
-                {
-                    till_result = new double[nr, nc];
-                    sum_tillage = new double[nr, nc];
-                    tillfields = new int[nr, nc];
-                    dz_till_bd = new double[nr, nc];
-                }
-
-                if (treefall_checkbox.Checked)
-                {
-                    treefall_count = new int[nr, nc];
-                    dz_treefall = new double[nr, nc];
-                }
-
-                if (version_lux_checkbox.Checked)
-                {
-                    tpi = new double[nr, nc];
-                    hornbeam_cover_fraction = new double[nr, nc];
-                    litter_kg = new double[nr, nc, 2];
-                }
-
-                if (Solifluction_checkbox.Checked)
-                {
-                    solif = new double[nr, nc];
-                    sum_solifluction = new double[nr, nc];
-                }
-                if (creep_active_checkbox.Checked)
-                {
-                    creep = new double[nr, nc];
-                    sum_creep_grid = new double[nr, nc];
-                }
-                if (Landslide_checkbox.Checked)
-                {
-                    //doubles
-                    stslope = new double[nr, nc];
-                    crrain = new double[nr, nc];
-                    camf = new double[nr, nc];
-                    T_fac = new double[nr, nc];
-                    C_fac = new double[nr, nc];
-                    Cs_fac = new double[nr, nc];
-                    bulkd = new double[nr, nc];
-                    intfr = new double[nr, nc];
-                    reserv = new double[nr, nc];
-                    ero_slid = new double[nr, nc];
-                    cel_dist = new double[nr, nc];
-                    sed_slid = new double[nr, nc];
-                    sed_bud = new double[nr, nc];
-                    dh_slid = new double[nr, nc];
-                    sum_landsliding = new double[nr, nc];
-                    //integers
-                    slidemap = new int[nr, nc];
-                    watsh = new int[nr, nc];
-                }
-                if (Biological_weathering_checkbox.Checked)
-                {
-                    bedrock_weathering_m = new double[nr, nc];
-                    sum_biological_weathering = new double[nr, nc];
-                }
-                if (Frost_weathering_checkbox.Checked)
-                {
-                    frost_weathering = new double[nr, nc];
-                    sum_frost_weathering = new double[nr, nc];
-                }
-                if (tilting_active_checkbox.Checked)
-                {
-                    sum_tilting = new double[nr, nc];
-                }
-                if (uplift_active_checkbox.Checked)
-                {
-                    sum_uplift = new double[nr, nc];
-                }
-                if (decalcification_checkbox.Checked)
-                {
-                    CO3_kg = new double[nr, nc, max_soil_layers];
-                }
-
-            }
-            aspect = new double[nr, nc];
-            slopeAnalysis = new double[nr, nc];
-            hillshade = new double[nr, nc];
-            Tau = new double[nr, nc];
-            // Debug.WriteLine("memory assigned succesfully");
-            return 1;
-        }
-
-        void makerecords(string filename)
-        {
-            string FILE_NAME = filename;
-            string input;
-            if (!File.Exists(FILE_NAME))
-            {
-                MessageBox.Show("No such data file " + FILE_NAME);
-                input_data_error = true;
-                return;
-            }
-            Debug.WriteLine("reading " + filename + " into record ");
-            StreamReader sr = File.OpenText(FILE_NAME);
-
-            //read first line: number of timesteps
-            input = sr.ReadLine();
-            int recordsize = 0;
-            try { recordsize = System.Convert.ToInt32(input); }
-            catch
-            {
-                MessageBox.Show("Wrong value " + input + " in first line of record " + FILE_NAME);
-                input_data_error = true;
-                return;
-            }
-            if (check_time_rain.Checked) { rainfall_record = new int[recordsize]; }
-            if (check_time_evap.Checked) { evap_record = new int[recordsize]; }
-            if (check_time_infil.Checked) { infil_record = new int[recordsize]; }
-            if (check_time_T.Checked) { temp_record = new int[recordsize]; }
-            if (check_time_till_fields.Checked) { till_record = new int[recordsize]; }
-
-            memory_records = true;
-        }
-
-        void makedailyrecords(string filename)
-        {
-            string FILE_NAME = filename;
-            string input;
-            if (!File.Exists(FILE_NAME))
-            {
-                MessageBox.Show("No such data file " + FILE_NAME);
-                input_data_error = true;
-                return;
-            }
-            Debug.WriteLine("reading " + filename + " into record ");
-            StreamReader sr = File.OpenText(FILE_NAME);
-
-            //read first line: number of timesteps
-            input = sr.ReadLine();
-            int recordsize = 0;
-            try { recordsize = System.Convert.ToInt32(input); }
-            catch
-            {
-                MessageBox.Show("Wrong value " + input + " in first line of record " + FILE_NAME);
-                input_data_error = true;
-                return;
-            }
-
-
-            guiVariables.P_all = new int[recordsize];
-            guiVariables.ET0_all = new int[recordsize];
-            guiVariables.D_all = new int[recordsize];
-            guiVariables.Tavg_all = new int[recordsize];
-            guiVariables.Tmin_all = new int[recordsize];
-            guiVariables.Tmax_all = new int[recordsize];
-
-
-            memory_records_d = true;
-        }
-
-        void dtm_file(string name1)
-        {
-
-            string FILE_NAME = name1;
-            int z, dem_integer_error = 1;
-            string[] lineArray2;
-            int sp;
-            //MessageBox.Show("Opening DEM" + FILE_NAME);
-            //MessageBox.Show("Directory " + Directory.GetCurrentDirectory() );
-
-            if (!File.Exists(FILE_NAME))
-            {
-                MessageBox.Show("No such DEM data file..");
-                input_data_error = true;
-                return;
-            }
-
-            try
-            {
-
-                //read headers
-                StreamReader sr = File.OpenText(FILE_NAME);
-                for (z = 1; z <= 6; z++)
-                {
-                    inputheader[z - 1] = sr.ReadLine();
-                    //MessageBox.Show(inputheader[z - 1]);
-                }
-                sr.Close();
-
-                // get nc, nr and dx from input headers
-
-                lineArray2 = inputheader[0].Split(new char[] { ' ' });
-                sp = 1;
-                while (lineArray2[sp] == "") sp++;
-                nc = int.Parse(lineArray2[sp]);
-
-                lineArray2 = inputheader[1].Split(new char[] { ' ' });
-                sp = 1;
-                while (lineArray2[sp] == "") sp++;
-                nr = int.Parse(lineArray2[sp]);
-
-                lineArray2 = inputheader[2].Split(new char[] { ' ' });
-                sp = 1;
-                while (lineArray2[sp] == "") sp++;
-                xcoord = double.Parse(lineArray2[sp]);
-
-                lineArray2 = inputheader[3].Split(new char[] { ' ' });
-                sp = 1;
-                while (lineArray2[sp] == "") sp++;
-                ycoord = double.Parse(lineArray2[sp]);
-
-                lineArray2 = inputheader[4].Split(new char[] { ' ' });
-                sp = 1;
-                while (lineArray2[sp] == "") sp++;
-                dx = double.Parse(lineArray2[sp]);
-
-                Debug.WriteLine("read DEM: nr = " + nr + " nc = " + nc);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("There is a problem with the header of the DEM file");
-                input_data_error = true;
-                return;
-
-            }
-            int ok = makematrices();
-            if (ok == 1)
-            { // we have now succesfully made memory reservations for all data layers in the model 
-
-            }
-            else
-            {
-                MessageBox.Show("There is not enough memory for LORICA to run with these settings");
-            }
-            {
-
-                int col, row, colcounter;
-                String input;
-                double tttt = 0.00;
-
-                // load dem
-
-                if (!File.Exists(FILE_NAME))
-                {
-                    MessageBox.Show("No such DEM data file..");
-                    input_data_error = true;
-                    return;
-                }
-
-                StreamReader sr = File.OpenText(FILE_NAME);
-
-                //now skip over the headers.
-                for (z = 1; z <= 6; z++)
-                {
-                    input = sr.ReadLine();
-                }
-                row = 0;
-                while ((input = sr.ReadLine()) != null)  // so not until nr is reached, but until the file is empty
-                {
-                    string[] lineArray;
-                    lineArray = input.Split(new char[] { ' ' });   // so we split the string that we read (readline) from file into an array of strings that each contain a number
-                    col = 0;
-                    for (colcounter = 0; colcounter <= (lineArray.Length - 1); colcounter++)  // the length of LineArray should equal nc, and therefore run from 0 to nc-1
-                    {
-
-                        if (lineArray[colcounter] != "" && col < nc) // but just to make sure, col counts only the non-empty strings in LineArrary (handy for instance when files are double-spaced)
-                        {
-                            tttt = double.Parse(lineArray[colcounter]);
-                            if (Ik_ben_Marijn.Checked == true) { original_dtm[row, col] = tttt; dtm[row, col] = -9999; }
-                            else { dtm[row, col] = tttt; }
-                            col++;
-                            if (double.Parse(lineArray[colcounter]) - Math.Round(double.Parse(lineArray[colcounter])) != 0)
-                            {
-                                dem_integer_error = 0;
-                            }
-                        }
-                    }
-                    row++;
-
-
-                }
-                sr.Close();
-                if (dem_integer_error == 1) { MessageBox.Show("Warning: Digital Elevation Model may only contain integer values\n LORICA can proceed, but may experience problems"); }
-
-            }
-        }
-
-        void read_double(string name2, double[,] map1)
-        {
-            string FILE_NAME = name2;
-            string input;
-            double tttt = 0.00;
-            int x, y, xcounter;
-            if (!File.Exists(FILE_NAME))
-            {
-                MessageBox.Show("No such double data file " + FILE_NAME);
-                input_data_error = true;
-                return;
-            }
-
-            StreamReader sr = File.OpenText(FILE_NAME);
-
-            //read headers
-            for (z = 1; z <= 6; z++)
-            {
-                input = sr.ReadLine();
-            }
-            y = 0;
-
-            while ((input = sr.ReadLine()) != null)
-            {
-                string[] lineArray;
-                lineArray = input.Split(new char[] { ' ' });
-                xcounter = 0;
-                for (x = 0; x <= (lineArray.Length - 1); x++)
-                {
-
-                    if (lineArray[x] != "" && xcounter < nc)
-                    {
-
-
-                        try
-                        {
-                            tttt = double.Parse(lineArray[x]);
-                        }
-                        catch
-                        {
-                            MessageBox.Show("Incorrect content " + lineArray[x] + " in file " + FILE_NAME);
-                            input_data_error = true;
-                            return;
-                        }
-                        map1[y, xcounter] = tttt;
-                        xcounter++;
-                    }
-                }
-                y++;
-
-            }
-            sr.Close();
-        } // end read_double()
-
-        void read_integer(string name2, int[,] map1)
-        {
-            string FILE_NAME = name2;
-            string input;
-            int tttt = 0;
-            int x, y, xcounter;
-            Debug.WriteLine(" Reading " + FILE_NAME + " from " + Directory.GetCurrentDirectory());
-            if (!File.Exists(FILE_NAME))
-            {
-                MessageBox.Show("No such data file " + FILE_NAME);
-                input_data_error = true;
-                return;
-            }
-            StreamReader sr = File.OpenText(FILE_NAME);
-
-            //read headers
-            for (z = 1; z <= 6; z++)
-            {
-                input = sr.ReadLine();
-                /*if (z == 1)
-                {
-                    string[] lineArray;
-                    lineArray = input.Split(new char[] { ' ' });
-                    Debug.WriteLine(input + " here " + lineArray[1] + " there " );
-                    if (int.Parse(lineArray[1]) != nc)
-                    {
-                        Debug.WriteLine(filename + " has different cols than the DEM ");
-                    }
-                }
-                if (z == 2)
-                {
-                    string[] lineArray;
-                    lineArray = input.Split(new char[] { ' ' });
-                    Debug.WriteLine(lineArray[1]);
-                    if (int.Parse(lineArray[1]) != nr)
-                    {
-                        Debug.WriteLine(filename + " has different rows than the DEM ");
-                    }
-                } */
-            }
-            y = 0;
-            while ((input = sr.ReadLine()) != null)
-            {
-                string[] lineArray;
-                lineArray = input.Split(new char[] { ' ' });
-                xcounter = 0;
-                for (x = 0; x <= (lineArray.Length - 1); x++)
-                {
-
-                    if (lineArray[x] != "" && xcounter < nc)
-                    {
-                        try
-                        {
-                            tttt = int.Parse(lineArray[x]);
-                        }
-                        catch
-                        {
-                            MessageBox.Show("Incorrect content " + lineArray[x] + " in file " + FILE_NAME);
-                            input_data_error = true;
-                            return;
-                        }
-                        map1[y, xcounter] = tttt;
-                        xcounter++;
-                    }
-                }
-                y++;
-
-            }
-            sr.Close();
-            //Debug.WriteLine("completed reading file" + FILE_NAME);
-        } // end read_integer()
-
-        void read_record(string filename, int[] record)
-        {
-            string FILE_NAME = filename;
-            string input;
-            int tttt = 0;
-            int y;
-            if (!File.Exists(FILE_NAME))
-            {
-                MessageBox.Show("No such data file " + FILE_NAME);
-                input_data_error = true;
-                return;
-            }
-            // Debug.WriteLine("reading " + filename + " into record ");
-            StreamReader sr = File.OpenText(FILE_NAME);
-
-            //read first line: number of timesteps
-            input = sr.ReadLine();
-            y = 0;
-            int recordsize = 0;
-            try { recordsize = System.Convert.ToInt32(input); }
-            catch
-            {
-                MessageBox.Show("Wrong value " + input + " in first line of record " + FILE_NAME);
-                input_data_error = true;
-                return;
-            }
-
-
-            // Debug.WriteLine("reading " + filename + " into record of size " + record.Length);
-
-            // the record size is read from the first line and not necessarily equal to the number of timesteps. 
-            // Runs will start from beginning of record and repeat when necessary
-            while ((input = sr.ReadLine()) != null)
-            {
-                if (y >= recordsize)
-                {
-                    MessageBox.Show("record " + FILE_NAME + " contains more values than expected. Extras are ignored");
-                    break;
-                }
-
-                try { tttt = int.Parse(input); }
-                catch
-                {
-                    MessageBox.Show("Incorrect content " + input + " in file " + FILE_NAME);
-                    input_data_error = true;
-                    return;
-                }
-                record[y] = tttt;
-                //Debug.WriteLine("value " + y + " in record is " + record[y]);
-                y++;
-            }
-            sr.Close();
-
-        }
-
-        void out_double(string name4, double[,] output)
-        {
-            int nn, row, col;
-            string FILENAME = name4;
-            using (StreamWriter sw = new StreamWriter(FILENAME))
-            {
-                sw.Write("ncols         " + nc);
-                sw.Write("\r\n");
-                sw.Write("nrows         " + nr);
-                sw.Write("\r\n");
-                for (nn = 2; nn <= 5; nn++)
-                {
-                    sw.Write(inputheader[nn]); sw.Write("\r\n");
-                    //MessageBox.Show(inputheader[nn]);
-                }
-                for (row = 0; row < nr; row++)
-                {
-                    for (col = 0; col < nc; col++)
-                    {
-                        sw.Write("{0:F6}", output[row, col]);
-                        sw.Write(" ");
-
-                    }
-                    sw.Write("\r\n");
-                }
-                sw.Close();
-            }
-
-        } //end out_double
-
-        void out_mf(string name4, double[,,] output)
-        {
-            int nn, row, col;
-            string FILENAME = name4;
-            using (StreamWriter sw = new StreamWriter(FILENAME))
-            {
-                sw.Write("In n1 n2 n3 n4 n5 n6 n7 n8");
-                sw.Write("\r\n");
-                for (row = 0; row < nr; row++)
-                {
-                    for (col = 0; col < nc; col++)
-                    {
-                        for (int dir = 0; dir < 9; dir++)
-                        {
-                            sw.Write(guiVariables.OFy_m[row, col, dir]);
-                            sw.Write(" ");
-                        }
-                        sw.Write("\r\n");
-                    }
-                }
-
-                sw.Write("ncols         " + nc);
-                sw.Write("\r\n");
-                sw.Write("nrows         " + nr);
-                sw.Write("\r\n");
-
-                sw.Close();
-            }
-        }
-
-        void out_integer(string name4, int[,] output)
-        {
-            int nn, row, col;
-            string FILENAME = name4;
-            using (StreamWriter sw = new StreamWriter(FILENAME))
-            {
-                for (nn = 0; nn <= 5; nn++)
-                {
-                    sw.Write(inputheader[nn]); sw.Write("\n");
-                }
-                for (row = 0; row < nr; row++)
-                {
-                    for (col = 0; col < nc; col++)
-                    {
-
-                        sw.Write(output[row, col]);
-                        sw.Write(" ");
-                    }
-
-                    sw.Write("\n");
-                }
-                sw.Close();
-            }
-        } //end out_integer
-
-        void out_profile(string name5, double[,] output, bool row_is_fixed, int row_or_col)
-        {
-            // WVG 20-10-2010 output a profile file for benefit glorious model of LORICA
-            int row, col;
-            string FILENAME = name5;
-            using (StreamWriter sw = new StreamWriter(FILENAME))
-
-                try
-                {
-                    if (row_is_fixed)
-                    {
-                        try
-                        {
-                            for (col = 0; col < nc; col++)// WVG the number of columns is equal to nc
-                            {
-                                sw.Write(output[row_or_col, col]);
-                                sw.Write(" ");
-                            }
-                            sw.Write("\n");
-                        }
-                        catch { Debug.WriteLine("out_profile: error "); }
-                    }
-                    else  // apparently column is fixed
-                    {
-                        try
-                        {
-                            for (row = 0; row < nr; row++)// WVG the number of columns is equal to nc
-                            {
-                                sw.Write(output[row, row_or_col]);
-                                sw.Write(" ");
-                            }
-                            sw.Write("\n");
-                        }
-                        catch { Debug.WriteLine("out_profile: error "); }
-                    }
-                    sw.Close();
-                }
-                catch { Debug.WriteLine("Profile could not be written"); }
-
-        } //WVG end out_profile
-
-        void writesoil(int row, int col)
-        {
-            int layer;
-            double cumthick, midthick;
-            string FILENAME = string.Format("{0}\\t{1}_r{2}_c{3}_out_soil.csv", workdir, t + 1, row, col);
-            using (StreamWriter sw = new StreamWriter(FILENAME))
-            {
-                sw.Write("row, col, t, cumth_m, thick_m, midthick_m, coarse_kg, sand_kg, silt_kg, clay_kg, fine_kg, YOM_kg, OOM_kg, YOM/OOM, f_coarse, f_sand, f_silt, f_clay, f_fineclay");
-                sw.Write("\r\n");
-                cumthick = 0;
-                midthick = 0;
-                int t_out = t + 1;
-                for (layer = 0; layer < max_soil_layers; layer++) // only the top layer
-                {
-                    if (layerthickness_m[row, col, layer] > 0)
-                    {
-                        cumthick += layerthickness_m[row, col, layer];
-                        midthick += layerthickness_m[row, col, layer] / 2;
-                        double totalweight = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer];
-                        sw.Write(row + "," + col + "," + t_out + "," + cumthick + "," + layerthickness_m[row, col, layer] + "," + midthick + "," + texture_kg[row, col, layer, 0] + "," + texture_kg[row, col, layer, 1] + "," + texture_kg[row, col, layer, 2] + "," + texture_kg[row, col, layer, 3] + "," + texture_kg[row, col, layer, 4] + "," + young_SOM_kg[row, col, layer] + "," + old_SOM_kg[row, col, layer] + "," + young_SOM_kg[row, col, layer] / old_SOM_kg[row, col, layer] + "," + texture_kg[row, col, layer, 0] / totalweight + "," + texture_kg[row, col, layer, 1] / totalweight + "," + texture_kg[row, col, layer, 2] / totalweight + "," + texture_kg[row, col, layer, 3] / totalweight + "," + texture_kg[row, col, layer, 4] / totalweight);
-                        sw.Write("\r\n");
-                        midthick += layerthickness_m[row, col, layer] / 2;
-                    }
-
-                }
-                sw.Close();
-            }
-        }// end writesoil
-
-        void writeallsoils()
-        {
-            int layer;
-            double cumthick, midthick, z_layer;
-            string FILENAME = string.Format("{0}\\t{1}_out_allsoils.csv", workdir, t + 1);
-            using (StreamWriter sw = new StreamWriter(FILENAME))
-            {
-                sw.Write("row, col, t, nlayer, cumth_m, thick_m, midthick_m, z, coarse_kg, sand_kg, silt_kg, clay_kg, fine_kg, YOM_kg, OOM_kg, YOM/OOM, f_coarse, f_sand, f_silt, f_clay, f_fineclay, ftotal_clay, f_OM, BD");
-                sw.Write("\r\n");
-                int t_out = t + 1;
-                for (int row = 0; row < nr; row++)
-                {
-                    for (int col = 0; col < nc; col++)
-                    {
-                        if (dtm[row, col] != -9999)
-                        {
-                            cumthick = 0;
-                            midthick = 0;
-                            z_layer = dtm[row, col];
-                            for (layer = 0; layer < max_soil_layers; layer++) // only the top layer
-                            {
-                                if (layerthickness_m[row, col, layer] > 0)
-                                {
-                                    cumthick += layerthickness_m[row, col, layer];
-                                    midthick += layerthickness_m[row, col, layer] / 2;
-                                    double totalweight = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer];
-                                    double totalweight_tex = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4];
-                                    sw.Write(row + "," + col + "," + t_out + "," + layer + "," + cumthick + "," + layerthickness_m[row, col, layer] + "," + midthick + "," + z_layer + "," + texture_kg[row, col, layer, 0] + "," + texture_kg[row, col, layer, 1] + "," + texture_kg[row, col, layer, 2] + "," + texture_kg[row, col, layer, 3] + "," + texture_kg[row, col, layer, 4] + "," + young_SOM_kg[row, col, layer] + "," + old_SOM_kg[row, col, layer] + "," + young_SOM_kg[row, col, layer] / old_SOM_kg[row, col, layer] + "," + texture_kg[row, col, layer, 0] / totalweight_tex + "," + texture_kg[row, col, layer, 1] / totalweight_tex + "," + texture_kg[row, col, layer, 2] / totalweight_tex + "," + texture_kg[row, col, layer, 3] / totalweight_tex + "," + texture_kg[row, col, layer, 4] / totalweight_tex + "," + (texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4]) / totalweight_tex + "," + (young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer]) / (young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer] + totalweight_tex) + "," + bulkdensity[row, col, layer]);
-                                    sw.Write("\r\n");
-                                    midthick += layerthickness_m[row, col, layer] / 2;
-                                    z_layer -= layerthickness_m[row, col, layer];
-                                }
-
-                            }
-
-                        }
-                    }
-                }
-                sw.Close();
-            }
-
-        }// end writeallsoils
-
-        void write_longitudinal_profile(int startrow, int startcol, string name4)
-        {
-
-            // writes a longitudinal steepest-descent profile starting from a given begin r,c 
-            double altidiff, non_lake_altidiff, maxaltidiff;
-            int row, col, i, j, non_lake_maxi, non_lake_maxj, maxi, maxj, profilesize = 1000, step;
-            double[] profile;
-            profile = new double[1000];
-            row = startrow;
-            col = startcol;
-            step = 0;
-            string FILENAME = name4;
-
-            while (row - 1 >= 0 && row + 1 < nr && col - 1 >= 0 && col + 1 < nc)
-            {   // as long as we have not reached the edge
-                Debug.WriteLine("profile now at row %d col %d, alt %.4f\n", row, col, dtm[row, col]);
-                altidiff = -9999; non_lake_altidiff = 0; maxaltidiff = 0; non_lake_maxi = 0; non_lake_maxj = 0; maxi = 0; maxj = 0;
-                for (i = -1; i <= 1; i++)
-                {
-                    for (j = -1; j <= 1; j++)
-                    {
-                        altidiff = dtm[row, col] - dtm[row + i, col + j];
-                        //Debug.WriteLine(" profile : nb %d %d, diff %.3f\n",row+i,col+j,altidiff);
-                        if (altidiff > maxaltidiff)
-                        {
-                            maxaltidiff = altidiff; maxi = i; maxj = j;
-                        }
-                        if (altidiff > non_lake_altidiff && depression[row + i, col + j] == 0)
-                        {
-                            non_lake_altidiff = altidiff; non_lake_maxi = i; non_lake_maxj = j;
-                        }
-                    }
-                }
-                Debug.WriteLine("profile : found lowest nb at %d %d, diff %.3f\n", row + maxi, col + maxj, maxaltidiff);
-                if (non_lake_altidiff != 0) { row += non_lake_maxi; col += non_lake_maxj; } //avoid depressions if you can and prevent from falling back
-                else { row += maxi; col += maxj; }
-                if (maxi == 0 && maxj == 0 || maxaltidiff == 0)
-                {
-                    Debug.WriteLine("warning : no profile-progress due to sink?\n"); // go straight to the outlet of this depression and count the number of cells in between
-                    //break;
-                    maxi = drainingoutlet_row[depression[row, col], 0] - row;
-                    maxj = drainingoutlet_col[depression[row, col], 0] - col;
-                    for (i = 1; i <= (Math.Abs(maxi) + Math.Abs(maxj)); i++)
-                    {
-                        profile[step] = dtm[row, col] + (i / (Math.Abs(maxi) + Math.Abs(maxj))) * (depressionlevel[depression[row, col]] - dtm[row, col]);
-                        Debug.WriteLine("profile %d now %.6f\n", step, profile[step]);
-                        step++;
-                    }
-                    row += maxi;
-                    col += maxj;
-                }
-                else
-                {
-                    profile[step] = dtm[row, col];
-                    step++;
-                    if (step > profilesize - 3) { Debug.WriteLine("warning : profilerecord may be too small\n"); break; }
-                }
-            }
-
-            using (StreamWriter sw = new StreamWriter(FILENAME))
-            {
-                for (i = 0; i < step + 1; i++)
-                {
-                    Debug.WriteLine(profile[i]);
-                    sw.Write("{0:F6}", profile[i]);
-                }
-                sw.Write("\r\n");
-            }
-            Debug.WriteLine("profile contains %d values\n", step);
-        } // end write_profile() 
-
-        void write_full_output(string filecore, int rows, int cols, int layers, int t)
-        {
-            int layer, row, col;
-            string filename = workdir + "\\" + filecore + t + ".lrc";
-            //Debug.WriteLine("attempting to write output " + filename + " at t " + t);
-            using (StreamWriter sw = new StreamWriter(filename))
-            {
-                try
-                {
-                    sw.WriteLine("Lorica output header");
-                    sw.WriteLine("year " + t);
-                    sw.WriteLine("years " + end_time + " every " + int.Parse(Box_years_output.Text));
-                    sw.WriteLine("rows " + rows + " cellsize " + dx + " yllcoord " + ycoord);
-                    sw.WriteLine("cols " + cols + " xllcoord " + xcoord);
-                    sw.WriteLine("layers " + layers);
-                    sw.WriteLine("properties 10");
-                    sw.WriteLine("propnames elevation thickness_m density_kg_m3 coarse_kg sand_kg silt_kg clay_kg fineclay_kg youngom_kg oldom_kg");
-                    sw.WriteLine("Lorica output content");
-                }
-                catch { Debug.WriteLine(" issue with writing the header of the full output file for this timestep"); }
-                try
-                {
-                    for (row = 0; row < rows; row++)
-                    {
-                        for (col = 0; col < cols; col++)
-                        {
-                            for (layer = 0; layer < layers; layer++)
-                            {
-                                sw.Write(dtm[row, col]
-                                    + "_" + layerthickness_m[row, col, layer]
-                                    + "_" + bulkdensity[row, col, layer]
-                                    + "_" + texture_kg[row, col, layer, 0]
-                                    + "_" + texture_kg[row, col, layer, 1]
-                                    + "_" + texture_kg[row, col, layer, 2]
-                                    + "_" + texture_kg[row, col, layer, 3]
-                                    + "_" + texture_kg[row, col, layer, 4]
-                                    + "_" + young_SOM_kg[row, col, layer]
-                                    + "_" + old_SOM_kg[row, col, layer]
-                                    + ",");
-                            }
-                            sw.Write("\n");
-                        }
-                    }
-                }
-                catch { Debug.WriteLine(" issue with writing the content of the full output file for this timestep"); }
-                sw.Close();
-            }
-        }
 
         private void menuItemConfigFileOpen_Click(object sender, System.EventArgs e)
         {
@@ -6854,7 +5313,7 @@ namespace LORICA4
             int read_error = 0;
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.Filter = "cfg files (*.xml)|*.xml|All files (*.*)|*.*";
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
@@ -7454,7 +5913,7 @@ namespace LORICA4
 
                 SaveFileDialog saveFileDialog1 = new SaveFileDialog();
 
-                saveFileDialog1.InitialDirectory = workdir;
+                saveFileDialog1.InitialDirectory = GlobalMethods.Workdir;
                 saveFileDialog1.Filter = "cfg files (*.xml)|*.xml|All files (*.*)|*.*";
                 saveFileDialog1.FilterIndex = 1;
                 saveFileDialog1.RestoreDirectory = false;
@@ -7791,173 +6250,6 @@ namespace LORICA4
 
         #region mapping and drawing code
 
-        double calc_slope_stdesc(int row_s, int col_s)
-        {
-            double slope_desc = 0, slope_temp = 0;
-            if (dtm[row_s, col_s] != -9999)
-            {
-                for (i = (-1); i <= 1; i++)
-                {
-                    for (j = (-1); j <= 1; j++)
-                    {
-                        if (((row_s + i) >= 0) && ((row_s + i) < nr) && ((col_s + j) >= 0) && ((col_s + j) < nc) && !((i == 0) && (j == 0)))  //to stay within the grid and avoid the row col cell itself
-                        {
-                            if (dtm[row_s + i, col_s + j] != -9999) // if neighbour exists
-                            {
-                                if ((row_s != row_s + i) && (col_s != col_s + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
-                                slope_temp = (dtm[row_s, col_s] - dtm[row_s + i, col_s + j]) / d_x;
-                                if (slope_desc < slope_temp) { slope_desc = slope_temp; }
-                            }
-                        }
-                    }
-                }
-            }
-
-            slope_desc = Math.Atan(slope_desc); // slope in radians
-            return (slope_desc);
-        }
-
-        void update_slope_and_aspect()
-        {
-            double slopemax, slope, slopetot;
-            for (row = 0; row < nr; row++)
-            {
-                for (col = 0; col < nc; col++)
-                {
-                    if (dtm[row, col] != -9999)
-                    {
-                        slopemax = 0;
-                        slope = 0;
-                        slopetot = 0;
-
-                        // Do slope analysis and Aspect Calculation first
-                        if ((row - 1) >= 0)
-                        {
-                            if (dtm[row, col] > dtm[row - 1, col] && dtm[row - 1, col] != -9999) // North 0
-                            {
-                                slope = (dtm[row, col] - dtm[row - 1, col]) / dx;
-                                if (slope > slopemax)
-                                {
-                                    slopemax = slope;
-                                    slopetot++;
-                                    aspect[row, col] = 0 * (3.141592654 / 180);
-                                }
-                            }
-                        }
-
-                        if ((row - 1) >= 0 & (col + 1) < nc)
-                        {
-                            if (dtm[row, col] > dtm[row - 1, col + 1] && dtm[row - 1, col + 1] != -9999) // Northeast 45
-                            {
-                                slope = (dtm[row, col] - dtm[row - 1, col + 1]) / (dx * Math.Sqrt(2));
-                                if (slope > slopemax)
-                                {
-                                    slopemax = slope;
-                                    slopetot++;
-                                    aspect[row, col] = 45 * (3.141592654 / 180);
-                                }
-                            }
-                        }
-
-                        if ((col + 1) < nc)
-                        {
-                            if (dtm[row, col] > dtm[row, col + 1] && dtm[row, col + 1] != -9999) // East 90
-                            {
-                                slope = (dtm[row, col] - dtm[row, col + 1]) / dx;
-                                if (slope > slopemax)
-                                {
-                                    slopemax = slope;
-                                    slopetot++;
-                                    aspect[row, col] = 90 * (3.141592654 / 180);
-                                }
-                            }
-                        }
-                        if ((row + 1) < nr & (col + 1) < nc)
-                        {
-                            if (dtm[row, col] > dtm[row + 1, col + 1] && dtm[row + 1, col + 1] != -9999) // SouthEast 135
-                            {
-                                slope = (dtm[row, col] - dtm[row + 1, col + 1]) / (dx * Math.Sqrt(2));
-                                if (slope > slopemax)
-                                {
-                                    slopemax = slope;
-                                    slopetot++;
-                                    aspect[row, col] = 135 * (3.141592654 / 180);
-                                }
-
-                            }
-                        }
-
-                        if ((row + 1) < nr)
-                        {
-                            if (dtm[row, col] > dtm[row + 1, col] && dtm[row + 1, col] != -9999) // South 180
-                            {
-                                slope = (dtm[row, col] - dtm[row + 1, col]) / dx;
-                                if (slope > slopemax)
-                                {
-                                    slopemax = slope;
-                                    slopetot++;
-                                    aspect[row, col] = 180 * (3.141592654 / 180);
-                                }
-                            }
-                        }
-                        if ((row + 1) < nr & (col - 1) >= 0)
-                        {
-                            if (dtm[row, col] > dtm[row + 1, col - 1] && dtm[row + 1, col - 1] != -9999) // SouthWest 225
-                            {
-                                slope = (dtm[row, col] - dtm[row + 1, col - 1]) / (dx * Math.Sqrt(2));
-                                if (slope > slopemax)
-                                {
-                                    slopemax = slope;
-                                    slopetot++;
-                                    aspect[row, col] = 225 * (3.141592654 / 180);
-                                }
-                            }
-                        }
-
-                        if ((col - 1) >= 0)
-                        {
-                            if (dtm[row, col] > dtm[row, col - 1] && dtm[row, col - 1] != -9999) // West 270
-                            {
-                                slope = (dtm[row, col] - dtm[row, col - 1]) / dx;
-                                if (slope > slopemax)
-                                {
-                                    slopemax = slope;
-                                    slopetot++;
-                                    aspect[row, col] = 270;
-                                }
-                            }
-                        }
-
-                        if ((row - 1) >= 0 & (col - 1) >= 0)
-                        {
-                            if (dtm[row, col] > dtm[row - 1, col - 1] && dtm[row - 1, col - 1] != -9999) // Northwest 315
-                            {
-                                slope = (dtm[row, col] - dtm[row - 1, col - 1]) / (dx * Math.Sqrt(2));
-                                if (slope > slopemax)
-                                {
-                                    slopemax = slope;
-                                    slopetot++;
-                                    aspect[row, col] = 315 * (3.141592654 / 180);
-                                }
-                            }
-                        }
-
-
-                        if (slope > 0) slopeAnalysis[row, col] = slopemax;// Tom's: (slope/slopetot); ?
-                        else { slopeAnalysis[row, col] = 0; }
-
-                        // Convert slope to radians
-                        slopeAnalysis[row, col] = System.Math.Atan(slopeAnalysis[row, col]);
-
-                        //// test
-                        //slopeAnalysis[row, col] = 0 * Math.PI / 180;
-                        //aspect[row, col] = 0 * Math.PI / 180;
-
-                    }
-                }
-            }
-        }
-
 
         void calc_hillshade() // 
         {
@@ -7973,114 +6265,114 @@ namespace LORICA4
             double azimuth = 315 * (3.141592654 / 180); // Default of 315 degrees converted to radians
             double altitude = 45 * (3.141592654 / 180); // Default of 45 degrees converted to radians
 
-            for (row = 1; row < nr - 1; row++)
+            for (row = 1; row < GlobalMethods.nr - 1; row++)
             {
-                for (col = 1; col < nc - 1; col++)
+                for (col = 1; col < GlobalMethods.nc - 1; col++)
                 {
-                    if (dtm[row, col] != -9999 && dtm[row, col] > 0)
+                    if (GlobalMethods.dtm[row, col] != -9999 && GlobalMethods.dtm[row, col] > 0)
                     {
                         slopemax = 0;
                         slope = 0;
                         slopetot = 0;
 
                         // Do slope analysis and Aspect Calculation first
-                        if (dtm[row, col] > dtm[row - 1, col] && dtm[row - 1, col] != -9999) // North 0
+                        if (GlobalMethods.dtm[row, col] > GlobalMethods.dtm[row - 1, col] && GlobalMethods.dtm[row - 1, col] != -9999) // North 0
                         {
-                            slope = Math.Pow((dtm[row, col] - dtm[row - 1, col]) / root, 1);
+                            slope = Math.Pow((GlobalMethods.dtm[row, col] - GlobalMethods.dtm[row - 1, col]) / root, 1);
                             if (slope > slopemax)
                             {
                                 slopemax = slope;
                                 slopetot++;
-                                aspect[row, col] = 0 * (3.141592654 / 180);
+                                GlobalMethods.aspect[row, col] = 0 * (3.141592654 / 180);
                             }
 
                         }
-                        if (dtm[row, col] > dtm[row - 1, col + 1] && dtm[row - 1, col + 1] != -9999) // Northeast 45
+                        if (GlobalMethods.dtm[row, col] > GlobalMethods.dtm[row - 1, col + 1] && GlobalMethods.dtm[row - 1, col + 1] != -9999) // Northeast 45
                         {
-                            slope = Math.Pow((dtm[row, col] - dtm[row - 1, col + 1]) / d_x, 1);
+                            slope = Math.Pow((GlobalMethods.dtm[row, col] - GlobalMethods.dtm[row - 1, col + 1]) / GlobalMethods.d_x, 1);
                             if (slope > slopemax)
                             {
                                 slopemax = slope;
                                 slopetot++;
-                                aspect[row, col] = 45 * (3.141592654 / 180);
+                                GlobalMethods.aspect[row, col] = 45 * (3.141592654 / 180);
                             }
                         }
-                        if (dtm[row, col] > dtm[row, col + 1] && dtm[row, col + 1] != -9999) // East 90
+                        if (GlobalMethods.dtm[row, col] > GlobalMethods.dtm[row, col + 1] && GlobalMethods.dtm[row, col + 1] != -9999) // East 90
                         {
-                            slope = Math.Pow((dtm[row, col] - dtm[row, col + 1]) / root, 1);
+                            slope = Math.Pow((GlobalMethods.dtm[row, col] - GlobalMethods.dtm[row, col + 1]) / root, 1);
                             if (slope > slopemax)
                             {
                                 slopemax = slope;
                                 slopetot++;
-                                aspect[row, col] = 90 * (3.141592654 / 180);
+                                GlobalMethods.aspect[row, col] = 90 * (3.141592654 / 180);
                             }
                         }
-                        if (dtm[row, col] > dtm[row + 1, col + 1] && dtm[row + 1, col + 1] != -9999) // SouthEast 135
+                        if (GlobalMethods.dtm[row, col] > GlobalMethods.dtm[row + 1, col + 1] && GlobalMethods.dtm[row + 1, col + 1] != -9999) // SouthEast 135
                         {
-                            slope = Math.Pow((dtm[row, col] - dtm[row + 1, col + 1]) / root, 1);
+                            slope = Math.Pow((GlobalMethods.dtm[row, col] - GlobalMethods.dtm[row + 1, col + 1]) / root, 1);
                             if (slope > slopemax)
                             {
                                 slopemax = slope;
                                 slopetot++;
-                                aspect[row, col] = 135 * (3.141592654 / 180);
+                                GlobalMethods.aspect[row, col] = 135 * (3.141592654 / 180);
                             }
 
                         }
-                        if (dtm[row, col] > dtm[row + 1, col] && dtm[row + 1, col] != -9999) // South 180
+                        if (GlobalMethods.dtm[row, col] > GlobalMethods.dtm[row + 1, col] && GlobalMethods.dtm[row + 1, col] != -9999) // South 180
                         {
-                            slope = Math.Pow((dtm[row, col] - dtm[row + 1, col]) / d_x, 1);
+                            slope = Math.Pow((GlobalMethods.dtm[row, col] - GlobalMethods.dtm[row + 1, col]) / GlobalMethods.d_x, 1);
                             if (slope > slopemax)
                             {
                                 slopemax = slope;
                                 slopetot++;
-                                aspect[row, col] = 180 * (3.141592654 / 180);
+                                GlobalMethods.aspect[row, col] = 180 * (3.141592654 / 180);
                             }
                         }
-                        if (dtm[row, col] > dtm[row + 1, col - 1] && dtm[row + 1, col - 1] != -9999) // SouthWest 225
+                        if (GlobalMethods.dtm[row, col] > GlobalMethods.dtm[row + 1, col - 1] && GlobalMethods.dtm[row + 1, col - 1] != -9999) // SouthWest 225
                         {
-                            slope = Math.Pow((dtm[row, col] - dtm[row + 1, col - 1]) / root, 1);
+                            slope = Math.Pow((GlobalMethods.dtm[row, col] - GlobalMethods.dtm[row + 1, col - 1]) / root, 1);
                             if (slope > slopemax)
                             {
                                 slopemax = slope;
                                 slopetot++;
-                                aspect[row, col] = 225 * (3.141592654 / 180);
+                                GlobalMethods.aspect[row, col] = 225 * (3.141592654 / 180);
                             }
                         }
-                        if (dtm[row, col] > dtm[row, col - 1] && dtm[row, col - 1] != -9999) // West 270
+                        if (GlobalMethods.dtm[row, col] > GlobalMethods.dtm[row, col - 1] && GlobalMethods.dtm[row, col - 1] != -9999) // West 270
                         {
-                            slope = Math.Pow((dtm[row, col] - dtm[row, col - 1]) / root, 1);
+                            slope = Math.Pow((GlobalMethods.dtm[row, col] - GlobalMethods.dtm[row, col - 1]) / root, 1);
                             if (slope > slopemax)
                             {
                                 slopemax = slope;
                                 slopetot++;
-                                aspect[row, col] = 270;
+                                GlobalMethods.aspect[row, col] = 270;
                             }
                         }
-                        if (dtm[row, col] > dtm[row - 1, col - 1] && dtm[row - 1, col - 1] != -9999) // Northwest 315
+                        if (GlobalMethods.dtm[row, col] > GlobalMethods.dtm[row - 1, col - 1] && GlobalMethods.dtm[row - 1, col - 1] != -9999) // Northwest 315
                         {
-                            slope = Math.Pow((dtm[row, col] - dtm[row - 1, col - 1]) / d_x, 1);
+                            slope = Math.Pow((GlobalMethods.dtm[row, col] - GlobalMethods.dtm[row - 1, col - 1]) / GlobalMethods.d_x, 1);
                             if (slope > slopemax)
                             {
                                 slopemax = slope;
                                 slopetot++;
-                                aspect[row, col] = 315 * (3.141592654 / 180);
+                                GlobalMethods.aspect[row, col] = 315 * (3.141592654 / 180);
                             }
                         }
 
-                        if (slope > 0) slopeAnalysis[row, col] = slopemax;// Tom's: (slope/slopetot); ?
+                        if (slope > 0) GlobalMethods.slopeAnalysis[row, col] = slopemax;// Tom's: (slope/slopetot); ?
 
                         // Convert slope to radians
-                        slopeAnalysis[row, col] = System.Math.Atan(slopeAnalysis[row, col]);
+                        GlobalMethods.slopeAnalysis[row, col] = System.Math.Atan(GlobalMethods.slopeAnalysis[row, col]);
 
 
                         // Do Hillshade Calculation
                         local_Illumination = 255 * ((System.Math.Cos(azimuth)
-                                                     * System.Math.Sin(slopeAnalysis[row, col])
-                                                     * System.Math.Cos(aspect[row, col] - azimuth))
+                                                     * System.Math.Sin(GlobalMethods.slopeAnalysis[row, col])
+                                                     * System.Math.Cos(GlobalMethods.aspect[row, col] - azimuth))
                                                    + (System.Math.Sin(altitude)
-                                                     * System.Math.Cos(slopeAnalysis[row, col])));
+                                                     * System.Math.Cos(GlobalMethods.slopeAnalysis[row, col])));
 
-                        hillshade[row, col] = System.Math.Abs(local_Illumination);
+                        GlobalMethods.hillshade[row, col] = System.Math.Abs(local_Illumination);
                     }
                 }
             }
@@ -8174,7 +6466,7 @@ namespace LORICA4
             int t = 0;
 
             // Set Graphics Display Size
-            if (nc <= 0) nc = 1;
+            if (GlobalMethods.nc <= 0) GlobalMethods.nc = 1;
 
             //set scaling of graphics - so X bmp pixels to every model pixel.
             t = graphics_scale;
@@ -8191,16 +6483,16 @@ namespace LORICA4
                 calc_hillshade();       // Call up routine 
 
                 // First, find max, min and range of DEM and Hillshade
-                for (row = 0; row < nr; row++)
+                for (row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < nc; col++)
+                    for (col = 0; col < GlobalMethods.nc; col++)
                     {
-                        zCalc = dtm[row, col];
+                        zCalc = GlobalMethods.dtm[row, col];
                         if (zCalc != -9999)
                         {
                             if (zCalc < zMin) zMin = zCalc;
                             if (zCalc > zMax) zMax = zCalc;
-                            hs = hillshade[row, col];
+                            hs = GlobalMethods.hillshade[row, col];
                             if (hs < hsMin) hsMin = hs;
                             if (hs > hsMax) hsMax = hs;
                             if (zCalc < -9900) { Debug.WriteLine(" Cell " + row + " " + col + " has altitude " + zCalc); }
@@ -8215,11 +6507,11 @@ namespace LORICA4
 
                 Debug.WriteLine(" zMax, zMin, zRange : " + zMax + " " + zMin + " " + zRange);
 
-                for (row = 0; row < nr - 1; row++)
+                for (row = 0; row < GlobalMethods.nr - 1; row++)
                 {
-                    for (col = 0; col < nc - 1; col++)
+                    for (col = 0; col < GlobalMethods.nc - 1; col++)
                     {
-                        if (dtm[row, col] > 0)
+                        if (GlobalMethods.dtm[row, col] > 0)
                         {
                             // HILLSHADE: Draw first underneath
                             // set gray scale intensity
@@ -8227,7 +6519,7 @@ namespace LORICA4
                             sat = 0;        // ensures gray shade
                             valMin = 0;
                             valMax = 1;
-                            val = ((hillshade[row, col] / 255) * (valMax - valMin)) + valMin; // uses maximum contrast
+                            val = ((GlobalMethods.hillshade[row, col] / 255) * (valMax - valMin)) + valMin; // uses maximum contrast
 
                             Color_HSVtoRGB();   // Call up color conversion
                             redcol = System.Convert.ToInt32(red * 255);
@@ -8239,7 +6531,7 @@ namespace LORICA4
                             objGraphics.FillRectangle(brush2, (col) * t, (row) * t, t, t);
 
                             // DEM: Colouring based on altitude	
-                            zDEM = (dtm[row, col]);
+                            zDEM = (GlobalMethods.dtm[row, col]);
                             // Sets hue based on desired color range (in decimal degrees; max 360)
                             double hueMin = 20; //30 = orange   // 20 = reddish orange
                             double hueMax = 140; //85 = green   // 140 = greenish blue
@@ -8272,16 +6564,16 @@ namespace LORICA4
 
 
             // All these loop through just the 'Active Area'
-            for (row = 0; row < nr - 1; row++)
+            for (row = 0; row < GlobalMethods.nr - 1; row++)
             {
-                for (col = 0; col < nc - 1; col++)
+                for (col = 0; col < GlobalMethods.nc - 1; col++)
                 {
-                    if (1 > 0) // Index masks out so only 'active cells' shown	was if(index[row,col]>-9999)		
+                    if (1 > 0) // Index masks out so only 'active cells' shown	was if(GlobalMethods.index[row,col]>-9999)		
                     {
                         // Water Depth
-                        if (Menu_map_waterflow.Checked == true && waterflow_m3[row, col] > 20)
+                        if (Menu_map_waterflow.Checked == true && GlobalMethods.waterflow_m3[row, col] > 20)
                         {
-                            try { z = (int)(waterflow_m3[row, col] * 0.1 * contrastMultiplier); }
+                            try { z = (int)(GlobalMethods.waterflow_m3[row, col] * 0.1 * contrastMultiplier); }
                             catch { z = 2147483647; } // this is the maximum integer value.
                             if (z < 0) z = 0;
                             if (z > 255) z = 254;
@@ -8295,9 +6587,9 @@ namespace LORICA4
                         // Total erosion/ deposition
                         if (Menu_map_total_sediment.Checked == true)
                         {
-                            if (dtmchange[row, col] < -0.05) //eroding
+                            if (GlobalMethods.dtmchange[row, col] < -0.05) //eroding
                             {
-                                z = (int)(-dtmchange[row, col] * 200 * contrastMultiplier);
+                                z = (int)(-GlobalMethods.dtmchange[row, col] * 200 * contrastMultiplier);
                                 if (z < 0) z = 0;
                                 if (z > 254) z = 254;
                                 greencol = 255 - z;
@@ -8305,9 +6597,9 @@ namespace LORICA4
                                 SolidBrush brush = new SolidBrush(Color.FromArgb(255, greencol, greencol));
                                 objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
                             }
-                            if (dtmchange[row, col] > 0.01) //depositing
+                            if (GlobalMethods.dtmchange[row, col] > 0.01) //depositing
                             {
-                                z = (int)(dtmchange[row, col] * 1000 * contrastMultiplier);
+                                z = (int)(GlobalMethods.dtmchange[row, col] * 1000 * contrastMultiplier);
                                 if (z < 0) z = 0;
                                 if (z > 254) z = 254;
                                 greencol = z;
@@ -8319,9 +6611,9 @@ namespace LORICA4
                         // Water erosion/ deposition
                         if (Menu_map_water_ero.Checked == true)
                         {
-                            if (sum_water_erosion[row, col] / 25 < -0.05) //eroding
+                            if (GlobalMethods.sum_water_erosion[row, col] / 25 < -0.05) //eroding
                             {
-                                z = (int)(-sum_water_erosion[row, col] * 40 * contrastMultiplier);
+                                z = (int)(-GlobalMethods.sum_water_erosion[row, col] * 40 * contrastMultiplier);
                                 if (z < 0) z = 0;
                                 if (z > 254) z = 254;
                                 greencol = 255 - z;
@@ -8329,9 +6621,9 @@ namespace LORICA4
                                 SolidBrush brush = new SolidBrush(Color.FromArgb(255, greencol, greencol));
                                 objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
                             }
-                            if (sum_water_erosion[row, col] / 25 > 0.05) //depositing
+                            if (GlobalMethods.sum_water_erosion[row, col] / 25 > 0.05) //depositing
                             {
-                                z = (int)(sum_water_erosion[row, col] * 40 * contrastMultiplier);
+                                z = (int)(GlobalMethods.sum_water_erosion[row, col] * 40 * contrastMultiplier);
                                 if (z < 0) z = 0;
                                 if (z > 254) z = 254;
                                 greencol = z;
@@ -8343,9 +6635,9 @@ namespace LORICA4
                         // Tillage 
                         if (Menu_map_tillage.Checked == true)
                         {
-                            if (sum_tillage[row, col] < -0.05) //eroding
+                            if (GlobalMethods.sum_tillage[row, col] < -0.05) //eroding
                             {
-                                z = (int)(-sum_tillage[row, col] * 200 * contrastMultiplier);
+                                z = (int)(-GlobalMethods.sum_tillage[row, col] * 200 * contrastMultiplier);
                                 if (z < 0) z = 0;
                                 if (z > 254) z = 254;
                                 greencol = 255 - z;
@@ -8353,9 +6645,9 @@ namespace LORICA4
                                 SolidBrush brush = new SolidBrush(Color.FromArgb(255, greencol, greencol));
                                 objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
                             }
-                            if (sum_tillage[row, col] > 0.05) //depositing
+                            if (GlobalMethods.sum_tillage[row, col] > 0.05) //depositing
                             {
-                                z = (int)(sum_tillage[row, col] * 200 * contrastMultiplier);
+                                z = (int)(GlobalMethods.sum_tillage[row, col] * 200 * contrastMultiplier);
                                 if (z < 0) z = 0;
                                 if (z > 254) z = 254;
                                 greencol = z;
@@ -8367,9 +6659,9 @@ namespace LORICA4
                         // Creep 
                         if (Menu_map_creep.Checked == true)
                         {
-                            if (sum_creep_grid[row, col] < -0.05) //eroding
+                            if (GlobalMethods.sum_creep_grid[row, col] < -0.05) //eroding
                             {
-                                z = (int)(-sum_creep_grid[row, col] * 200 * contrastMultiplier);
+                                z = (int)(-GlobalMethods.sum_creep_grid[row, col] * 200 * contrastMultiplier);
                                 if (z < 0) z = 0;
                                 if (z > 254) z = 254;
                                 greencol = 255 - z;
@@ -8377,9 +6669,9 @@ namespace LORICA4
                                 SolidBrush brush = new SolidBrush(Color.FromArgb(255, greencol, greencol));
                                 objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
                             }
-                            if (sum_creep_grid[row, col] > 0.05) //depositing
+                            if (GlobalMethods.sum_creep_grid[row, col] > 0.05) //depositing
                             {
-                                z = (int)(sum_creep_grid[row, col] * 200 * contrastMultiplier);
+                                z = (int)(GlobalMethods.sum_creep_grid[row, col] * 200 * contrastMultiplier);
                                 if (z < 0) z = 0;
                                 if (z > 254) z = 254;
                                 greencol = z;
@@ -8389,9 +6681,9 @@ namespace LORICA4
                             }
                         }
                         // Weathering
-                        if (Menu_map_weathering.Checked == true && sum_biological_weathering[row, col] > 0.001)
+                        if (Menu_map_weathering.Checked == true && GlobalMethods.sum_biological_weathering[row, col] > 0.001)
                         {
-                            z = (int)(sum_biological_weathering[row, col] * 1000 * contrastMultiplier);
+                            z = (int)(GlobalMethods.sum_biological_weathering[row, col] * 1000 * contrastMultiplier);
                             if (z < 0) z = 0;
                             if (z > 255) z = 254;
                             greencol = 255;
@@ -8404,9 +6696,9 @@ namespace LORICA4
                         // Landsliding
                         if (Menu_map_landsliding.Checked == true)
                         {
-                            if (sum_landsliding[row, col] < -0.1) //eroding
+                            if (GlobalMethods.sum_landsliding[row, col] < -0.1) //eroding
                             {
-                                z = (int)(-sum_landsliding[row, col] * 40 * contrastMultiplier);
+                                z = (int)(-GlobalMethods.sum_landsliding[row, col] * 40 * contrastMultiplier);
                                 if (z < 0) z = 0;
                                 if (z > 254) z = 254;
                                 greencol = 255 - z;
@@ -8414,9 +6706,9 @@ namespace LORICA4
                                 SolidBrush brush = new SolidBrush(Color.FromArgb(255, greencol, greencol));
                                 objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
                             }
-                            if (sum_landsliding[row, col] > 0.1) //depositing
+                            if (GlobalMethods.sum_landsliding[row, col] > 0.1) //depositing
                             {
-                                z = (int)(sum_landsliding[row, col] * 40 * contrastMultiplier);
+                                z = (int)(GlobalMethods.sum_landsliding[row, col] * 40 * contrastMultiplier);
                                 if (z < 0) z = 0;
                                 if (z > 254) z = 254;
                                 greencol = z;
@@ -8426,9 +6718,9 @@ namespace LORICA4
                             }
                         }
                         //Critical rainfall (for landsliding)
-                        if (Menu_map_critical_rainfall.Checked == true && crrain[row, col] != 99) // no colours for unconditionally stable areas
+                        if (Menu_map_critical_rainfall.Checked == true && GlobalMethods.crrain[row, col] != 99) // no colours for unconditionally stable areas
                         {
-                            z = (int)(crrain[row, col] * 1000 * contrastMultiplier);
+                            z = (int)(GlobalMethods.crrain[row, col] * 1000 * contrastMultiplier);
                             if (z < 0) z = 0;
                             if (z > 254) z = 254;
                             greencol = z;
@@ -8726,7 +7018,7 @@ Example: rainfall.asc can look like:
 
         private void Menu_map_waterflow_Click(object sender, EventArgs e)
         {
-            if (water_ero_active)
+            if (Water_ero_checkbox.Checked)
             {
                 Menu_map_waterflow.Checked = (!Menu_map_waterflow.Checked);
                 if (Menu_map_waterflow.Checked)
@@ -8749,7 +7041,7 @@ Example: rainfall.asc can look like:
 
         private void Menu_map_tillage_Click(object sender, EventArgs e)
         {
-            if (tillage_active)
+            if (Tillage_checkbox.Checked)
             {
                 Menu_map_tillage.Checked = (!Menu_map_tillage.Checked);
                 if (Menu_map_tillage.Checked)
@@ -8772,7 +7064,7 @@ Example: rainfall.asc can look like:
 
         private void Menu_map_water_ero_Click(object sender, EventArgs e)
         {
-            if (water_ero_active)
+            if (Water_ero_checkbox.Checked)
             {
                 Menu_map_water_ero.Checked = (!Menu_map_water_ero.Checked);
                 if (Menu_map_water_ero.Checked)
@@ -8795,7 +7087,7 @@ Example: rainfall.asc can look like:
 
         private void Menu_map_creep_Click(object sender, EventArgs e)
         {
-            if (creep_active)
+            if (creep_active_checkbox.Checked)
             {
                 Menu_map_creep.Checked = (!Menu_map_creep.Checked);
                 if (Menu_map_creep.Checked)
@@ -8818,7 +7110,7 @@ Example: rainfall.asc can look like:
 
         private void Menu_map_landsliding_Click(object sender, EventArgs e)
         {
-            if (landslide_active)
+            if (Landslide_checkbox.Checked)
             {
                 Menu_map_landsliding.Checked = (!Menu_map_landsliding.Checked);
                 if (Menu_map_landsliding.Checked)
@@ -8841,7 +7133,7 @@ Example: rainfall.asc can look like:
 
         private void Menu_map_critical_rainfall_Click(object sender, EventArgs e)
         {
-            if (landslide_active)
+            if (Landslide_checkbox.Checked)
             {
                 Menu_map_critical_rainfall.Checked = (!Menu_map_critical_rainfall.Checked);
                 if (Menu_map_critical_rainfall.Checked)
@@ -8864,7 +7156,7 @@ Example: rainfall.asc can look like:
 
         private void Menu_map_weathering_Click(object sender, EventArgs e)
         {
-            if (bedrock_weathering_active)
+            if (Biological_weathering_checkbox.Checked)
             {
                 Menu_map_weathering.Checked = (!Menu_map_weathering.Checked);
                 if (Menu_map_weathering.Checked)
@@ -8907,11 +7199,11 @@ Example: rainfall.asc can look like:
             if (arnaudsdialog.ShowDialog() == DialogResult.OK)
             {
                 dtm_input_filename_textbox.Text = arnaudsdialog.SelectedPath;
-                workdir = arnaudsdialog.SelectedPath;
+                GlobalMethods.Workdir = arnaudsdialog.SelectedPath;
             } */
 
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
@@ -8923,7 +7215,7 @@ Example: rainfall.asc can look like:
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
@@ -8936,7 +7228,7 @@ Example: rainfall.asc can look like:
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
@@ -8949,7 +7241,7 @@ Example: rainfall.asc can look like:
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
@@ -8962,7 +7254,7 @@ Example: rainfall.asc can look like:
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
@@ -8973,7 +7265,7 @@ Example: rainfall.asc can look like:
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
@@ -8985,7 +7277,7 @@ Example: rainfall.asc can look like:
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
@@ -8996,7 +7288,7 @@ Example: rainfall.asc can look like:
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
@@ -9007,7 +7299,7 @@ Example: rainfall.asc can look like:
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
@@ -9018,7 +7310,7 @@ Example: rainfall.asc can look like:
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.InitialDirectory = GlobalMethods.Workdir;
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = false;
 
@@ -9060,7 +7352,7 @@ Example: rainfall.asc can look like:
 
         private void start_run(object sender, System.EventArgs e)
         {
-            guiVariables = new GUIVariables(UpdateAllFields, UpdateStatusPannel, UpdateTimePannel, DelUpdateVariables);
+            guiVariables.UpdateFields();
             if (MainSimulation != null)
             {
                 throw new MemberAccessException();
@@ -9082,6 +7374,8 @@ Example: rainfall.asc can look like:
         private void UpdateAllFields()
         {
             this.Invoke(new MethodInvoker(() => {
+                GlobalMethods.dx = guiVariables.DX;
+
                 InfoStatusPanel.Text = guiVariables.InfoStatusPanel;
                 dtm_input_filename_textbox.Text = guiVariables.DTM_input_filename_textbox;
                 Number_runs_textbox.Text = guiVariables.Number_runs_textbox;
@@ -9150,7 +7444,8 @@ Example: rainfall.asc can look like:
                 rainfall_constant_value_box.Text = guiVariables.Rainfall_constant_value_box;
                 temp_constant_value_box.Text = guiVariables.Temp_constant_value_box;
                 calibration_ratio_reduction_parameter_textbox.Text = guiVariables.Calibration_ratio_reduction_parameter_textbox;
-
+                soildepth_constant_value_box.Text = guiVariables.Soildepth_constant_value_box;
+                Box_years_output.Text = guiVariables.Box_years_output;
             }
             ));
         }
@@ -9171,6 +7466,8 @@ Example: rainfall.asc can look like:
         private void DelUpdateVariables()
         {
             this.Invoke(new MethodInvoker(() => {
+                guiVariables.DX = GlobalMethods.dx;
+
                 guiVariables.InfoStatusPanel = InfoStatusPanel.Text;
                 guiVariables.DTM_input_filename_textbox = dtm_input_filename_textbox.Text;
                 guiVariables.Number_runs_textbox = Number_runs_textbox.Text;
@@ -9237,6 +7534,9 @@ Example: rainfall.asc can look like:
                 guiVariables.Rainfall_constant_value_box = rainfall_constant_value_box.Text;
                 guiVariables.Temp_constant_value_box = temp_constant_value_box.Text;
                 guiVariables.Calibration_ratio_reduction_parameter_textbox = calibration_ratio_reduction_parameter_textbox.Text;
+                guiVariables.Soildepth_constant_value_box = soildepth_constant_value_box.Text;
+                guiVariables.Box_years_output = Box_years_output.Text;
+
             }
             ));
 
@@ -9262,7 +7562,7 @@ Example: rainfall.asc can look like:
             t.Start();
             t.Join();
 
-            return filename;
+            return FileName;
         }
         private string GetDialogFileName(OpenFileDialog openFileDialog1)
         {
@@ -9283,97 +7583,6 @@ Example: rainfall.asc can look like:
             t.Join();
 
             return FileName;
-        }
-
-
-        private void comb_sort()      //sorts the data cells in a dtm in order of increasing altitude
-        {
-            // comb sorting by Wlodek Dobosiewicz in 1980
-            // http://en.wikipedia.org/wiki/Comb_sort
-            // LORICA adaptation by Arnaud Temme june 2009
-            //Debug.WriteLine("sorting. nr " + nr + " nc " + nc + " t " + t);
-            this.InfoStatusPanel.Text = "sorting";
-            int i = 0;
-            double dtm_temp = 0;
-            int row_temp = 0, col_temp = 0;
-            string rowcol_temp;
-            //Debug.WriteLine("sorting. nr " + nr + " nc " + nc + " t " + t);
-            if (t == t_intervene)  // only in the first timestep;
-            {
-                //Debug.WriteLine("normal sorting. nr " + nr + " nc " + nc + " t " + t);
-                number_of_data_cells = 0;
-                for (row = 0; row < nr; row++)  // why not do this only in the first timestep? And use the existing one as input in subsequent timesteps?
-                {
-                    for (col = 0; col < nc; col++)
-                    {
-                        if (dtm[row, col] != -9999)
-                        {
-                            index[i] = dtm[row, col]; 
-                            row_index[i] = row; 
-                            col_index[i] = col; 
-                            rowcol_index[i] = row.ToString() + "." + col.ToString();
-                            i++;
-                        }
-                    }
-                }
-                number_of_data_cells = i;
-            }
-            else
-            {
-                //Debug.WriteLine("alternative sorting. nr " + nr + " nc " + nc + " t " + t);
-                for (i = 0; i < number_of_data_cells; i++)
-                {
-                    index[i] = dtm[row_index[i], col_index[i]];     //merely update the existing index with the adapted altitudes and then sort     
-                }
-            }
-            //displayonscreen(0, 0);
-            this.InfoStatusPanel.Text = "data cells: " + number_of_data_cells;
-            //Debug.WriteLine("\n--sorting overview--");
-            //Debug.WriteLine("Sorting " + number_of_data_cells + " cells");
-            long gap = number_of_data_cells;
-            bool swaps;
-            long total_swaps = 0;
-            //while (gap > 1 && swaps == true)  // in freak? situations, swaps may be false for gap = x, but true for subsequent values of gap
-            while (gap > 1)
-            {
-                if (gap > 1)
-                {
-                    if (gap == 2) { gap = 1; }
-                    gap = Convert.ToInt64(gap / 1.2);
-                }
-                i = 0;
-                swaps = false;
-                //this.InfoStatusPanel.Text = "i " + i + " gap " + gap + " tot swaps " + total_swaps;
-                //Debug.WriteLine("i " + i + " gap " + gap + " tot swaps " + total_swaps);
-                while (i + gap < number_of_data_cells)
-                {
-                    //if (gap == Convert.ToInt64(number_of_data_cells / 1.2) && i < 10) {Debug.WriteLine("    i " + i + " gap " + gap + " tot swaps " + total_swaps + " alt1 " + index[i] + " (" + row_index[i] + "," + col_index[i] + ") alt2 " + index[i+gap] + " (" + row_index[i+gap] + "," + col_index[i+gap] + ")"); }
-                    if (index[i] > index[i + gap])
-                    {
-                        dtm_temp = index[i]; index[i] = index[i + gap]; index[i + gap] = dtm_temp;
-                        row_temp = row_index[i]; row_index[i] = row_index[i + gap]; row_index[i + gap] = row_temp;
-                        col_temp = col_index[i]; col_index[i] = col_index[i + gap]; col_index[i + gap] = col_temp;
-                        rowcol_temp = rowcol_index[i]; rowcol_index[i] = rowcol_index[i + gap]; rowcol_index[i + gap] = rowcol_temp;
-                        swaps = true;
-                        total_swaps++;
-                    } // end if
-                    i++;
-                }  // end while
-                   //if (gap < 4) { Debug.WriteLine("i " + i + " gap " + gap + " tot swaps " + total_swaps); }
-            } //end while
-            int sorting_error = 0;
-            for (i = 0; i < number_of_data_cells - 1; i++)
-            {
-                if (index[i] > index[i + 1]) { sorting_error = 1; }
-            }
-            if (sorting_error == 1)
-            {
-                Debug.WriteLine(" Sorting error in comb_sort ");
-            }
-            else
-            {
-                //Debug.WriteLine(" Sorting test successful ");
-            }
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -9429,25 +7638,25 @@ Example: rainfall.asc can look like:
         /*private void Quicksort()        
         {
             //Quicksort(unsorted, 0, unsorted.Length - 1);
-            int number_of_data_cells;
+            int GlobalMethods.number_of_data_cells;
             int i = 0;
             if (t == 0)  // only in the first timestep;
             {
-                number_of_data_cells = 0;
-                for (row = 0; row < nr; row++)  
+                GlobalMethods.number_of_data_cells = 0;
+                for (row = 0; row < GlobalMethods.nr; row++)  
                 {
-                    for (col = 0; col < nc; col++)
+                    for (col = 0; col < GlobalMethods.nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (GlobalMethods.dtm[row, col] != -9999)
                         {
-                            index[i] = dtm[row, col]; row_index[i] = row; col_index[i] = col;
+                            GlobalMethods.index[i] = GlobalMethods.dtm[row, col]; GlobalMethods.row_index[i] = row; GlobalMethods.col_index[i] = col;
                             i++;
                         }
                     }
                 }
-                number_of_data_cells = i;
+                GlobalMethods.number_of_data_cells = i;
             }
-            i = 0; j = number_of_data_cells;           
+            i = 0; j = GlobalMethods.number_of_data_cells;           
             IComparable pivot = elements[(left + right) / 2];             
             while (i <= j)            {                
                 while (elements[i].CompareTo(pivot) < 0)                
