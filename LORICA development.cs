@@ -7446,6 +7446,19 @@ Example: rainfall.asc can look like:
                 calibration_ratio_reduction_parameter_textbox.Text = guiVariables.Calibration_ratio_reduction_parameter_textbox;
                 soildepth_constant_value_box.Text = guiVariables.Soildepth_constant_value_box;
                 Box_years_output.Text = guiVariables.Box_years_output;
+                Water_ero_checkbox.Checked = guiVariables.Water_ero_checkbox;
+                Tillage_checkbox.Checked = guiVariables.Tillage_checkbox;
+                Landslide_checkbox.Checked = guiVariables.Landslide_checkbox;
+                creep_active_checkbox.Checked = guiVariables.Creep_active_checkbox;
+                Biological_weathering_checkbox.Checked = guiVariables.Biological_weathering_checkbox;
+                Frost_weathering_checkbox.Checked = guiVariables.Frost_weathering_checkbox;
+                tilting_active_checkbox.Checked = guiVariables.Tilting_active_checkbox;
+                uplift_active_checkbox.Checked = guiVariables.Uplift_active_checkbox;
+                soil_phys_weath_checkbox.Checked = guiVariables.Soil_phys_weath_checkbox;
+                soil_chem_weath_checkbox.Checked = guiVariables.Soil_chem_weath_checkbox;
+                soil_bioturb_checkbox.Checked = guiVariables.Soil_bioturb_checkbox;
+                soil_clay_transloc_checkbox.Checked = guiVariables.Soil_clay_transloc_checkbox;
+                soil_carbon_cycle_checkbox.Checked = guiVariables.Soil_carbon_cycle_checkbox;
             }
             ));
         }
@@ -7536,7 +7549,19 @@ Example: rainfall.asc can look like:
                 guiVariables.Calibration_ratio_reduction_parameter_textbox = calibration_ratio_reduction_parameter_textbox.Text;
                 guiVariables.Soildepth_constant_value_box = soildepth_constant_value_box.Text;
                 guiVariables.Box_years_output = Box_years_output.Text;
-
+                guiVariables.Water_ero_checkbox = Water_ero_checkbox.Checked;
+                guiVariables.Tillage_checkbox = Tillage_checkbox.Checked;
+                guiVariables.Landslide_checkbox = Landslide_checkbox.Checked;
+                guiVariables.Creep_active_checkbox = creep_active_checkbox.Checked;
+                guiVariables.Biological_weathering_checkbox = Biological_weathering_checkbox.Checked;
+                guiVariables.Frost_weathering_checkbox = Frost_weathering_checkbox.Checked;
+                guiVariables.Tilting_active_checkbox = tilting_active_checkbox.Checked;
+                guiVariables.Uplift_active_checkbox = uplift_active_checkbox.Checked;
+                guiVariables.Soil_phys_weath_checkbox = soil_phys_weath_checkbox.Checked;
+                guiVariables.Soil_chem_weath_checkbox = soil_chem_weath_checkbox.Checked;
+                guiVariables.Soil_bioturb_checkbox = soil_bioturb_checkbox.Checked;
+                guiVariables.Soil_clay_transloc_checkbox = soil_clay_transloc_checkbox.Checked;
+                guiVariables.Soil_carbon_cycle_checkbox = soil_carbon_cycle_checkbox.Checked;
             }
             ));
 
