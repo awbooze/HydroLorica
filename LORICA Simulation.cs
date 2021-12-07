@@ -92,7 +92,7 @@ namespace LORICA4
                 deposited_cells;
 
         double soildepth_error, dtm00;
-        int GlobalMethods.n_texture_classes = 5;
+        //int GlobalMethods.n_texture_classes = 5;
 
         const int maximumdepressionsize = 1500;  // run the program once to find out the SIZE OF the largest depression. Any higher number will do....
         const double tangent_of_delta = 0.005;
@@ -110,7 +110,7 @@ namespace LORICA4
         int[] rainfall_record_d, evap_record_d, duration_record_d;
         int[] zonesize = new int[22], zoneprogress = new int[22];
 
-        const int GlobalMethods.numberofsinks = 10000;           // run the program once to find out the number of sinks. The exact number and any higher number will do....
+        //const int GlobalMethods.numberofsinks = 10000;           // run the program once to find out the number of sinks. The exact number and any higher number will do....
 
         int[]
         iloedge = new int[GlobalMethods.numberofsinks],
@@ -232,7 +232,7 @@ namespace LORICA4
         infil_value_m, evap_value_m, rain_value_m, soildepth_value,
         volume_eroded, volume_deposited,
         sum_normalweathered, sum_frostweathered, sum_soildepth, sum_creep, sum_solif, avg_solif, avg_creep, avg_soildepth,
-        sum_ls, total_sum_tillage, total_GlobalMethods.sum_uplift, total_GlobalMethods.sum_tilting, total_sed_export;  // counters for logging and reporting through time
+        sum_ls, total_sum_tillage, total_sum_uplift, total_sum_tilting, total_sed_export;  // counters for logging and reporting through time
 
         int temp_value_C;
 
@@ -702,7 +702,7 @@ namespace LORICA4
                     try
                     {
                         filename = dtmfilename;             //for directory input
-                        dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
+                        GlobalMethods.dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
                     }
                     catch { Debug.WriteLine(" failed to initialise GlobalMethods.dtm "); }
 
@@ -895,13 +895,13 @@ namespace LORICA4
                 for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
                 {
 
-                    if (original_dtm[GlobalMethods.row, GlobalMethods.col] != -9999)
+                    if (GlobalMethods.original_dtm[GlobalMethods.row, GlobalMethods.col] != -9999)
                     {
 
-                        if (original_dtm[GlobalMethods.row, GlobalMethods.col] > minimum_overwater_elevation && GlobalMethods.dtm[GlobalMethods.row, GlobalMethods.col] == -9999)
+                        if (GlobalMethods.original_dtm[GlobalMethods.row, GlobalMethods.col] > minimum_overwater_elevation && GlobalMethods.dtm[GlobalMethods.row, GlobalMethods.col] == -9999)
                         {
                             // these cases were not over water, but now will be.
-                            GlobalMethods.dtm[GlobalMethods.row, GlobalMethods.col] = original_dtm[GlobalMethods.row, GlobalMethods.col];
+                            GlobalMethods.dtm[GlobalMethods.row, GlobalMethods.col] = GlobalMethods.original_dtm[GlobalMethods.row, GlobalMethods.col];
                             // all cases that were already overwater, will stay overwater - no changes there.
                         }
                     }
@@ -934,7 +934,7 @@ namespace LORICA4
             updateClick = 1;
             // Debug.WriteLine("starting calculations - TIME " + GlobalMethods.t);
 
-            if (guiVariables.Ik_ben_Marijn)
+            if (GlobalMethods.Ik_ben_Marijn)
             { calculate_overwater_landscape_Spitsbergen(); }
             //displaysoil(0, 0);
 
@@ -975,7 +975,7 @@ namespace LORICA4
                 //Debug.WriteLine("before WE1");
 
                 initialise_every(); //fast
-                comb_sort();        //fast
+                GlobalMethods.comb_sort();        //fast
 
                 if (daily_water.Checked)
                 {
@@ -1028,7 +1028,7 @@ namespace LORICA4
             {
                 try
                 {// Debug.WriteLine("calculating GlobalMethods.creep");
-                    comb_sort();
+                    GlobalMethods.comb_sort();
 
                     calculate_creep();
 
@@ -1042,7 +1042,7 @@ namespace LORICA4
             //displaysoil(0, 0);
             if (tillage_active)
             {
-                comb_sort();
+                GlobalMethods.comb_sort();
                 int tilltime = 0;
                 //if (check_time_till_fields.Checked) { tilltime = till_record[GlobalMethods.t]; }
                 //else { tilltime = 1; }
@@ -1063,7 +1063,7 @@ namespace LORICA4
             if (landslide_active)
             {
                 Debug.WriteLine("calculating landsliding");
-                comb_sort();
+                GlobalMethods.comb_sort();
                 ini_slope();
                 calculate_critical_rain();
                 calculate_slide();
@@ -1083,7 +1083,7 @@ namespace LORICA4
             if (soil_phys_weath_active)
             {
                 // Debug.WriteLine("calculating soil physical weathering");
-                if (!guiVariables.Ik_ben_Marijn) { soil_physical_weathering(); }
+                if (!GlobalMethods.Ik_ben_Marijn) { soil_physical_weathering(); }
                 else
                 {
                     SPITS_soil_physical_weathering();
@@ -1174,9 +1174,9 @@ namespace LORICA4
 
             if (soil_bioturb_active)
             {
-                for (int GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
+                for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
                 {
-                    for (int GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
+                    for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
                     {
                         update_all_soil_thicknesses(GlobalMethods.row, GlobalMethods.col);
                     }
@@ -1235,7 +1235,7 @@ namespace LORICA4
 
                     try
                     {
-                        out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_vegetationtype.asc", vegetation_type);
+                        GlobalMethods.out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_vegetationtype.asc", vegetation_type);
                         for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
                         {
                             for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
@@ -1279,9 +1279,9 @@ namespace LORICA4
                                 if (output == "toplayer_frac") { numberoflayers = 1; }
 
                                 double[,] output_litter_map = new double[GlobalMethods.nr, GlobalMethods.nc];
-                                for (int GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
+                                for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
                                 {
-                                    for (int GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
+                                    for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
                                     {
                                         double litterstock_kg = 0;
                                         double mineralsoil_toplayer_kg = 0;
@@ -1380,7 +1380,7 @@ namespace LORICA4
                 try
                 {
                     //Debug.WriteLine("writing all soils");
-                    writeallsoils();
+                    GlobalMethods.writeallsoils();
                 }
                 catch
                 {
@@ -1408,7 +1408,7 @@ namespace LORICA4
                     try
                     {
                         GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_dz_treefall.asc", GlobalMethods.dz_treefall);
-                        out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_treefallcount.asc", GlobalMethods.treefall_count);
+                        GlobalMethods.out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_treefallcount.asc", GlobalMethods.treefall_count);
 
                     }
                     catch { MessageBox.Show("treefall has not been written"); }
@@ -1447,7 +1447,7 @@ namespace LORICA4
                 }
                 if (depressions_output_checkbox.Checked)
                 {
-                    try { out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_depress.asc", depression); }
+                    try { GlobalMethods.out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_depress.asc", depression); }
                     catch { MessageBox.Show("depressions have not been written"); }
                     try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_dtmfillA.asc", GlobalMethods.dtmfill_A); }
                     catch { MessageBox.Show("dfmfill has not been written"); }
@@ -1547,12 +1547,12 @@ namespace LORICA4
                 {
                     if (profile.check_altitude_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_1_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                     if (profile.check_waterflow_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_1_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
@@ -1560,12 +1560,12 @@ namespace LORICA4
                 {
                     if (profile.check_altitude_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_1_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                     if (profile.check_waterflow_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_1_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
@@ -1573,12 +1573,12 @@ namespace LORICA4
                 {
                     if (profile.check_altitude_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_2_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                     if (profile.check_waterflow_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_2_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
@@ -1586,12 +1586,12 @@ namespace LORICA4
                 {
                     if (profile.check_altitude_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                     if (profile.check_waterflow_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_2_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
@@ -1599,12 +1599,12 @@ namespace LORICA4
                 {
                     if (profile.check_altitude_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_3_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                     if (profile.check_waterflow_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_3_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
@@ -1612,12 +1612,12 @@ namespace LORICA4
                 {
                     if (profile.check_altitude_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_3_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                     if (profile.check_waterflow_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_3_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
@@ -1892,7 +1892,7 @@ namespace LORICA4
 
             using (var reader = new StreamReader(dir + "GlobalMethods.t" + time + "_out_allsoils.csv"))
             {
-                int GlobalMethods.row, GlobalMethods.col, lay;
+                int lay;
                 // discard first line (header)    
                 var line = reader.ReadLine();
                 var values = line.Split(',');
@@ -2093,9 +2093,9 @@ namespace LORICA4
 
             // Create yearly matrices for infiltration and overland flow
             // Debug.WriteLine("wb2");
-            for (int GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
+            for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
             {
-                for (int GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
+                for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
                 {
                     pond_y[GlobalMethods.row, GlobalMethods.col] = 0;
                     outflow_y[GlobalMethods.row, GlobalMethods.col] = 0;
@@ -2110,7 +2110,7 @@ namespace LORICA4
                     }
                 }
             }
-            comb_sort();
+            GlobalMethods.comb_sort();
 
             double P_OF, snowmelt_m = 0;
             // Debug.WriteLine("wb3");
@@ -2176,9 +2176,9 @@ namespace LORICA4
 
                 //if (Pm.Sum() < P_OF) { MessageBox.Show("Pd > P"); }
                 // Monthly water balance
-                for (int GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
+                for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
                 {
-                    for (int GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
+                    for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
                     {
                         if (GlobalMethods.dtm[GlobalMethods.row, GlobalMethods.col] != -9999)
                         {
@@ -2308,9 +2308,9 @@ namespace LORICA4
 
 
             // Debug.WriteLine("uks1");
-            for (int GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
+            for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
             {
-                for (int GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
+                for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
                 {
                     BD_topsoil = new List<double>();
                     depth = 0;
@@ -2343,7 +2343,7 @@ namespace LORICA4
                         fclay = 100 * (tex_topsoil[3] + tex_topsoil[4]) / (tex_topsoil[1] + tex_topsoil[2] + tex_topsoil[3] + tex_topsoil[4]); // only fine fraction
                         fOM = 100 * tex_topsoil[5] / (tex_topsoil[1] + tex_topsoil[2] + tex_topsoil[3] + tex_topsoil[4] + tex_topsoil[5]); // only fine fraction
                         BD_t = BD_topsoil.Average() / 1000;
-                        slope_rad = calc_slope_stdesc(GlobalMethods.row, GlobalMethods.col);
+                        slope_rad = GlobalMethods.calc_slope_stdesc(GlobalMethods.row, GlobalMethods.col);
                         double slope_test = Math.Cos(slope_rad);
 
                         // Debug.WriteLine("uks3a");
@@ -2472,9 +2472,9 @@ namespace LORICA4
             //9: temporary flow, for the thresholds
 
 
-            for (int GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
+            for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
             {
-                for (int GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
+                for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
                 {
                     pond_d[GlobalMethods.row, GlobalMethods.col] = 0;
                     for (int it = 0; it <= 9; it++)
@@ -2489,9 +2489,9 @@ namespace LORICA4
             // Debug.WriteLine("df2");
             double totalwater = 0, totalwater2 = 0;
             // create overland flow in current flow map. This will be reset after flowing out, to consider a new flux of water after saddle overflow, without counting the first flux twice. 
-            for (int GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
+            for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
             {
-                for (int GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
+                for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
                 {
                     // Add rainfall excess to every cell. If negative, it can absorb incoming water from upstream.Overland flow will only be calculated when outflow is larger than zero. 
                     // Infiltration is dealt with at the end of the day. Water can still flow into the cell from higher up
@@ -2662,9 +2662,9 @@ namespace LORICA4
             } // end runner
               // Debug.WriteLine("df4");
 
-            for (int GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
+            for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
             {
-                for (int GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
+                for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
                 {
                     Iy[GlobalMethods.row, GlobalMethods.col] += pond_d[GlobalMethods.row, GlobalMethods.col];
                     if (double.IsNaN(Iy[GlobalMethods.row, GlobalMethods.col]))
@@ -2882,9 +2882,9 @@ namespace LORICA4
             bool stag_total = false;
             int lay;
             double depth;
-            for (int GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
+            for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
             {
-                for (int GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
+                for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
                 {
                     if (GlobalMethods.dtm[GlobalMethods.row, GlobalMethods.col] != -9999)
                     {
@@ -2907,9 +2907,9 @@ namespace LORICA4
         void lateral_flow()
         {
 
-            for (int GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
+            for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
             {
-                for (int GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
+                for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
                 {
                     for (i = (-1); i <= 1; i++)
                     {
@@ -4071,9 +4071,9 @@ namespace LORICA4
 
             try
             {
-                for (int GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
+                for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
                 {
-                    for (int GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
+                    for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
                     {
                         for (int lay = 0; lay < GlobalMethods.max_soil_layers; lay++)
                         {
@@ -4101,7 +4101,7 @@ namespace LORICA4
             {
                 for (int colmass = 0; colmass < GlobalMethods.nc; colmass++)
                 {
-                    for (ii = 0; ii < 5; ii++)
+                    for (int ii = 0; ii < 5; ii++)
                     {
                         tot_mass += GlobalMethods.sediment_in_transport_kg[rowmass, colmass, ii];
                     }
@@ -4116,7 +4116,7 @@ namespace LORICA4
         double mass_in_transport_row_col(int row1, int col1)
         {
             double tot_mass = 0;
-            for (ii = 0; ii < 5; ii++)
+            for (int ii = 0; ii < 5; ii++)
             {
                 tot_mass += GlobalMethods.sediment_in_transport_kg[row1, col1, ii];
             }
@@ -4136,7 +4136,7 @@ namespace LORICA4
                 {
                     for (int lay = 0; lay < GlobalMethods.max_soil_layers; lay++)
                     {
-                        for (ii = 0; ii < 5; ii++)
+                        for (int ii = 0; ii < 5; ii++)
                         {
                             tot_mass += texture_kg[rowmass, colmass, lay, ii];
                         }
@@ -4347,7 +4347,8 @@ namespace LORICA4
             //Debug.WriteLine(" successfully split layer ");
         }
 
-        bool search_nodataneighbour(int GlobalMethods.row, int GlobalMethods.col)
+        //bool search_nodataneighbour(int GlobalMethods.row, int GlobalMethods.col)
+        bool search_nodataneighbour()
         {
             bool ndn = false;
             for (i = (-1); i <= 1; i++)
@@ -5527,7 +5528,8 @@ namespace LORICA4
             }
         }
 
-        void lessivage_calibration(int GlobalMethods.row, int GlobalMethods.col, int cal)
+        //void lessivage_calibration(int GlobalMethods.row, int GlobalMethods.col, int cal)
+        void lessivage_calibration()
         {
             //Debug.Write(Cclay + " " + max_eluviation + " " + ct_depthdec + " ");
             //double[] lp4 = new double[,]{0.09, 0.09,0.09, 0.10, 0.16, 0.16, 0.19, 0.19, 0.19, 0.16, 0.16, 0.16, 0.16, 0.13, 0.13, 0.13, 0.13, 0.13, 0.13, 0.13};
@@ -6072,7 +6074,8 @@ namespace LORICA4
                                 }
                             } // end j
                         } // end i
-                        if (fracsum < 0.9999 & !search_nodataneighbour(GlobalMethods.row, GlobalMethods.col))
+                        //if (fracsum < 0.9999 & !search_nodataneighbour(GlobalMethods.row, GlobalMethods.col))
+                        if (fracsum < 0.9999 & !search_nodataneighbour())
                         {
                             Debug.WriteLine("fracsum = " + fracsum);
                             for (int otp = 0; otp < 10; otp++)
@@ -8011,13 +8014,12 @@ namespace LORICA4
                 }
 
                 this.InfoStatusPanel.Text = "GlobalMethods.creep calculation";
-                int GlobalMethods.row, GlobalMethods.col,
-                            i, j,
-                            nb_ok,
-                            NA_dem;
+                int i, j,
+                    nb_ok,
+                    NA_dem;
                 double
                             dhmin, dhe_tol, dhs_tol,
-                            slope_sum, dhmax, dz_min, GlobalMethods.d_x, dz_max, dh1, dh,
+                            slope_sum, dhmax, dz_min, dz_max, dh1, dh,
                             fraction,
                             temp, tempcreep, tempdep,
                             slope,
@@ -8913,7 +8915,6 @@ namespace LORICA4
         private void calculate_tilting()
         {
             this.InfoStatusPanel.Text = "tilting calculation";
-            int GlobalMethods.row, GlobalMethods.col;
 
             for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
             {
@@ -8930,7 +8931,6 @@ namespace LORICA4
         private void calculate_uplift()
         {
             this.InfoStatusPanel.Text = "uplift calculation";
-            int GlobalMethods.row, GlobalMethods.col;
 
             for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
             {
@@ -9092,9 +9092,9 @@ namespace LORICA4
                 if (windowsize % 2 == 0) { MessageBox.Show("window size for TPI calculations should be an uneven number"); }
 
                 int windowrange = (windowsize - 1) / 2;
-                for (int GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
+                for (GlobalMethods.row = 0; GlobalMethods.row < GlobalMethods.nr; GlobalMethods.row++)
                 {
-                    for (int GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
+                    for (GlobalMethods.col = 0; GlobalMethods.col < GlobalMethods.nc; GlobalMethods.col++)
                     {
                         if (GlobalMethods.dtm[GlobalMethods.row, GlobalMethods.col] != -9999)
                         {
@@ -9197,7 +9197,8 @@ namespace LORICA4
 
         #region experimental and maintenance code
 
-        void minimaps(int GlobalMethods.row, int GlobalMethods.col)
+        // void minimaps(int GlobalMethods.row, int GlobalMethods.col)
+        void minimaps()
         {
             int lowerrow, upperrow, lowercol, uppercol, disrow, discol;
             lowerrow = GlobalMethods.row - 4; if (lowerrow < 0) { lowerrow = 0; }
@@ -9364,7 +9365,8 @@ namespace LORICA4
             //Debug.WriteLine("");
         }
 
-        bool check_negative_weight(int GlobalMethods.row, int GlobalMethods.col)
+        // bool check_negative_weight(int GlobalMethods.row, int GlobalMethods.col)
+        bool check_negative_weight()
         {
             bool check = false;
             for (int layer1 = 0; layer1 < GlobalMethods.max_soil_layers; layer1++)
@@ -10642,7 +10644,7 @@ namespace LORICA4
                     string fn = filename.Substring(0, (namelength - 4));
                     filename = fn + "_sc" + P_scen + ".csv";
 
-                    read_record(filename, guiVariables.P_all);
+                    GlobalMethods.read_record(filename, guiVariables.P_all);
                     // Debug.WriteLine("guiVariables.P_all read successfully");
 
                     //filename = this.dailyET0.Text;
@@ -10652,22 +10654,22 @@ namespace LORICA4
 
                     filename = this.dailyD.Text;
                     if (memory_records_d == false) { makedailyrecords(filename); }
-                    read_record(filename, guiVariables.D_all);
+                    GlobalMethods.read_record(filename, guiVariables.D_all);
                     // Debug.WriteLine("guiVariables.D_all read successfully");
 
                     filename = this.dailyT_avg.Text;
                     if (memory_records_d == false) { makedailyrecords(filename); }
-                    read_record(filename, guiVariables.Tavg_all);
+                    GlobalMethods.read_record(filename, guiVariables.Tavg_all);
                     // Debug.WriteLine("guiVariables.Tavg_all read successfully");
 
                     filename = this.dailyT_min.Text;
                     if (memory_records_d == false) { makedailyrecords(filename); }
-                    read_record(filename, guiVariables.Tmin_all);
+                    GlobalMethods.read_record(filename, guiVariables.Tmin_all);
                     // Debug.WriteLine("guiVariables.Tmin_all read successfully");
 
                     filename = this.dailyT_max.Text;
                     if (memory_records_d == false) { makedailyrecords(filename); }
-                    read_record(filename, guiVariables.Tmax_all);
+                    GlobalMethods.read_record(filename, guiVariables.Tmax_all);
                     // Debug.WriteLine("guiVariables.Tmax_all read successfully");
 
                     //// Hargreaves extraterrestrial radiation
@@ -10723,65 +10725,65 @@ namespace LORICA4
             if (check_space_soildepth.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.soildepth_input_filename_textbox.Text;
-                read_double(filename, GlobalMethods.soildepth_m);
+                GlobalMethods.read_double(filename, GlobalMethods.soildepth_m);
                 Debug.WriteLine("read soildepth");
             }
             if (check_space_till_fields.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.tillfields_input_filename_textbox.Text;
-                read_integer(filename, GlobalMethods.tillfields);
+                GlobalMethods.read_integer(filename, GlobalMethods.tillfields);
                 Debug.WriteLine("read GlobalMethods.tillfields");
             }
             if (check_space_landuse.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.landuse_input_filename_textbox.Text;
-                read_integer(filename, GlobalMethods.landuse);
+                GlobalMethods.read_integer(filename, GlobalMethods.landuse);
                 Debug.WriteLine("read GlobalMethods.landuse");
             }
             if (check_space_evap.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.evap_input_filename_textbox.Text;
-                read_double(filename, GlobalMethods.evapotranspiration);
+                GlobalMethods.read_double(filename, GlobalMethods.evapotranspiration);
             }
             if (check_space_infil.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.infil_input_filename_textbox.Text;
-                read_double(filename, GlobalMethods.infil);
+                GlobalMethods.read_double(filename, GlobalMethods.infil);
             }
             if (check_space_rain.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.rain_input_filename_textbox.Text;
-                read_double(filename, GlobalMethods.rain);
+                GlobalMethods.read_double(filename, GlobalMethods.rain);
             }
             // If required, read timeseries instead.
             if (check_time_landuse.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.landuse_input_filename_textbox.Text;
-                read_integer(filename, GlobalMethods.landuse);
+                GlobalMethods.read_integer(filename, GlobalMethods.landuse);
             }
             if (check_time_evap.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.evap_input_filename_textbox.Text;
                 if (memory_records == false) { makerecords(filename); }
-                read_record(filename, evap_record);
+                GlobalMethods.read_record(filename, evap_record);
             }
             if (check_time_infil.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.infil_input_filename_textbox.Text;
                 if (memory_records == false) { makerecords(filename); }
-                read_record(filename, infil_record);
+                GlobalMethods.read_record(filename, infil_record);
             }
             if (check_time_rain.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.rain_input_filename_textbox.Text;
                 if (memory_records == false) { makerecords(filename); }
-                read_record(filename, rainfall_record);
+                GlobalMethods.read_record(filename, rainfall_record);
             }
             if (check_time_T.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.temp_input_filename_textbox.Text;
                 if (memory_records == false) { makerecords(filename); }
-                read_record(filename, temp_record);
+                GlobalMethods.read_record(filename, temp_record);
             }
 
 
@@ -10789,7 +10791,7 @@ namespace LORICA4
             {
                 filename = this.tillfields_input_filename_textbox.Text;
                 if (memory_records == false) { makerecords(filename); }
-                read_record(filename, till_record);
+                GlobalMethods.read_record(filename, till_record);
                 Debug.WriteLine("Tillage time parameters read");
             }
 
@@ -11479,7 +11481,7 @@ namespace LORICA4
                     }
                     catch { GlobalMethods.input_data_error = true; MessageBox.Show("Calibration ratio input error"); }
                 }
-            try { calib_levels = Convert.ToInt32(calibration_levels_textbox.Text); }
+            try { GUcalib_levels = Convert.ToInt32(calibration_levels_textbox.Text); }
             catch { GlobalMethods.input_data_error = true; MessageBox.Show("Calibration iterations must be an integer"); }
             maxruns = calib_levels * Convert.ToInt32(Math.Pow(ratiowords.Length, calibparacount));
             Debug.WriteLine(" the number of runs for calibration will be " + maxruns);
