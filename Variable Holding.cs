@@ -51,6 +51,104 @@ namespace LORICAVariables
             updateVariables();
         }
 
+        public class output_timeseries
+        {
+
+        }
+        public class output_profile
+        {
+
+        }
+        public class landuse_determinator
+        {
+
+        }
+        public class soil_specifier
+        {
+
+        }
+
+        ReaderWriterLock TimeseriesRWL = new ReaderWriterLock();
+        protected output_timeseries timeseries;
+        public output_timeseries Timeseries
+        {
+            get
+            {
+                TimeseriesRWL.AcquireReaderLock(Timeout.Infinite);
+                output_timeseries temp = timeseries;
+                TimeseriesRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                TimeseriesRWL.AcquireWriterLock(Timeout.Infinite);
+                timeseries = value;
+                TimeseriesRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock ProfileRWL = new ReaderWriterLock();
+        protected output_profile profile;
+        public output_profile Profile
+        {
+            get
+            {
+                ProfileRWL.AcquireReaderLock(Timeout.Infinite);
+                output_profile temp = profile;
+                ProfileRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                ProfileRWL.AcquireWriterLock(Timeout.Infinite);
+                profile = value;
+                ProfileRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Landuse_determinatorRWL = new ReaderWriterLock();
+        protected landuse_determinator landuse_determinator;
+        public landuse_determinator Landuse_determinator
+        {
+            get
+            {
+                Landuse_determinatorRWL.AcquireReaderLock(Timeout.Infinite);
+                landuse_determinator temp = landuse_determinator;
+                Landuse_determinatorRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Landuse_determinatorRWL.AcquireWriterLock(Timeout.Infinite);
+                landuse_determinator = value;
+                Landuse_determinatorRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock SoildataRWL = new ReaderWriterLock();
+        protected soil_specifier soildata;
+        public soil_specifier Soildata
+        {
+            get
+            {
+                SoildataRWL.AcquireReaderLock(Timeout.Infinite);
+                soil_specifier temp = soildata;
+                SoildataRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                SoildataRWL.AcquireWriterLock(Timeout.Infinite);
+                soildata = value;
+                SoildataRWL.ReleaseWriterLock();
+            }
+        }
+
+
         ReaderWriterLock End_timeRWL = new ReaderWriterLock();
         protected double end_time;
         public double End_time
