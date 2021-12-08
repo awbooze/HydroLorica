@@ -82,6 +82,27 @@ namespace LORICAVariables
                 updateTimeSeries = uts;
             }
 
+            ReaderWriterLock Total_chem_weath_checkboxRWL = new ReaderWriterLock();
+            protected bool total_chem_weath_checkbox = false;
+            public bool Total_chem_weath_checkbox
+            {
+                get
+                {
+                    Total_chem_weath_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = total_chem_weath_checkbox;
+                    Total_chem_weath_checkboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Total_chem_weath_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    total_chem_weath_checkbox = value;
+                    Total_chem_weath_checkboxRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
             ReaderWriterLock Timeseries_number_soil_thicker_checkboxRWL = new ReaderWriterLock();
             protected bool timeseries_number_soil_thicker_checkbox = false;
             public bool Timeseries_number_soil_thicker_checkbox
@@ -231,28 +252,6 @@ namespace LORICAVariables
                     Timeseries_cell_waterflow_checkRWL.AcquireWriterLock(Timeout.Infinite);
                     timeseries_cell_waterflow_check = value;
                     Timeseries_cell_waterflow_checkRWL.ReleaseWriterLock();
-
-                    UpdateTimeSeries();
-                }
-            }
-
-            ReaderWriterLock Total_chem_weath_checkboxRWL = new ReaderWriterLock();
-            protected bool total_chem_weath_checkbox = false;
-            public bool Total_chem_weath_checkbox
-            {
-                get
-                {
-                    Total_chem_weath_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
-                    bool temp = total_chem_weath_checkbox;
-                    Total_chem_weath_checkboxRWL.ReleaseReaderLock();
-
-                    return temp;
-                }
-                set
-                {
-                    Total_chem_weath_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
-                    total_chem_weath_checkbox = value;
-                    Total_chem_weath_checkboxRWL.ReleaseWriterLock();
 
                     UpdateTimeSeries();
                 }

@@ -7447,6 +7447,7 @@ Example: rainfall.asc can look like:
                 check_time_till_fields.Checked = guiVariables.Check_time_till_fields;
                 check_scaling_daily_weather.Checked = guiVariables.Check_scaling_daily_weather;
 
+                UpdateTimeSeries();
                 this.Refresh(); // tjc to enable graphics to be drawn before sending to AVI
             }
             ));
@@ -7478,6 +7479,7 @@ Example: rainfall.asc can look like:
                 guiVariables.Mapwindow.Location.X = this.Mapwindow.Location.X;
                 guiVariables.Mapwindow.Location.Y = this.Mapwindow.Location.Y;
 
+                #region TextBoxes
                 guiVariables.InfoStatusPanel = InfoStatusPanel.Text;
                 guiVariables.DTM_input_filename_textbox = dtm_input_filename_textbox.Text;
                 guiVariables.Number_runs_textbox = Number_runs_textbox.Text;
@@ -7572,7 +7574,9 @@ Example: rainfall.asc can look like:
                 guiVariables.Daily_n = daily_n.Text;
                 guiVariables.Latitude_deg = latitude_deg.Text;
                 guiVariables.Latitude_min = latitude_min.Text;
+                #endregion
 
+                #region CheckBoxes
                 guiVariables.Water_ero_checkbox = Water_ero_checkbox.Checked;
                 guiVariables.Tillage_checkbox = Tillage_checkbox.Checked;
                 guiVariables.Landslide_checkbox = Landslide_checkbox.Checked;
@@ -7589,6 +7593,122 @@ Example: rainfall.asc can look like:
                 guiVariables.UTMsouthcheck = UTMsouthcheck.Checked;
                 guiVariables.Check_time_till_fields = check_time_till_fields.Checked;
                 guiVariables.Check_scaling_daily_weather = check_scaling_daily_weather.Checked;
+                #endregion
+
+                #region TimeSeries
+                guiVariables.Timeseries.Timeseries_soil_thicker_textbox = timeseries.timeseries_soil_thicker_textbox.Text;
+                guiVariables.Timeseries.Timeseries_soil_coarser_fraction_textbox = timeseries.timeseries_soil_coarser_fraction_textbox.Text;
+                guiVariables.Timeseries.Timeseries_soil_cell_row = timeseries.timeseries_soil_cell_row.Text;
+                guiVariables.Timeseries.Timeseries_soil_cell_col = timeseries.timeseries_soil_cell_col.Text;
+                guiVariables.Timeseries.Timeseries_erosion_threshold = timeseries.timeseries_erosion_threshold;
+                guiVariables.Timeseries.Timeseries_deposition_threshold = timeseries.timeseries_deposition_threshold;
+                guiVariables.Timeseries.Timeseries_waterflow_threshold = timeseries.timeseries_waterflow_threshold;
+                guiVariables.Timeseries.Timeseries_textbox_cell_row = timeseries.timeseries_textbox_cell_row.Text;
+                guiVariables.Timeseries.Timeseries_textbox_cell_col = timeseries.timeseries_textbox_cell_col.Text;
+
+                guiVariables.Timeseries.Total_chem_weath_checkbox = timeseries.total_chem_weath_checkbox.Checked;
+                guiVariables.Timeseries.Timeseries_number_soil_thicker_checkbox = timeseries.timeseries_number_soil_thicker_checkbox.Checked;
+                guiVariables.Timeseries.Total_average_soilthickness_checkbox = timeseries.total_average_soilthickness_checkbox.Checked;
+                guiVariables.Timeseries.Timeseries_soil_depth_checkbox = timeseries.timeseries_soil_depth_checkbox.Checked;
+                guiVariables.Timeseries.Timeseries_cell_waterflow_check = timeseries.timeseries_cell_waterflow_check.Checked;
+                guiVariables.Timeseries.Timeseries_cell_waterflow_check = timeseries.timeseries_cell_waterflow_check.Checked;
+                guiVariables.Timeseries.Total_fine_formed_checkbox = timeseries.total_fine_formed_checkbox.Checked;
+                guiVariables.Timeseries.Total_mass_bioturbed_checkbox = timeseries.total_mass_bioturbed_checkbox.Checked;
+                guiVariables.Timeseries.Total_OM_input_checkbox = timeseries.total_OM_input_checkbox.Checked;
+                guiVariables.Timeseries.Total_fine_eluviated_checkbox = timeseries.total_fine_eluviated_checkbox.Checked;
+                guiVariables.Timeseries.Timeseries_net_ero_check = timeseries.timeseries_net_ero_check.Checked;
+                guiVariables.Timeseries.Timeseries_number_dep_check = timeseries.timeseries_number_dep_check.Checked;
+                guiVariables.Timeseries.Timeseries_cell_altitude_check = timeseries.timeseries_cell_altitude_check.Checked;
+                guiVariables.Timeseries.Timeseries_number_erosion_check = timeseries.timeseries_number_erosion_check.Checked;
+                guiVariables.Timeseries.Timeseries_number_waterflow_check = timeseries.timeseries_number_waterflow_check.Checked;
+                guiVariables.Timeseries.Timeseries_SDR_check = timeseries.timeseries_SDR_check.Checked;
+                guiVariables.Timeseries.Timeseries_total_average_alt_check = timeseries.timeseries_total_average_alt_check.Checked;
+                guiVariables.Timeseries.Timeseries_total_dep_check = timeseries.timeseries_total_dep_check.Checked;
+                guiVariables.Timeseries.Timeseries_total_ero_check = timeseries.timeseries_total_ero_check.Checked;
+                guiVariables.Timeseries.Timeseries_total_evap_check = timeseries.timeseries_total_evap_check.Checked;
+                guiVariables.Timeseries.Timeseries_total_infil_check = timeseries.timeseries_total_infil_check.Checked;
+                guiVariables.Timeseries.Timeseries_total_rain_check = timeseries.timeseries_total_rain_check.Checked;
+                guiVariables.Timeseries.Total_phys_weath_checkbox = timeseries.total_phys_weath_checkbox.Checked;
+                guiVariables.Timeseries.Timeseries_coarser_checkbox = timeseries.timeseries_coarser_checkbox.Checked;
+                guiVariables.Timeseries.Timeseries_soil_mass_checkbox = timeseries.timeseries_soil_mass_checkbox.Checked;
+                #endregion
+
+                #region Profile
+                guiVariables.Profile.P1_row_col_box = profile.p1_row_col_box.Text;
+                guiVariables.Profile.P2_row_col_box = profile.p2_row_col_box.Text;
+                guiVariables.Profile.P3_row_col_box = profile.p3_row_col_box.Text;
+
+                guiVariables.Profile.Radio_pro1_col = profile.radio_pro1_col.Checked;
+                guiVariables.Profile.Check_altitude_profile1 = profile.check_altitude_profile1.Checked;
+                guiVariables.Profile.Check_waterflow_profile1 = profile.check_waterflow_profile1.Checked;
+                guiVariables.Profile.Radio_pro1_row = profile.radio_pro1_row.Checked;
+                guiVariables.Profile.Radio_pro2_col = profile.radio_pro2_col.Checked;
+                guiVariables.Profile.Radio_pro2_row = profile.radio_pro2_row.Checked;
+                guiVariables.Profile.Radio_pro3_col = profile.radio_pro3_col.Checked;
+                guiVariables.Profile.Radio_pro3_row = profile.radio_pro3_row.Checked;
+                #endregion
+
+                #region Landuse Determinator
+
+                guiVariables.Landuse_determinator.LU1_Inf_textbox = landuse_determinator.LU1_Inf_textbox.Text;
+                guiVariables.Landuse_determinator.LU1_Evap_textbox = landuse_determinator.LU1_Evap_textbox.Text;
+                guiVariables.Landuse_determinator.LU1_Ero_textbox = landuse_determinator.LU1_Ero_textbox.Text;
+                guiVariables.Landuse_determinator.LU1_Dep_textbox = landuse_determinator.LU1_Dep_textbox.Text;
+
+
+                guiVariables.Landuse_determinator.LU2_Inf_textbox = landuse_determinator.LU2_Inf_textbox.Text;
+                guiVariables.Landuse_determinator.LU2_Evap_textbox = landuse_determinator.LU2_Evap_textbox.Text;
+                guiVariables.Landuse_determinator.LU2_Ero_textbox = landuse_determinator.LU2_Ero_textbox.Text;
+                guiVariables.Landuse_determinator.LU2_Dep_textbox = landuse_determinator.LU2_Dep_textbox.Text;
+
+                guiVariables.Landuse_determinator.LU3_Inf_textbox = landuse_determinator.LU3_Inf_textbox.Text;
+                guiVariables.Landuse_determinator.LU3_Evap_textbox = landuse_determinator.LU3_Evap_textbox.Text;
+                guiVariables.Landuse_determinator.LU3_Ero_textbox = landuse_determinator.LU3_Ero_textbox.Text;
+                guiVariables.Landuse_determinator.LU3_Dep_textbox = landuse_determinator.LU3_Dep_textbox.Text;
+
+                guiVariables.Landuse_determinator.LU4_Inf_textbox = landuse_determinator.LU4_Inf_textbox.Text;
+                guiVariables.Landuse_determinator.LU4_Evap_textbox = landuse_determinator.LU4_Evap_textbox.Text;
+                guiVariables.Landuse_determinator.LU4_Ero_textbox = landuse_determinator.LU4_Ero_textbox.Text;
+                guiVariables.Landuse_determinator.LU4_Dep_textbox = landuse_determinator.LU4_Dep_textbox.Text;
+
+                guiVariables.Landuse_determinator.LU5_Inf_textbox = landuse_determinator.LU5_Inf_textbox.Text;
+                guiVariables.Landuse_determinator.LU5_Evap_textbox = landuse_determinator.LU5_Evap_textbox.Text;
+                guiVariables.Landuse_determinator.LU5_Ero_textbox = landuse_determinator.LU5_Ero_textbox.Text;
+                guiVariables.Landuse_determinator.LU5_Dep_textbox = landuse_determinator.LU5_Dep_textbox.Text;
+
+                guiVariables.Landuse_determinator.LU6_Inf_textbox = landuse_determinator.LU6_Inf_textbox.Text;
+                guiVariables.Landuse_determinator.LU6_Evap_textbox = landuse_determinator.LU6_Evap_textbox.Text;
+                guiVariables.Landuse_determinator.LU6_Ero_textbox = landuse_determinator.LU6_Ero_textbox.Text;
+                guiVariables.Landuse_determinator.LU6_Dep_textbox = landuse_determinator.LU6_Dep_textbox.Text;
+
+                guiVariables.Landuse_determinator.LU7_Inf_textbox = landuse_determinator.LU7_Inf_textbox.Text;
+                guiVariables.Landuse_determinator.LU7_Evap_textbox = landuse_determinator.LU7_Evap_textbox.Text;
+                guiVariables.Landuse_determinator.LU7_Ero_textbox = landuse_determinator.LU7_Ero_textbox.Text;
+                guiVariables.Landuse_determinator.LU7_Dep_textbox = landuse_determinator.LU7_Dep_textbox.Text;
+
+                guiVariables.Landuse_determinator.LU8_Inf_textbox = landuse_determinator.LU8_Inf_textbox.Text;
+                guiVariables.Landuse_determinator.LU8_Evap_textbox = landuse_determinator.LU8_Evap_textbox.Text;
+                guiVariables.Landuse_determinator.LU8_Ero_textbox = landuse_determinator.LU8_Ero_textbox.Text;
+                guiVariables.Landuse_determinator.LU8_Dep_textbox = landuse_determinator.LU8_Dep_textbox.Text;
+
+                guiVariables.Landuse_determinator.LU9_Inf_textbox = landuse_determinator.LU9_Inf_textbox.Text;
+                guiVariables.Landuse_determinator.LU9_Evap_textbox = landuse_determinator.LU9_Evap_textbox.Text;
+                guiVariables.Landuse_determinator.LU9_Ero_textbox = landuse_determinator.LU9_Ero_textbox.Text;
+                guiVariables.Landuse_determinator.LU9_Dep_textbox = landuse_determinator.LU9_Dep_textbox.Text;
+
+                guiVariables.Landuse_determinator.LU10_Inf_textbox = landuse_determinator.LU10_Inf_textbox.Text;
+                guiVariables.Landuse_determinator.LU10_Evap_textbox = landuse_determinator.LU10_Evap_textbox.Text;
+                guiVariables.Landuse_determinator.LU10_Ero_textbox = landuse_determinator.LU10_Ero_textbox.Text;
+                guiVariables.Landuse_determinator.LU10_Dep_textbox = landuse_determinator.LU10_Dep_textbox.Text;
+                #endregion
+
+                #region SoilData
+                guiVariables.Soildata.Coarsebox = soildata.coarsebox.Text;
+                guiVariables.Soildata.Sandbox = soildata.sandbox.Text;
+                guiVariables.Soildata.Siltbox = soildata.siltbox.Text;
+                guiVariables.Soildata.Claybox = soildata.claybox.Text;
+                guiVariables.Soildata.Fineclaybox = soildata.fineclaybox.Text;
+                #endregion
             }
             ));
 
@@ -7596,19 +7716,115 @@ Example: rainfall.asc can look like:
 
         private void UpdateTimeSeries()
         {
+            timeseries.timeseries_soil_thicker_textbox.Text = guiVariables.Timeseries.Timeseries_soil_thicker_textbox;
+            timeseries.timeseries_soil_coarser_fraction_textbox.Text = guiVariables.Timeseries.Timeseries_soil_coarser_fraction_textbox;
+            timeseries.timeseries_soil_cell_row.Text = guiVariables.Timeseries.Timeseries_soil_cell_row;
+            timeseries.timeseries_soil_cell_col.Text = guiVariables.Timeseries.Timeseries_soil_cell_col;
+            timeseries.timeseries_textbox_cell_row.Text = guiVariables.Timeseries.Timeseries_textbox_cell_row;
+            timeseries.timeseries_textbox_cell_col.Text = guiVariables.Timeseries.Timeseries_textbox_cell_col;
+            timeseries.timeseries_erosion_threshold = guiVariables.Timeseries.Timeseries_erosion_threshold;
+            timeseries.timeseries_deposition_threshold = guiVariables.Timeseries.Timeseries_deposition_threshold;
+            timeseries.timeseries_waterflow_threshold = guiVariables.Timeseries.Timeseries_waterflow_threshold;
 
+            timeseries.total_chem_weath_checkbox.Checked = guiVariables.Timeseries.Total_chem_weath_checkbox;
+            timeseries.timeseries_number_soil_thicker_checkbox.Checked = guiVariables.Timeseries.Timeseries_number_soil_thicker_checkbox;
+            timeseries.total_average_soilthickness_checkbox.Checked = guiVariables.Timeseries.Total_average_soilthickness_checkbox;
+            timeseries.timeseries_soil_depth_checkbox.Checked = guiVariables.Timeseries.Timeseries_soil_depth_checkbox;
+            timeseries.timeseries_cell_waterflow_check.Checked = guiVariables.Timeseries.Timeseries_cell_waterflow_check;
+            timeseries.total_fine_formed_checkbox.Checked = guiVariables.Timeseries.Total_fine_formed_checkbox;
+            timeseries.total_mass_bioturbed_checkbox.Checked = guiVariables.Timeseries.Total_mass_bioturbed_checkbox;
+            timeseries.total_OM_input_checkbox.Checked = guiVariables.Timeseries.Total_OM_input_checkbox;
+            timeseries.total_fine_eluviated_checkbox.Checked = guiVariables.Timeseries.Total_fine_eluviated_checkbox;
+            timeseries.timeseries_net_ero_check.Checked = guiVariables.Timeseries.Timeseries_net_ero_check;
+            timeseries.timeseries_number_dep_check.Checked = guiVariables.Timeseries.Timeseries_number_dep_check;
+            timeseries.timeseries_cell_altitude_check.Checked = guiVariables.Timeseries.Timeseries_cell_altitude_check;
+            timeseries.timeseries_number_erosion_check.Checked = guiVariables.Timeseries.Timeseries_number_erosion_check;
+            timeseries.timeseries_number_waterflow_check.Checked = guiVariables.Timeseries.Timeseries_number_waterflow_check;
+            timeseries.timeseries_SDR_check.Checked = guiVariables.Timeseries.Timeseries_SDR_check;
+            timeseries.timeseries_total_average_alt_check.Checked = guiVariables.Timeseries.Timeseries_total_average_alt_check;
+            timeseries.timeseries_total_dep_check.Checked = guiVariables.Timeseries.Timeseries_total_dep_check;
+            timeseries.timeseries_total_ero_check.Checked = guiVariables.Timeseries.Timeseries_total_ero_check;
+            timeseries.timeseries_total_evap_check.Checked = guiVariables.Timeseries.Timeseries_total_evap_check;
+            timeseries.timeseries_total_infil_check.Checked = guiVariables.Timeseries.Timeseries_total_infil_check;
+            timeseries.timeseries_total_rain_check.Checked = guiVariables.Timeseries.Timeseries_total_rain_check;
+            timeseries.total_phys_weath_checkbox.Checked = guiVariables.Timeseries.Total_phys_weath_checkbox;
+            timeseries.timeseries_coarser_checkbox.Checked = guiVariables.Timeseries.Timeseries_coarser_checkbox;
+            timeseries.timeseries_soil_mass_checkbox.Checked = guiVariables.Timeseries.Timeseries_soil_mass_checkbox;
         }
         private void UpdateProfile()
         {
+            profile.p1_row_col_box.Text = guiVariables.Profile.P1_row_col_box;
+            profile.p2_row_col_box.Text = guiVariables.Profile.P2_row_col_box;
+            profile.p3_row_col_box.Text = guiVariables.Profile.P3_row_col_box;
 
+            profile.radio_pro1_col.Checked = guiVariables.Profile.Radio_pro1_col;
+            profile.check_altitude_profile1.Checked = guiVariables.Profile.Check_altitude_profile1;
+            profile.check_waterflow_profile1.Checked = guiVariables.Profile.Check_waterflow_profile1;
+            profile.radio_pro1_row.Checked = guiVariables.Profile.Radio_pro1_row;
+            profile.radio_pro2_col.Checked = guiVariables.Profile.Radio_pro2_col;
+            profile.radio_pro2_row.Checked = guiVariables.Profile.Radio_pro2_row;
+            profile.radio_pro3_col.Checked = guiVariables.Profile.Radio_pro3_col;
+            profile.radio_pro3_row.Checked = guiVariables.Profile.Radio_pro3_row;
         }
         private void UpdateLanduse_determinator()
         {
+            landuse_determinator.LU1_Inf_textbox.Text = guiVariables.Landuse_determinator.LU1_Inf_textbox;
+            landuse_determinator.LU1_Evap_textbox.Text = guiVariables.Landuse_determinator.LU1_Evap_textbox;
+            landuse_determinator.LU1_Ero_textbox.Text = guiVariables.Landuse_determinator.LU1_Ero_textbox;
+            landuse_determinator.LU1_Dep_textbox.Text = guiVariables.Landuse_determinator.LU1_Dep_textbox;
 
+            landuse_determinator.LU2_Inf_textbox.Text = guiVariables.Landuse_determinator.LU2_Inf_textbox;
+            landuse_determinator.LU2_Evap_textbox.Text = guiVariables.Landuse_determinator.LU2_Evap_textbox;
+            landuse_determinator.LU2_Ero_textbox.Text = guiVariables.Landuse_determinator.LU2_Ero_textbox;
+            landuse_determinator.LU2_Dep_textbox.Text = guiVariables.Landuse_determinator.LU2_Dep_textbox;
+
+            landuse_determinator.LU3_Inf_textbox.Text = guiVariables.Landuse_determinator.LU3_Inf_textbox;
+            landuse_determinator.LU3_Evap_textbox.Text = guiVariables.Landuse_determinator.LU3_Evap_textbox;
+            landuse_determinator.LU3_Ero_textbox.Text = guiVariables.Landuse_determinator.LU3_Ero_textbox;
+            landuse_determinator.LU3_Dep_textbox.Text = guiVariables.Landuse_determinator.LU3_Dep_textbox;
+
+            landuse_determinator.LU4_Inf_textbox.Text = guiVariables.Landuse_determinator.LU4_Inf_textbox;
+            landuse_determinator.LU4_Evap_textbox.Text = guiVariables.Landuse_determinator.LU4_Evap_textbox;
+            landuse_determinator.LU4_Ero_textbox.Text = guiVariables.Landuse_determinator.LU4_Ero_textbox;
+            landuse_determinator.LU4_Dep_textbox.Text = guiVariables.Landuse_determinator.LU4_Dep_textbox;
+
+            landuse_determinator.LU5_Inf_textbox.Text = guiVariables.Landuse_determinator.LU5_Inf_textbox;
+            landuse_determinator.LU5_Evap_textbox.Text = guiVariables.Landuse_determinator.LU5_Evap_textbox;
+            landuse_determinator.LU5_Ero_textbox.Text = guiVariables.Landuse_determinator.LU5_Ero_textbox;
+            landuse_determinator.LU5_Dep_textbox.Text = guiVariables.Landuse_determinator.LU5_Dep_textbox;
+
+            landuse_determinator.LU6_Inf_textbox.Text = guiVariables.Landuse_determinator.LU6_Inf_textbox;
+            landuse_determinator.LU6_Evap_textbox.Text = guiVariables.Landuse_determinator.LU6_Evap_textbox;
+            landuse_determinator.LU6_Ero_textbox.Text = guiVariables.Landuse_determinator.LU6_Ero_textbox;
+            landuse_determinator.LU6_Dep_textbox.Text = guiVariables.Landuse_determinator.LU6_Dep_textbox;
+
+            landuse_determinator.LU7_Inf_textbox.Text = guiVariables.Landuse_determinator.LU7_Inf_textbox;
+            landuse_determinator.LU7_Evap_textbox.Text = guiVariables.Landuse_determinator.LU7_Evap_textbox;
+            landuse_determinator.LU7_Ero_textbox.Text = guiVariables.Landuse_determinator.LU7_Ero_textbox;
+            landuse_determinator.LU7_Dep_textbox.Text = guiVariables.Landuse_determinator.LU7_Dep_textbox;
+
+            landuse_determinator.LU8_Inf_textbox.Text = guiVariables.Landuse_determinator.LU8_Inf_textbox;
+            landuse_determinator.LU8_Evap_textbox.Text = guiVariables.Landuse_determinator.LU8_Evap_textbox;
+            landuse_determinator.LU8_Ero_textbox.Text = guiVariables.Landuse_determinator.LU8_Ero_textbox;
+            landuse_determinator.LU8_Dep_textbox.Text = guiVariables.Landuse_determinator.LU8_Dep_textbox;
+
+            landuse_determinator.LU9_Inf_textbox.Text = guiVariables.Landuse_determinator.LU9_Inf_textbox;
+            landuse_determinator.LU9_Evap_textbox.Text = guiVariables.Landuse_determinator.LU9_Evap_textbox;
+            landuse_determinator.LU9_Ero_textbox.Text = guiVariables.Landuse_determinator.LU9_Ero_textbox;
+            landuse_determinator.LU9_Dep_textbox.Text = guiVariables.Landuse_determinator.LU9_Dep_textbox;
+
+            landuse_determinator.LU10_Inf_textbox.Text = guiVariables.Landuse_determinator.LU10_Inf_textbox;
+            landuse_determinator.LU10_Evap_textbox.Text = guiVariables.Landuse_determinator.LU10_Evap_textbox;
+            landuse_determinator.LU10_Ero_textbox.Text = guiVariables.Landuse_determinator.LU10_Ero_textbox;
+            landuse_determinator.LU10_Dep_textbox.Text = guiVariables.Landuse_determinator.LU10_Dep_textbox;
         }
         private void UpdateSoildata()
         {
-
+            soildata.coarsebox.Text = guiVariables.Soildata.Coarsebox;
+            soildata.sandbox.Text = guiVariables.Soildata.Sandbox;
+            soildata.siltbox.Text = guiVariables.Soildata.Siltbox;
+            soildata.claybox.Text = guiVariables.Soildata.Claybox;
+            soildata.fineclaybox.Text = guiVariables.Soildata.Fineclaybox;
         }
         private string GetDialogFileName()
         {
