@@ -37,6 +37,10 @@ namespace LORICA4
         double urfinalLati, urfinalLongi, llfinalLati, llfinalLongi, yurcorner, xurcorner = 0;
         TimeSpan geo_t, pedo_t, hydro_t, ponding_t;
 
+
+
+        public static int updateClick = 0;
+
         #region weird public variables
         AviWriter aw; // <JMW 20041018>
         bool frost_weathering_active,
@@ -217,6 +221,29 @@ namespace LORICA4
                old_depth_decay_constant,
                young_CTI_decay_constant;
 
+
+        double[,,]     //3D matrices for properties of soil layers in different x y (x,y,z)
+                    layerthickness_m,         // : thickness in m 
+                    young_SOM_kg,         // : OM mass in kgrams (per voxel = layer * thickness)
+                    old_SOM_kg,         // : OM mass in kgrams (per voxel = layer * thickness) 
+                    bulkdensity;            // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
+
+
+
+
+        int[,]  // integer matrices
+                    zones,
+                    mask,
+                    error_m,            // To store error locations as integer
+                    sinkmap,
+                    soilmap,            // integer numbers for soil map
+                    vegetation_type;
+
+
+
+        int calibration_length; // to assess if a process has to be calibrated mvdm, >1 is more runs
+
+
         // Decalcification parameters
         double[,,] CO3_kg;   // CaCO3, to track decalcification speed. Does not contribute to texture or soil mass (yet) MM
         double ini_CO3_content_frac;
@@ -329,7 +356,7 @@ namespace LORICA4
         {
             /*
             this.Invoke(new MethodInvoker(() => {
-                InfoStatusPanel.Text = "Entered main program";
+                guiVariables.InfoStatusPanel = "Entered main program";
             }
             ));
             */
@@ -928,7 +955,7 @@ namespace LORICA4
 
             //if (GlobalMethods.t == 0 | GlobalMethods.t == 1) { displaysoil(50, 0); }
             int i = 0;
-            this.TimeStatusPanel.Text = "timestep " + (GlobalMethods.t + 1) + "/" + +guiVariables.End_time;
+            guiVariables.TimeStatusPanel = "timestep " + (GlobalMethods.t + 1) + "/" + +guiVariables.End_time;
             updateClick = 1;
             // Debug.WriteLine("starting calculations - TIME " + GlobalMethods.t);
 
@@ -940,7 +967,7 @@ namespace LORICA4
             //Debug.WriteLine("before water {0}",texture_kg[0,0,0,2]);
             //Debug.WriteLine("before water balance");
             hydro_start = DateTime.Now;
-            if (daily_water.Checked)
+            if (guiVariables.Daily_Water)
             {
 
                 // Debug.WriteLine("Running daily water balance");
@@ -955,7 +982,7 @@ namespace LORICA4
 
             #region Vegetation
             // Debug.WriteLine("before vegetation");
-            if (daily_water.Checked)
+            if (guiVariables.Daily_Water)
             {
                 determine_vegetation_type();
                 change_vegetation_parameters();
@@ -975,7 +1002,7 @@ namespace LORICA4
                 initialise_every(); //fast
                 GlobalMethods.comb_sort();        //fast
 
-                if (daily_water.Checked)
+                if (guiVariables.Daily_Water)
                 {
                     //Debug.WriteLine("before WE2");
                     calculate_water_ero_sed_daily();
@@ -1001,7 +1028,7 @@ namespace LORICA4
             }
 
             // Debug.WriteLine("before TF");
-            if (treefall_checkbox.Checked)
+            if (guiVariables.Treefall_checkbox)
             {
                 if (GlobalMethods.t <= (guiVariables.End_time - 500)) // if there is no tillage
                 {
@@ -1218,7 +1245,7 @@ namespace LORICA4
                 // displaysoil(31, 12);
                 // Debug.WriteLine("Total catchment mass = " + total_catchment_mass());
 
-                if (daily_water.Checked)
+                if (guiVariables.Daily_Water)
                 {
                     Debug.WriteLine("writing daily water");
 
@@ -1401,7 +1428,7 @@ namespace LORICA4
                     //try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + GlobalMethods.t + "_out_dzsed.asc", GlobalMethods.dz_sed_m); }
                     //catch { MessageBox.Show("dzsed has not been written"); }
                 }
-                if (treefall_checkbox.Checked)
+                if (guiVariables.Treefall_checkbox)
                 {
                     try
                     {
@@ -1411,25 +1438,25 @@ namespace LORICA4
                     }
                     catch { MessageBox.Show("treefall has not been written"); }
                 }
-                if (Soildepth_output_checkbox.Checked)
+                if (guiVariables.Soildepth_output_checkbox)
                 {
                     try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_soildepth.asc", GlobalMethods.soildepth_m); }
                     catch { MessageBox.Show("soildepth has not been written"); }
                 }
-                if (Alt_change_output_checkbox.Checked)
+                if (guiVariables.Alt_change_output_checkbox)
                 {
                     try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_change.asc", GlobalMethods.dtmchange); }
                     catch { MessageBox.Show("change has not been written"); }
                 }
 
-                if (water_output_checkbox.Checked & Water_ero_checkbox.Checked)
+                if (guiVariables.Water_output_checkbox & guiVariables.Water_ero_checkbox)
                 {
                     // Debug.WriteLine("before writing water flow");
 
 
                     try
                     {
-                        if (daily_water.Checked)
+                        if (guiVariables.Daily_Water)
                         {
                             for (int roww = 0; roww < GlobalMethods.nr; roww++)
                             {
@@ -1443,7 +1470,7 @@ namespace LORICA4
                     }
                     catch { MessageBox.Show("water has not been written"); }
                 }
-                if (depressions_output_checkbox.Checked)
+                if (guiVariables.Depressions_output_checkbox)
                 {
                     try { GlobalMethods.out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_depress.asc", depression); }
                     catch { MessageBox.Show("depressions have not been written"); }
@@ -1462,17 +1489,17 @@ namespace LORICA4
                     catch { MessageBox.Show("lakesed has not been written"); }
                 }
 
-                if (Water_ero_checkbox.Checked)
+                if (guiVariables.Water_ero_checkbox)
                 {
                     // Debug.WriteLine("before writing water erosion");
 
-                    if (all_process_output_checkbox.Checked)
+                    if (guiVariables.All_process_output_checkbox)
                     {
                         try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_water_erosion.asc", GlobalMethods.sum_water_erosion); }
                         catch { MessageBox.Show("water erosion has not been written"); }
                     }
                 }
-                if (creep_active_checkbox.Checked)
+                if (guiVariables.Creep_active_checkbox)
                 {
                     // Debug.WriteLine("before writing GlobalMethods.creep");
 
@@ -1481,11 +1508,11 @@ namespace LORICA4
 
                 }
 
-                if (Tillage_checkbox.Checked)
+                if (guiVariables.Tillage_checkbox)
                 {
                     // Debug.WriteLine("before writing tillage erosion");
 
-                    if (all_process_output_checkbox.Checked)
+                    if (guiVariables.All_process_output_checkbox)
                     {
                         try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_tillage.asc", GlobalMethods.sum_tillage); }
                         catch { MessageBox.Show("tillage has not been written"); }
@@ -1669,7 +1696,7 @@ namespace LORICA4
                     Debug.WriteLine("Error finishing video output");
                 }
 
-                this.InfoStatusPanel.Text = " --finished--";
+                guiVariables.InfoStatusPanel = " --finished--";
                 stopwatch.Stop();
                 Debug.WriteLine("Elapsed time: " + stopwatch.Elapsed);
                 //Timeseries output
@@ -4514,7 +4541,7 @@ namespace LORICA4
                             {
                                 weathered_mass_kg = GlobalMethods.texture_kg[row, col, layer, tex_class] * chemical_weathering_constant / 10 * Math.Exp(-Cthree * depth) * Cfour * specific_area[tex_class] * dt;
 
-                                if (daily_water.Checked) { weathered_mass_kg *= waterfactor[row, col]; }
+                                if (guiVariables.Daily_Water) { weathered_mass_kg *= waterfactor[row, col]; }
 
                                 //Debug.WriteLine(" weath mass for layer " + layer + " class " + tex_class + " is " + weathered_mass_kg + " " + Math.Exp(-Cthree * depth));
                                 // note that the chem_weath constant is in kg/m2 mineral surface / y (in contrast to the original value from Salvador Blanes (mol/m2 mineral/s)
@@ -4575,7 +4602,7 @@ namespace LORICA4
                             //    Debug.WriteLine(" Warning: more than 100% of leached mass wants to become fine clay. This may indicate an error. Capping at 100%");
                             //    fraction_neoform = 1;
                             //}
-                            //if (daily_water.Checked) { fraction_neoform *= waterfactor[row,col]; }
+                            //if (guiVariables.Daily_Water) { fraction_neoform *= waterfactor[row,col]; }
                             //texture_kg[row, col, layer, 4] += total_weath_mass * fraction_neoform;
                             //total_fine_neoformed_mass_kg += total_weath_mass * fraction_neoform;
                             //total_weath_mass -= total_weath_mass * fraction_neoform;
@@ -4683,7 +4710,7 @@ namespace LORICA4
                             }
                             //select vegetation parameters, same as GlobalMethods.creep
                             potential_bioturbation_kg_m2_y = 4.5;
-                            if (daily_water.Checked)
+                            if (guiVariables.Daily_Water)
                             {
                                 if (aridity_vegetation[row, col] < 1) { potential_bioturbation_kg_m2_y = 4 + 0.3; } // grassland
                                 else { potential_bioturbation_kg_m2_y = 4 + 1.3; } // forest
@@ -4692,7 +4719,7 @@ namespace LORICA4
                             // if (findnegativetexture()) { Debugger.Break(); }
 
                             // geen split voor voor depth decay voor verschillende vegetaties. Depth decay van GlobalMethods.creep aanhouden. 
-                            //if(daily_water.Checked)
+                            //if(guiVariables.Daily_Water)
                             //{
                             //    if (aridity_vegetation[row, col] < 1)
                             //    {
@@ -5157,7 +5184,7 @@ namespace LORICA4
                     //Parallel.For(0, GlobalMethods.nc, i =>                    //we parallelize over cols
                     for (int col = 0; col < GlobalMethods.nc; col++)
                     {
-                        if (daily_water.Checked)
+                        if (guiVariables.Daily_Water)
                         {
                             if (aridity_vegetation[row, col] < 1) { potential_OM_input = 0.67; } // grassland
                             else { potential_OM_input = 0.62; } // forest
@@ -5238,7 +5265,7 @@ namespace LORICA4
             //possibly a function of local wetness / infiltration, but for now not/.
             double Iavg = 0, Imin = 10000000, Imax = 0;
 
-            if (daily_water.Checked)
+            if (guiVariables.Daily_Water)
             {
                 int Icount = 0;
                 for (int row = 0; row < GlobalMethods.nr; row++)
@@ -5281,7 +5308,7 @@ namespace LORICA4
                                     if (CT_depth_decay_checkbox.Checked) { eluviated_kg = max_eluviation * (1 - Math.Exp(-Cclay * GlobalMethods.texture_kg[row, col, layer, 4] / totalweight)) * Math.Exp(-ct_depthdec * depth) * dt * GlobalMethods.dx * GlobalMethods.dx; }
                                     else { eluviated_kg = max_eluviation * (1 - Math.Exp(-Cclay * GlobalMethods.texture_kg[row, col, layer, 4] / totalweight)) * dt * GlobalMethods.dx * GlobalMethods.dx; }
                                     //
-                                    if (daily_water.Checked)
+                                    if (guiVariables.Daily_Water)
                                     {
                                         eluviated_kg *= waterfactor[row, col];
                                         ;
@@ -5338,7 +5365,7 @@ namespace LORICA4
                                 Debug.WriteLine("ctj1");
                             }
 
-                            if (daily_water.Checked)
+                            if (guiVariables.Daily_Water)
                             {
                                 local_I = Math.Max(Iy[row, col], 0);
                                 ct_adv0 = ct_adv0_all * (1 - Math.Exp(-local_I / (2.0 * (1.0 / 3)))); // Exponential function to determine v0, based on infiltration. The function approaches a v0 of 1. I of 0.5~v0 of 0.5. the 2 indicates the range of the variogram. 
@@ -6226,7 +6253,7 @@ namespace LORICA4
                     total_kg_deposited += total_mass_deposited[size];
                 }
             }
-            this.InfoStatusPanel.Text = "calc movement has been finished";
+            guiVariables.InfoStatusPanel = "calc movement has been finished";
             this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
 
             //double mass_after = total_catchment_mass();
@@ -6255,7 +6282,7 @@ namespace LORICA4
 
         void calculate_water_ero_sed()    //where the water starts flowing, eroding and transporting
         {
-            this.InfoStatusPanel.Text = "water erosion calculation";
+            guiVariables.InfoStatusPanel = "water erosion calculation";
             dhmax_errors = 0;
             //set all start q values effective precipitation at time GlobalMethods.t
             nb_ok = 0;  // nb_ok is 1 als er uberhaupt buren zijn, dus 0 als er alleen maar NODATA is
@@ -6845,7 +6872,7 @@ namespace LORICA4
                     Debug.WriteLine(" on m-basis: sedimented into " + depressions_delta + " of " + totaldepressions + " depressions, " + sediment_delta + "  sediment used");
                 } */
             }
-            this.InfoStatusPanel.Text = "calc movement has been finished";
+            guiVariables.InfoStatusPanel = "calc movement has been finished";
             this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
 
 
@@ -6959,7 +6986,7 @@ namespace LORICA4
         {
             // from steepest local slope, contributing area and stability parameters
             // start calculation number of contributing draining cells by multiple flow algorithm
-            this.InfoStatusPanel.Text = "critical rainfall calculation";
+            guiVariables.InfoStatusPanel = "critical rainfall calculation";
             double beta;
             //set all start q values effective precipitation at time GlobalMethods.t
             nb_ok = 0; nb_check = 0; all_grids = 0;
@@ -7166,7 +7193,7 @@ namespace LORICA4
         {
             try
             {
-                this.InfoStatusPanel.Text = "landslide calculation";
+                guiVariables.InfoStatusPanel = "landslide calculation";
                 int tell;
                 //set all start q values effective precipitation at time GlobalMethods.t
                 nb_ok = 0; nb_check = 0; all_grids = 0.0;
@@ -7401,9 +7428,9 @@ namespace LORICA4
             try
             {
                 double mass_before = total_catchment_mass();
-                this.InfoStatusPanel.Text = "tillage calculation";
+                guiVariables.InfoStatusPanel = "tillage calculation";
                 int row, col, i, j;
-                double slope_sum, dz_min, GlobalMethods.d_x, dz_max, dh, fraction, temptill, tempdep, temptill_kg,
+                double slope_sum, dz_min, d_x, dz_max, dh, fraction, temptill, tempdep, temptill_kg,
                             slope;
 
                 nb_ok = 0; nb_check = 0;
@@ -7707,7 +7734,7 @@ namespace LORICA4
         /*
         private void calculate_creep()
         {
-            this.InfoStatusPanel.Text = "GlobalMethods.creep calculation";
+            guiVariables.InfoStatusPanel = "GlobalMethods.creep calculation";
             int row, col,
                         i, j,
                         nb_ok;
@@ -7826,7 +7853,7 @@ namespace LORICA4
         {
             try
             {
-                this.InfoStatusPanel.Text = "GlobalMethods.creep calculation";
+                guiVariables.InfoStatusPanel = "GlobalMethods.creep calculation";
                 int row, col,
                             i, j,
                             nb_ok,
@@ -8089,7 +8116,7 @@ namespace LORICA4
                         // potential_creep_kg = 4.5;
                         potential_creep_kg = Convert.ToDouble(potential_bioturbation_textbox.Text);
 
-                        if (daily_water.Checked)
+                        if (guiVariables.Daily_Water)
                         {
                             if (aridity_vegetation[row, col] < 1) { potential_creep_kg = 4 + 0.3; } // grassland
                             else { potential_creep_kg = 4 + 1.3; } // forest
@@ -8480,7 +8507,7 @@ namespace LORICA4
 
             try
             {
-                this.InfoStatusPanel.Text = "tree fall calculation";
+                guiVariables.InfoStatusPanel = "tree fall calculation";
 
                 bool fallen = false;
                 int i_tf = 0, j_tf = 0;
@@ -8846,7 +8873,7 @@ namespace LORICA4
         {
             // as function of infiltration?
             double Iavg = 0, Imin = 10000000, Imax = 0;
-            if (daily_water.Checked)
+            if (guiVariables.Daily_Water)
             {
                 int Icount = 0;
                 for (row = 0; row < GlobalMethods.nr; row++)
@@ -8887,7 +8914,7 @@ namespace LORICA4
 
                         if (rockweath_method.SelectedIndex == 2)
                         {
-                            if (daily_water.Checked)
+                            if (guiVariables.Daily_Water)
                             {
                                 GlobalMethods.bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
                             }
@@ -9404,7 +9431,7 @@ namespace LORICA4
 
         void findsinks()
         {
-            this.InfoStatusPanel.Text = "findtrouble has been entered";
+            guiVariables.InfoStatusPanel = "findtrouble has been entered";
             int number, twoequals = 0, threeequals = 0, moreequals = 0;
             int[] intoutlet = new int[9];
             int x;
@@ -9464,7 +9491,7 @@ namespace LORICA4
 
             //reports
 
-            this.InfoStatusPanel.Text = "found " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells";
+            guiVariables.InfoStatusPanel = "found " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells";
             Debug.WriteLine("\n\n--sinks overview at GlobalMethods.t = " + GlobalMethods.t + "--");
 
             if (numsinks / (GlobalMethods.nr * GlobalMethods.nc) > 0.0075) { Debug.WriteLine("this DEM contains " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells\n That's a lot!"); }
@@ -9480,7 +9507,7 @@ namespace LORICA4
         void searchdepressions()
         {
             int z;
-            this.InfoStatusPanel.Text = "searchdepressions has been entered";
+            guiVariables.InfoStatusPanel = "searchdepressions has been entered";
             for (row = 0; row < GlobalMethods.nr; row++)
             {        //visit all cells in the DEM and  ...
                 for (col = 0; col < GlobalMethods.nc; col++)
@@ -9882,7 +9909,7 @@ namespace LORICA4
             // to membercells so they drain towards the outlet.
             // we cannot simply use distance_to_outlet for each member cell, since depressions can round corners....
 
-            this.InfoStatusPanel.Text = "def fillheight has been entered";
+            guiVariables.InfoStatusPanel = "def fillheight has been entered";
             //Debug.WriteLine("defining fillheight\n");
             int notyetdone, done, depressiontt;
 
@@ -10628,7 +10655,7 @@ namespace LORICA4
         void initialise_once()        //fills the inputgrids with values
         {
 
-            if (daily_water.Checked && GlobalMethods.input_data_error == false)
+            if (guiVariables.Daily_Water && GlobalMethods.input_data_error == false)
             {
                 try
                 {
@@ -10801,17 +10828,17 @@ namespace LORICA4
                         GlobalMethods.dz_soil[row, col] = 0;
                         if (Creep_Checkbox.Checked) { GlobalMethods.sum_creep_grid[row, col] = 0; GlobalMethods.creep[row, col] = 0; }
                         if (Solifluction_checkbox.Checked) { GlobalMethods.sum_solifluction[row, col] = 0; }
-                        if (Water_ero_checkbox.Checked && only_waterflow_checkbox.Checked == false) { GlobalMethods.sum_water_erosion[row, col] = 0; total_sed_export = 0; }
-                        if (treefall_checkbox.Checked) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
+                        if (guiVariables.Water_ero_checkbox && only_waterflow_checkbox.Checked == false) { GlobalMethods.sum_water_erosion[row, col] = 0; total_sed_export = 0; }
+                        if (guiVariables.Treefall_checkbox) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
                         if (Biological_weathering_checkbox.Checked) { GlobalMethods.sum_biological_weathering[row, col] = 0; }
                         if (Frost_weathering_checkbox.Checked) { GlobalMethods.sum_frost_weathering[row, col] = 0; }
-                        if (Tillage_checkbox.Checked) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; GlobalMethods.dz_till_bd[row, col] = 0; }
+                        if (guiVariables.Tillage_checkbox) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; GlobalMethods.dz_till_bd[row, col] = 0; }
                         if (guiVariables.Landslide_checkbox) { GlobalMethods.sum_landsliding[row, col] = 0; total_sum_tillage = 0; }
                         if (GlobalMethods.soildepth_m[row, col] < 0.0 && GlobalMethods.soildepth_m[row, col] != -9999) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
-                        if (uplift_active_checkbox.Checked) { GlobalMethods.sum_uplift[row, col] = 0; total_GlobalMethods.sum_uplift = 0; }
-                        if (tilting_active_checkbox.Checked) { GlobalMethods.sum_tilting[row, col] = 0; total_GlobalMethods.sum_tilting = 0; }
+                        if (uplift_active_checkbox.Checked) { GlobalMethods.sum_uplift[row, col] = 0; total_sum_uplift = 0; }
+                        if (tilting_active_checkbox.Checked) { GlobalMethods.sum_tilting[row, col] = 0; total_sum_tilting = 0; }
                         if (check_space_soildepth.Checked != true) { GlobalMethods.soildepth_m[row, col] = soildepth_value; }
-                        if (check_space_till_fields.Checked != true && Tillage_checkbox.Checked)
+                        if (check_space_till_fields.Checked != true && guiVariables.Tillage_checkbox)
                         {
                             GlobalMethods.tillfields[row, col] = 1;
 
@@ -10819,12 +10846,12 @@ namespace LORICA4
 
 
 
-                        if (Water_ero_checkbox.Checked && only_waterflow_checkbox.Checked == false)
+                        if (guiVariables.Water_ero_checkbox && only_waterflow_checkbox.Checked == false)
                         {
                             GlobalMethods.K_fac[row, col] = advection_erodibility; GlobalMethods.P_fac[row, col] = P_act;
                         } //WVG GlobalMethods.K_fac matrix initialisation is needed when GlobalMethods.landuse is disabled
 
-                        if (Water_ero_checkbox.Checked && check_space_landuse.Checked == true)
+                        if (guiVariables.Water_ero_checkbox && check_space_landuse.Checked == true)
                         {
                             //currently, this will throw an exception if GlobalMethods.landuse is actually spatial //development required //ArT
                             if (GlobalMethods.landuse[row, col] == 1)
@@ -11357,16 +11384,16 @@ namespace LORICA4
                     {
                         GlobalMethods.dz_soil[row, col] = 0;
                         if (Creep_Checkbox.Checked) { GlobalMethods.sum_creep_grid[row, col] = 0; GlobalMethods.creep[row, col] = 0; }
-                        if (treefall_checkbox.Checked) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
+                        if (guiVariables.Treefall_checkbox) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
                         if (Solifluction_checkbox.Checked) { GlobalMethods.sum_solifluction[row, col] = 0; }
-                        if (Water_ero_checkbox.Checked) { GlobalMethods.sum_water_erosion[row, col] = 0; }
+                        if (guiVariables.Water_ero_checkbox) { GlobalMethods.sum_water_erosion[row, col] = 0; }
                         if (Biological_weathering_checkbox.Checked) { GlobalMethods.sum_biological_weathering[row, col] = 0; }
                         if (Frost_weathering_checkbox.Checked) { GlobalMethods.sum_frost_weathering[row, col] = 0; }
-                        if (Tillage_checkbox.Checked) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; }
+                        if (guiVariables.Tillage_checkbox) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; }
                         if (GlobalMethods.soildepth_m[row, col] < 0.0) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
                     }
                     if (GlobalMethods.soildepth_m[row, col] < 0.0) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
-                    if (Water_ero_checkbox.Checked) { GlobalMethods.waterflow_m3[row, col] = 0.0; }
+                    if (guiVariables.Water_ero_checkbox) { GlobalMethods.waterflow_m3[row, col] = 0.0; }
 
                 } //for
             } //for

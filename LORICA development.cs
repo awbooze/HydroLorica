@@ -433,26 +433,6 @@ namespace LORICA4
 
         private System.ComponentModel.IContainer components;
 
-        double[,,]     //3D matrices for properties of soil layers in different x y (x,y,z)
-                    layerthickness_m,         // : thickness in m 
-                    young_SOM_kg,         // : OM mass in kgrams (per voxel = layer * thickness)
-                    old_SOM_kg,         // : OM mass in kgrams (per voxel = layer * thickness) 
-                    bulkdensity;            // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
-
-
-        
-
-        int[,]  // integer matrices
-                    zones,
-                    mask,
-                    error_m,            // To store error locations as integer
-                    sinkmap,
-                    soilmap,            // integer numbers for soil map
-                    vegetation_type;
-
-
-
-        int calibration_length; // to assess if a process has to be calibrated mvdm, >1 is more runs
 
         //sinks and depression parameters:
         //the constant values below may have to be increased for large or strange landscapes and studies
@@ -460,12 +440,7 @@ namespace LORICA4
         
         const double root = 7.07;
 
-        int     i,
-                j,
-                ii,
-                jj,
-                z,
-                graphics_scale = 2; /*
+        int     graphics_scale = 2; /*
                 
                 tel1,
                 tel2,
