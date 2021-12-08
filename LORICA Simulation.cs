@@ -933,7 +933,7 @@ namespace LORICA4
             updateClick = 1;
             // Debug.WriteLine("starting calculations - TIME " + GlobalMethods.t);
 
-            if (guiVariables.Ik_ben_Marijn)
+            if (GlobalMethods.Ik_ben_Marijn)
             { calculate_overwater_landscape_Spitsbergen(); }
             //displaysoil(0, 0);
 
@@ -974,7 +974,7 @@ namespace LORICA4
                 //Debug.WriteLine("before WE1");
 
                 initialise_every(); //fast
-                comb_sort();        //fast
+                GlobalMethods.comb_sort();        //fast
 
                 if (daily_water.Checked)
                 {
@@ -1027,7 +1027,7 @@ namespace LORICA4
             {
                 try
                 {// Debug.WriteLine("calculating GlobalMethods.creep");
-                    comb_sort();
+                    GlobalMethods.comb_sort();
 
                     calculate_creep();
 
@@ -1041,7 +1041,7 @@ namespace LORICA4
             //displaysoil(0, 0);
             if (tillage_active)
             {
-                comb_sort();
+                GlobalMethods.comb_sort();
                 int tilltime = 0;
                 //if (guivariables.Check_time_till_fields) { tilltime = till_record[GlobalMethods.t]; }
                 //else { tilltime = 1; }
@@ -1062,7 +1062,7 @@ namespace LORICA4
             if (landslide_active)
             {
                 Debug.WriteLine("calculating landsliding");
-                comb_sort();
+                GlobalMethods.comb_sort();
                 ini_slope();
                 calculate_critical_rain();
                 calculate_slide();
@@ -1082,7 +1082,7 @@ namespace LORICA4
             if (soil_phys_weath_active)
             {
                 // Debug.WriteLine("calculating soil physical weathering");
-                if (!guiVariables.Ik_ben_Marijn) { soil_physical_weathering(); }
+                if (!GlobalMethods.Ik_ben_Marijn) { soil_physical_weathering(); }
                 else
                 {
                     SPITS_soil_physical_weathering();
@@ -1127,7 +1127,7 @@ namespace LORICA4
             {
                 // Debug.WriteLine("calculating soil clay dynamics ");
 
-                if (guiVariables.Ik_ben_Marijn)
+                if (GlobalMethods.Ik_ben_Marijn)
                 {
                     soil_silt_translocation(); // Spitsbergen case study
                 }
@@ -1691,7 +1691,7 @@ namespace LORICA4
             if (coordinateDone == 0)
             {
                 //transfrom coordinates
-                point testPoint = new point(xcoord, ycoord);
+                point testPoint = new point(GlobalMethods.xcoord, GlobalMethods.ycoord);
                 if (UTMgridcheckbox.Checked)
                 {
                     testPoint.UTMzone = System.Convert.ToInt32(UTMzonebox.Text);
@@ -1702,8 +1702,8 @@ namespace LORICA4
                 {
                     testPoint.transformPoint();
                 }
-                yurcorner = ycoord + (System.Convert.ToDouble(GlobalMethods.nr) * System.Convert.ToDouble(GlobalMethods.dx)); //ART possibly incorrect GlobalMethods.nr = GlobalMethods.nc
-                xurcorner = xcoord + (System.Convert.ToDouble(GlobalMethods.nc) * System.Convert.ToDouble(GlobalMethods.dx));
+                yurcorner = GlobalMethods.ycoord + (System.Convert.ToDouble(GlobalMethods.nr) * System.Convert.ToDouble(GlobalMethods.dx)); //ART possibly incorrect GlobalMethods.nr = GlobalMethods.nc
+                xurcorner = GlobalMethods.xcoord + (System.Convert.ToDouble(GlobalMethods.nc) * System.Convert.ToDouble(GlobalMethods.dx));
                 point testPoint2 = new point(xurcorner, yurcorner);
                 if (UTMgridcheckbox.Checked)
                 {
@@ -2111,7 +2111,7 @@ namespace LORICA4
                     }
                 }
             }
-            comb_sort();
+            GlobalMethods.comb_sort();
 
             double P_OF, snowmelt_m = 0;
             // Debug.WriteLine("wb3");
@@ -2522,8 +2522,8 @@ namespace LORICA4
                 //Debug.WriteLine("runner start of run: " + runner);
                 if (GlobalMethods.index[runner] != -9999)
                 {
-                    int row = row_index[runner]; 
-                    int col = col_index[runner];
+                    int row = GlobalMethods.row_index[runner]; 
+                    int col = GlobalMethods.col_index[runner];
 
                     //if (row == 186 & col == 499 & GlobalMethods.t == 5) { minimaps(186, 499); }
 
@@ -7198,7 +7198,7 @@ namespace LORICA4
                 for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
                     int row, col;
-                    row = GlobalMethods.row_index[runner]; col = col_index[runner];
+                    row = GlobalMethods.row_index[runner]; col = GlobalMethods.col_index[runner];
 
                     // into loop for surrounding grids of certain grid
                     // Start first the slope_sum loop for all lower neighbour grids
@@ -10820,7 +10820,7 @@ namespace LORICA4
                         if (Tillage_checkbox.Checked) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; GlobalMethods.dz_till_bd[row, col] = 0; }
                         if (guiVariables.Landslide_checkbox) { GlobalMethods.sum_landsliding[row, col] = 0; total_sum_tillage = 0; }
                         if (GlobalMethods.soildepth_m[row, col] < 0.0 && GlobalMethods.soildepth_m[row, col] != -9999) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
-                        if (uplift_active_checkbox.Checked) { GlobalMethods.sum_uplift[row, col] = 0; sum_uplift = 0; }
+                        if (uplift_active_checkbox.Checked) { GlobalMethods.sum_uplift[row, col] = 0; GlobalMethods.sum_uplift = 0; }
                         if (tilting_active_checkbox.Checked) { GlobalMethods.sum_tilting[row, col] = 0; total_sum_tilting = 0; }
                         if (check_space_soildepth.Checked != true) { GlobalMethods.soildepth_m[row, col] = soildepth_value; }
                         if (check_space_till_fields.Checked != true && Tillage_checkbox.Checked)
