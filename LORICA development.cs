@@ -409,7 +409,6 @@ namespace LORICA4
         private Label label120;
         private CheckBox version_lux_checkbox;
         private Button button4;
-        private System.Drawing.Bitmap m_objDrawingSurface;// = new Bitmap(FILENAMENEEDED);
         public static int plotType = 0;
         public static double magnifyValue = 0;
         public static int updateClick = 0;
@@ -6413,7 +6412,7 @@ namespace LORICA4
         {
             Debug.WriteLine("\n--drawing maps--");
             Graphics objGraphics;
-            objGraphics = Graphics.FromImage(m_objDrawingSurface);
+            objGraphics = Graphics.FromImage(GlobalMethods.m_objDrawingSurface);
             objGraphics.Clear(SystemColors.Control);
 
             int row, col, z;
@@ -6688,7 +6687,7 @@ namespace LORICA4
             }                   // Close of Row Loop
 
             objGraphics.Dispose();
-            Mapwindow.Image = m_objDrawingSurface;
+            Mapwindow.Image = GlobalMethods.m_objDrawingSurface;
 
         }
 
@@ -7426,6 +7425,10 @@ Example: rainfall.asc can look like:
                 textBoxAVIFile.Text = guiVariables.TextBoxAVIFile;
                 ini_CaCO3_content.Text = guiVariables.Ini_CaCO3_content;
                 calibration_levels_textbox.Text = guiVariables.Calibration_levels_textbox;
+                daily_n.Text = guiVariables.Daily_n;
+                latitude_deg.Text = guiVariables.Latitude_deg;
+                latitude_min.Text = guiVariables.Latitude_min; 
+
 
                 Water_ero_checkbox.Checked = guiVariables.Water_ero_checkbox;
                 Tillage_checkbox.Checked = guiVariables.Tillage_checkbox;
@@ -7442,6 +7445,7 @@ Example: rainfall.asc can look like:
                 soil_carbon_cycle_checkbox.Checked = guiVariables.Soil_carbon_cycle_checkbox;
                 UTMsouthcheck.Checked = guiVariables.UTMsouthcheck;
                 check_time_till_fields.Checked = guiVariables.Check_time_till_fields;
+                check_scaling_daily_weather.Checked = guiVariables.Check_scaling_daily_weather;
 
                 this.Refresh(); // tjc to enable graphics to be drawn before sending to AVI
             }
@@ -7565,6 +7569,9 @@ Example: rainfall.asc can look like:
                 guiVariables.TextBoxAVIFile = textBoxAVIFile.Text;
                 guiVariables.Ini_CaCO3_content = ini_CaCO3_content.Text;
                 guiVariables.Calibration_levels_textbox = calibration_levels_textbox.Text;
+                guiVariables.Daily_n = daily_n.Text;
+                guiVariables.Latitude_deg = latitude_deg.Text;
+                guiVariables.Latitude_min = latitude_min.Text;
 
                 guiVariables.Water_ero_checkbox = Water_ero_checkbox.Checked;
                 guiVariables.Tillage_checkbox = Tillage_checkbox.Checked;
@@ -7581,6 +7588,7 @@ Example: rainfall.asc can look like:
                 guiVariables.Soil_carbon_cycle_checkbox = soil_carbon_cycle_checkbox.Checked;
                 guiVariables.UTMsouthcheck = UTMsouthcheck.Checked;
                 guiVariables.Check_time_till_fields = check_time_till_fields.Checked;
+                guiVariables.Check_scaling_daily_weather = check_scaling_daily_weather.Checked;
             }
             ));
 

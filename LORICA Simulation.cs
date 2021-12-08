@@ -840,7 +840,7 @@ namespace LORICA4
                                 if (c_scale < r_scale) { graphics_scale = System.Convert.ToInt32(Math.Floor(c_scale)); }
                                 else { graphics_scale = System.Convert.ToInt32(Math.Floor(r_scale)); }
                                 if (graphics_scale < 1) { graphics_scale = 1; }
-                                m_objDrawingSurface = new Bitmap(GlobalMethods.nc * graphics_scale, GlobalMethods.nr * graphics_scale, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                                GlobalMethods.m_objDrawingSurface = new Bitmap(GlobalMethods.nc * graphics_scale, GlobalMethods.nr * graphics_scale, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
                                 GlobalMethods.mygraphics = this.CreateGraphics();
                                 Mapwindow.Visible = true;
                                 //map_controls.Visible = true; */
@@ -1780,8 +1780,8 @@ namespace LORICA4
             }
 
             //Save image
-            m_objDrawingSurface.MakeTransparent();
-            m_objDrawingSurface.Save(GlobalMethods.Workdir + "\\animation\\mysavedimage" + imageCount2 + ".png", System.Drawing.Imaging.ImageFormat.Png);
+            GlobalMethods.m_objDrawingSurface.MakeTransparent();
+            GlobalMethods.m_objDrawingSurface.Save(GlobalMethods.Workdir + "\\animation\\mysavedimage" + imageCount2 + ".png", System.Drawing.Imaging.ImageFormat.Png);
             //update time
             googleTime = googleTime.AddYears(save_interval2);
             kmlTime = googleTime.ToString();
@@ -2070,7 +2070,7 @@ namespace LORICA4
             double lat_rad, L1_Ra, L2_Ra, D1_Ra, D_Ra, E_Ra, R0_Ra, R1_Ra, R4_Ra, T_Ra, T7_Ra, T6_Ra, T3_Ra, T2_Ra, T1_Ra, T0_Ra, acos_in;
 
             R0_Ra = 1.95 * 0.041868; // Convert from cal/cm2/min to MJ/m2/min
-            lat_rad = Math.PI / 180 * (System.Convert.ToDouble(latitude_deg.Text) + System.Convert.ToDouble(latitude_min.Text) / 60); // latitude [rad]
+            lat_rad = Math.PI / 180 * (System.Convert.ToDouble(guiVariables.Latitude_deg) + System.Convert.ToDouble(guiVariables.Latitude_min) / 60); // latitude [rad]
             L1_Ra = Math.Asin(Math.Cos(slope_rad) * Math.Sin(lat_rad) + Math.Sin(slope_rad) * Math.Cos(lat_rad) * Math.Cos(aspect_rad)); // equivalent latitude [rad]
             D1_Ra = Math.Cos(slope_rad) * Math.Cos(lat_rad) - Math.Sin(slope_rad) * Math.Sin(lat_rad) * Math.Cos(aspect_rad);
             if (D1_Ra == 0) { D1_Ra = 1E-10; }
@@ -2438,7 +2438,7 @@ namespace LORICA4
             int T_ann = temp_value_C;
 
             Random year_w = new Random(GlobalMethods.t); // GlobalMethods.t as random seed to get deterministic results
-            int n_timeseries = year_w.Next(0, System.Convert.ToInt32(daily_n.Text));
+            int n_timeseries = year_w.Next(0, System.Convert.ToInt32(guiVariables.Daily_n));
             // n_timeseries = 5;
 
             //Debug.WriteLine("dw.1c");
@@ -2457,7 +2457,7 @@ namespace LORICA4
             // 2. Rescale rainfall and temperature
             //Debug.WriteLine("dw.1a");
 
-            if (check_scaling_daily_weather.Checked) // scaling with yearly values, for global change scenarios
+            if (guiVariables.Check_scaling_daily_weather) // scaling with yearly values, for global change scenarios
             {
                 double Py_sum = Py.Sum();
                 for (int pi = 0; pi < Py.Count(); pi++) { Py[pi] = Py[pi] / Py_sum * P_ann; } // Scale with yearly P in meters
@@ -5339,7 +5339,7 @@ namespace LORICA4
                                     depth += GlobalMethods.layerthickness_m[row, col, layer] / 2;
                                     double totalweight = GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
                                     //calculate the mass of eluviation
-                                    if (CT_depth_decay_checkbox.Checked) { eluviated_kg = max_eluviation * (1 - Math.Exp(-Cclay * GlobalMethods.texture_kg[row, col, layer, 4] / totalweight)) * Math.Exp(-ct_depthdec * depth) * dt * GlobalMethods.dx * GlobalMethods.dx; }
+                                    if (guiVariables.CT_depth_decay_checkbox) { eluviated_kg = max_eluviation * (1 - Math.Exp(-Cclay * GlobalMethods.texture_kg[row, col, layer, 4] / totalweight)) * Math.Exp(-ct_depthdec * depth) * dt * GlobalMethods.dx * GlobalMethods.dx; }
                                     else { eluviated_kg = max_eluviation * (1 - Math.Exp(-Cclay * GlobalMethods.texture_kg[row, col, layer, 4] / totalweight)) * dt * GlobalMethods.dx * GlobalMethods.dx; }
                                     //
                                     if (guiVariables.Daily_water)
@@ -6412,7 +6412,6 @@ namespace LORICA4
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found before sorted row col loop in water erosed"); }
             for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
             {     // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
-                int row, col;
                 if (GlobalMethods.index[runner] != -9999)
                 {
 
@@ -6448,6 +6447,8 @@ namespace LORICA4
                         }
                         //all cells of this lake have now been considered, except the outlets
                     }
+                    int row = GlobalMethods.row;
+                    int col = GlobalMethods.col;
                     if (GlobalMethods.depression[row, col] < 0) { Debug.WriteLine(" error: negative depression value " + GlobalMethods.depression[row, col] + " at " + row + " " + col); minimaps(row, col); }
                     // this check indicates a problem with the resetting of cells involved in a delta
                     if (GlobalMethods.depression[row, col] == 0 ||
@@ -6909,7 +6910,7 @@ namespace LORICA4
                 } */
             }
             guiVariables.InfoStatusPanel = "calc movement has been finished";
-            this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
+            guiVariables.Out_sed_statuspanel = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
 
 
             //save timeseries_outputs
@@ -10876,7 +10877,7 @@ namespace LORICA4
                         if (guiVariables.Tillage_checkbox) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; GlobalMethods.dz_till_bd[row, col] = 0; }
                         if (guiVariables.Landslide_checkbox) { GlobalMethods.sum_landsliding[row, col] = 0; total_sum_tillage = 0; }
                         if (GlobalMethods.soildepth_m[row, col] < 0.0 && GlobalMethods.soildepth_m[row, col] != -9999) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
-                        if (guiVariables.Ulift_active_checkbox) { GlobalMethods.sum_uplift[row, col] = 0; GlobalMethods.sum_uplift = 0; }
+                        if (guiVariables.Ulift_active_checkbox) { GlobalMethods.sum_uplift[row, col] = 0; total_sum_uplift = 0; } //total_GlobalMethods.sum_uplift
                         if (guiVariables.Tilting_active_checkbox) { GlobalMethods.sum_tilting[row, col] = 0; total_sum_tilting = 0; }
                         if (guiVariables.Check_space_soildepth != true) { GlobalMethods.soildepth_m[row, col] = soildepth_value; }
                         if (guiVariables.Check_space_till_fields != true && guiVariables.Tillage_checkbox)

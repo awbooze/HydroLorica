@@ -2334,7 +2334,7 @@ namespace LORICAVariables
         }
 
 
-        public delegate void DelDrawMap(Graphics); //Pulls Values from GUI
+        public delegate void DelDrawMap(Graphics graphics); //Pulls Values from GUI
         DelDrawMap drawMap;
 
         public void DrawMap(Graphics graphics)
@@ -4609,6 +4609,63 @@ namespace LORICAVariables
                 Calibration_levels_textboxRWL.ReleaseWriterLock();
             }
         }
+        ReaderWriterLock Daily_nRWL = new ReaderWriterLock();
+        protected string daily_n = "";
+        public string Daily_n
+        {
+            get
+            {
+                Daily_nRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = daily_n;
+                Daily_nRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Daily_nRWL.AcquireWriterLock(Timeout.Infinite);
+                daily_n = value;
+                Daily_nRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock Latitude_degRWL = new ReaderWriterLock();
+        protected string latitude_deg = "";
+        public string Latitude_deg
+        {
+            get
+            {
+                Latitude_degRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = latitude_deg;
+                Latitude_degRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Latitude_degRWL.AcquireWriterLock(Timeout.Infinite);
+                latitude_deg = value;
+                Latitude_degRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock Latitude_minRWL = new ReaderWriterLock();
+        protected string latitude_min = "";
+        public string Latitude_min
+        {
+            get
+            {
+                Latitude_minRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = latitude_min;
+                Latitude_minRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Latitude_minRWL.AcquireWriterLock(Timeout.Infinite);
+                latitude_min = value;
+                Latitude_minRWL.ReleaseWriterLock();
+            }
+        }
 
 
 
@@ -5911,9 +5968,28 @@ namespace LORICAVariables
                 Check_time_till_fieldsRWL.ReleaseWriterLock();
             }
         }
+        ReaderWriterLock Check_scaling_daily_weatherRWL = new ReaderWriterLock();
+        protected bool check_scaling_daily_weather = false;
+        public bool Check_scaling_daily_weather
+        {
+            get
+            {
+                Check_scaling_daily_weatherRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = check_scaling_daily_weather;
+                Check_scaling_daily_weatherRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Check_scaling_daily_weatherRWL.AcquireWriterLock(Timeout.Infinite);
+                check_scaling_daily_weather = value;
+                Check_scaling_daily_weatherRWL.ReleaseWriterLock();
+            }
+        }
+
+
 
         
-
-
     }
 }
