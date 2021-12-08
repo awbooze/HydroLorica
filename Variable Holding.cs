@@ -8,12 +8,18 @@ namespace LORICAVariables
 {
     public class GUIVariables
     {
-        public GUIVariables(DelUpdateAllFields UAF, DelUpdateStatusPannel UPS, DelUpdateTimePannel UTP, DelUpdateVariables UF)
+        public GUIVariables(DelUpdateAllFields UAF, DelUpdateStatusPannel UPS, DelUpdateTimePannel UTP, DelUpdateVariables UF,
+                            DelUpdateTimeSeries uts, DelUpdateProfile up, DelUpdateLanduse_determinator uld, DelUpdateSoildata usd)
         {
             updateAllFields = UAF;
             updateStatusPannel = UPS;
             updateTimePannel = UTP;
             updateVariables = UF;
+
+            Timeseries = new output_timeseries(uts);
+            Profile = new output_profile(up);
+            Landuse_determinator = new landuse_determinator(uld) ;
+            Soildata = new soil_specifier(usd);
 
             updateVariables();
         }
@@ -27,13 +33,6 @@ namespace LORICAVariables
         DelUpdateStatusPannel updateStatusPannel;
         DelUpdateTimePannel updateTimePannel;
         DelUpdateVariables updateVariables;
-
-
-        //public delegate double Delbulk_Density_Calc(double, double , double, double, double, double, double, double); //Pulls Values from GUI
-        //public Delbulk_Density_Calc bulk_density_calc;
-
-        //if none of these fields get additional instructions, remove and rename the delegates
-        //Ex: updateAllFields becomes UpdateAllFields
         public void UpdateAllFields()
         {
             updateAllFields();
@@ -51,20 +50,99 @@ namespace LORICAVariables
             updateVariables();
         }
 
+
+        public delegate void DelUpdateTimeSeries(); //Pushes Variables to TimeSeries
+        public delegate void DelUpdateProfile(); //Pushes Variables to Profile
+        public delegate void DelUpdateLanduse_determinator(); //Pushes Variables to Landuse_determinator
+        public delegate void DelUpdateSoildata(); //Pushes Variables to Soildata
+
+
+        //public delegate double Delbulk_Density_Calc(double, double , double, double, double, double, double, double); //Pulls Values from GUI
+        //public Delbulk_Density_Calc bulk_density_calc;
+
+        //if none of these fields get additional instructions, remove and rename the delegates
+        //Ex: updateAllFields becomes UpdateAllFields
+
+
+
+
         public class output_timeseries
         {
+            static DelUpdateTimeSeries updateTimeSeries;
+            public static void UpdateTimeSeries()
+            {
+                updateTimeSeries();
+            }
+            public output_timeseries(DelUpdateTimeSeries uts)
+            {
+                updateTimeSeries = uts;
+            }
+
+
+
+
+            ReaderWriterLock ThingRWL = new ReaderWriterLock();
+            protected string thing = "";
+            public string Thing
+            {
+                get
+                {
+                    ThingRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = thing;
+                    ThingRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    ThingRWL.AcquireWriterLock(Timeout.Infinite);
+                    thing = value;
+                    ThingRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+
+
+
 
         }
         public class output_profile
         {
-
+            static DelUpdateProfile updateProfile;
+            public void UpdateProfile()
+            {
+                updateProfile();
+            }
+            public output_profile(DelUpdateProfile up)
+            {
+                updateProfile = up;
+            }
         }
         public class landuse_determinator
         {
-
+            static DelUpdateLanduse_determinator updateLanduse_determinator;
+            public void UpdateLanduse_determinator()
+            {
+                updateLanduse_determinator();
+            }
+            public landuse_determinator(DelUpdateLanduse_determinator uld)
+            {
+                updateLanduse_determinator = uld;
+            }
         }
         public class soil_specifier
         {
+            static DelUpdateSoildata updateSoildata;
+            public void UpdateSoildata()
+            {
+                updateSoildata();
+            }
+            public soil_specifier(DelUpdateSoildata usd)
+            {
+                updateSoildata = usd;
+            }
 
         }
 
@@ -109,13 +187,13 @@ namespace LORICAVariables
         }
 
         ReaderWriterLock Landuse_determinatorRWL = new ReaderWriterLock();
-        protected landuse_determinator landuse_determinator;
+        protected landuse_determinator landuse;
         public landuse_determinator Landuse_determinator
         {
             get
             {
                 Landuse_determinatorRWL.AcquireReaderLock(Timeout.Infinite);
-                landuse_determinator temp = landuse_determinator;
+                landuse_determinator temp = landuse;
                 Landuse_determinatorRWL.ReleaseReaderLock();
 
                 return temp;
@@ -123,7 +201,7 @@ namespace LORICAVariables
             set
             {
                 Landuse_determinatorRWL.AcquireWriterLock(Timeout.Infinite);
-                landuse_determinator = value;
+                landuse = value;
                 Landuse_determinatorRWL.ReleaseWriterLock();
             }
         }

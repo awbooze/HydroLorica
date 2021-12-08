@@ -731,7 +731,9 @@ namespace LORICA4
         /// </summary>
         private void InitializeComponent()
         {
-            guiVariables = new GUIVariables(UpdateAllFields, UpdateStatusPannel, UpdateTimePannel, DelUpdateVariables);
+            guiVariables = new GUIVariables(UpdateAllFields, UpdateStatusPannel, UpdateTimePannel, DelUpdateVariables, UpdateTimeSeries, UpdateProfile, UpdateLanduse_determinator, UpdateSoildata);
+
+
             GlobalMethods.Workdir = "D:\\PhD\\projects\\2g_clorpt effects on soil landscape diversity\\";
 
             this.components = new System.ComponentModel.Container();
@@ -7567,7 +7569,22 @@ Example: rainfall.asc can look like:
 
         }
 
+        private void UpdateTimeSeries()
+        {
 
+        }
+        private void UpdateProfile()
+        {
+
+        }
+        private void UpdateLanduse_determinator()
+        {
+
+        }
+        private void UpdateSoildata()
+        {
+
+        }
         private string GetDialogFileName()
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
