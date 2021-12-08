@@ -7307,6 +7307,7 @@ Example: rainfall.asc can look like:
         private void start_run(object sender, System.EventArgs e)
         {
             guiVariables.UpdateFields();
+            GlobalMethods.setUp(Ik_ben_Marijn.Checked, 0, 0, guiVariables);
             if (MainSimulation != null)
             {
                 throw new MemberAccessException();
@@ -7463,7 +7464,7 @@ Example: rainfall.asc can look like:
         private void UpdateTimePannel()
         {
             this.Invoke(new MethodInvoker(() => {
-                InfoStatusPanel.Text = guiVariables.InfoStatusPanel;
+                TimeStatusPanel.Text = guiVariables.TimeStatusPanel;
             }
             ));
         }
@@ -7474,10 +7475,16 @@ Example: rainfall.asc can look like:
 
                 guiVariables.DX = GlobalMethods.dx;
                 guiVariables.Rockweath_method = rockweath_method.SelectedIndex;
-                guiVariables.Mapwindow.Size.Width = this.Mapwindow.Size.Width;
-                guiVariables.Mapwindow.Size.Height = this.Mapwindow.Size.Height;
-                guiVariables.Mapwindow.Location.X = this.Mapwindow.Location.X;
-                guiVariables.Mapwindow.Location.Y = this.Mapwindow.Location.Y;
+                try{
+                    guiVariables.Mapwindow.Size.Width = this.Mapwindow.Size.Width;
+                    guiVariables.Mapwindow.Size.Height = this.Mapwindow.Size.Height;
+                    guiVariables.Mapwindow.Location.X = this.Mapwindow.Location.X;
+                    guiVariables.Mapwindow.Location.Y = this.Mapwindow.Location.Y;
+                }
+                catch
+                {
+
+                }
 
                 #region TextBoxes
                 guiVariables.InfoStatusPanel = InfoStatusPanel.Text;
@@ -7489,6 +7496,7 @@ Example: rainfall.asc can look like:
                 guiVariables.UTMzonebox = UTMzonebox.Text;
                 guiVariables.Saveintervalbox = saveintervalbox.Text;
                 guiVariables.Parameter_m_textbox = parameter_m_textbox.Text;
+                guiVariables.Parameter_n_textbox = parameter_n_textbox.Text;
                 guiVariables.Parameter_K_textbox = parameter_K_textbox.Text;
                 guiVariables.Bio_protection_constant_textbox = bio_protection_constant_textbox.Text;
                 guiVariables.Rock_protection_constant_textbox = rock_protection_constant_textbox.Text;
