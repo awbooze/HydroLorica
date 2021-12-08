@@ -1672,7 +1672,7 @@ namespace LORICA4
                     Debug.WriteLine("Error finishing video output");
                 }
 
-                guiVariables.InfoStatusPanel = " --finished--";
+                this.InfoStatusPanel.Text = " --finished--";
                 stopwatch.Stop();
                 Debug.WriteLine("Elapsed time: " + stopwatch.Elapsed);
                 //Timeseries output
@@ -6232,7 +6232,7 @@ namespace LORICA4
                     total_kg_deposited += total_mass_deposited[size];
                 }
             }
-            guiVariables.InfoStatusPanel = "calc movement has been finished";
+            this.InfoStatusPanel.Text = "calc movement has been finished";
             this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
 
             //double mass_after = total_catchment_mass();
@@ -6261,7 +6261,7 @@ namespace LORICA4
 
         void calculate_water_ero_sed()    //where the water starts flowing, eroding and transporting
         {
-            guiVariables.InfoStatusPanel = "water erosion calculation";
+            this.InfoStatusPanel.Text = "water erosion calculation";
             dhmax_errors = 0;
             //set all start q values effective precipitation at time GlobalMethods.t
             nb_ok = 0;  // nb_ok is 1 als er uberhaupt buren zijn, dus 0 als er alleen maar NODATA is
@@ -6290,20 +6290,20 @@ namespace LORICA4
                 }
             }
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found before row col loop in water erosed"); }
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
 
                     if (GlobalMethods.dtm[row, col] != -9999)
                     {
                         // First, we apply rainwater to our landscape (in a two step approach - first normal cells and lake outlets)
-                        if (depression[row, col] == 0 ||
-                            (GlobalMethods.drainingoutlet_col[depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 0] == col) ||
-                            (GlobalMethods.drainingoutlet_col[depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 1] == col) ||
-                            (GlobalMethods.drainingoutlet_col[depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 2] == col) ||
-                            (GlobalMethods.drainingoutlet_col[depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 3] == col) ||
-                            (GlobalMethods.drainingoutlet_col[depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 4] == col))
+                        if (GlobalMethods.depression[row, col] == 0 ||
+                            (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == col) ||
+                            (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == col) ||
+                            (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == col) ||
+                            (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == col) ||
+                            (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == col))
                         {
                             if (check_space_evap.Checked == true) { evap_value_m = GlobalMethods.evapotranspiration[row, col]; }
                             if (check_space_rain.Checked == true) { rain_value_m = GlobalMethods.rain[row, col]; }
@@ -6317,7 +6317,7 @@ namespace LORICA4
                         { // for other lakecells, we send the rainwater directly (equally distributed) to that lake's outlet(s) (infiltration is not zero in the lake at the moment)
                             //Debug.WriteLine(" B at " + row + " col " + col + " alt " + GlobalMethods.dtm[row, col] + " dep " + depression[row, col]);
                             int outletcounter = 0; ;
-                            while (GlobalMethods.drainingoutlet_col[depression[row, col], outletcounter] != -1)
+                            while (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], outletcounter] != -1)
                             {
                                 outletcounter++;
                                 if (outletcounter == 5) { break; }
@@ -6330,7 +6330,7 @@ namespace LORICA4
                                 if (check_space_infil.Checked == true) { infil_value_m = GlobalMethods.infil[row, col]; }
                                 //ArT // development required to account for f(GlobalMethods.t) situations
                                 //ArT remember to check for negative lake outflow once it happens
-                                GlobalMethods.waterflow_m3[GlobalMethods.drainingoutlet_col[depression[row, col], i], GlobalMethods.drainingoutlet_col[depression[row, col], i]] += GlobalMethods.dx * GlobalMethods.dx * (rain_value_m - infil_value_m - evap_value_m) / outletcounter;
+                                GlobalMethods.waterflow_m3[GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], i], GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], i]] += GlobalMethods.dx * GlobalMethods.dx * (rain_value_m - infil_value_m - evap_value_m) / outletcounter;
                             }
                         }
                         if (only_waterflow_checkbox.Checked == false)
@@ -6356,26 +6356,27 @@ namespace LORICA4
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found before sorted row col loop in water erosed"); }
             for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
             {     // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
+                int row, col;
                 if (GlobalMethods.index[runner] != -9999)
                 {
 
-                    row = row_index[runner]; col = col_index[runner];
+                    row = GlobalMethods.row_index[runner]; col = GlobalMethods.col_index[runner];
                     //Debug.WriteLine(runner + " " + row + "  " + col + " GlobalMethods.nr " + GlobalMethods.nr + " GlobalMethods.nc " + GlobalMethods.nc + " GlobalMethods.nr*GlobalMethods.nc " + GlobalMethods.nr * GlobalMethods.nc + " data cells " + GlobalMethods.number_of_data_cells); 
                     if (GlobalMethods.t == 4 && row == 186 && col == 72) { diagnostic_mode = 1; }
                     else { diagnostic_mode = 0; }
                     powered_slope_sum = 0; max_allowed_erosion = 0; dz_min = -9999.99;
                     direct = 20; dz_max = -10; dhtemp = -99999.99; maximum_allowed_deposition = -9999.99;
-                    if (depression[row, col] < 0) { depression[row, col] = 0; }
-                    if ((GlobalMethods.drainingoutlet_col[depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 0] == col) ||
-                        (GlobalMethods.drainingoutlet_col[depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 1] == col) ||
-                        (GlobalMethods.drainingoutlet_col[depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 2] == col) ||
-                        (GlobalMethods.drainingoutlet_col[depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 3] == col) ||
-                        (GlobalMethods.drainingoutlet_col[depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 4] == col))
+                    if (GlobalMethods.depression[row, col] < 0) { GlobalMethods.depression[row, col] = 0; }
+                    if ((GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == col) ||
+                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == col) ||
+                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == col) ||
+                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == col) ||
+                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == col))
                     {
-                        if (depressionconsidered[depression[row, col]] == 0)
+                        if (depressionconsidered[GlobalMethods.depression[row, col]] == 0)
                         {
                             //diagnostic_mode = 1;
-                            depressionnumber = depression[row, col];
+                            depressionnumber = GlobalMethods.depression[row, col];
                             depressionconsidered[depressionnumber] = 1;
                             if (diagnostic_mode == 1) { Debug.WriteLine(" now considering dep " + depressionnumber + " GlobalMethods.index " + runner); }
                             update_depression(depressionnumber);
@@ -6391,14 +6392,14 @@ namespace LORICA4
                         }
                         //all cells of this lake have now been considered, except the outlets
                     }
-                    if (depression[row, col] < 0) { Debug.WriteLine(" error: negative depression value " + depression[row, col] + " at " + row + " " + col); minimaps(row, col); }
+                    if (GlobalMethods.depression[row, col] < 0) { Debug.WriteLine(" error: negative depression value " + GlobalMethods.depression[row, col] + " at " + row + " " + col); minimaps(row, col); }
                     // this check indicates a problem with the resetting of cells involved in a delta
-                    if (depression[row, col] == 0 ||
-                                                (GlobalMethods.drainingoutlet_col[depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 0] == col) ||
-                                                (GlobalMethods.drainingoutlet_col[depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 1] == col) ||
-                                                (GlobalMethods.drainingoutlet_col[depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 2] == col) ||
-                                                (GlobalMethods.drainingoutlet_col[depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 3] == col) ||
-                                                (GlobalMethods.drainingoutlet_col[depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 4] == col))
+                    if (GlobalMethods.depression[row, col] == 0 ||
+                                                (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == col) ||
+                                                (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == col) ||
+                                                (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == col) ||
+                                                (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == col) ||
+                                                (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == col))
                     { //for all cells outside a depression and for outlets, we use the stream power equations based on a multiple flow (D8) template
                         //if (row == 24 && col == 81) { Debug.WriteLine(" looking around cell " + row + " " + col); minimaps(row, col); }
                         for (i = (-1); i <= 1; i++)
@@ -6411,8 +6412,8 @@ namespace LORICA4
                                     // below, we calculate slope_sum for all cells either not in a depression, or being a outlet
                                     // slope_sum is needed to calculate flow in a multiple flow environment until someone thinks of something better
                                     // if (diagnostic_mode == 1) { Debug.WriteLine("checking " + (row + i) + " " + (col + j) + " from cell " + row + " " + col); }
-                                    if (depression[row, col] < 0) { Debug.WriteLine(" lakes error: cell has depression < 1"); } //out_integer("wrong_lakes.asc", depression); 
-                                    if (depression[row, col] == 0)
+                                    if (GlobalMethods.depression[row, col] < 0) { Debug.WriteLine(" lakes error: cell has depression < 1"); } //out_integer("wrong_lakes.asc", depression); 
+                                    if (GlobalMethods.depression[row, col] == 0)
                                     {    // if the cell is not in a depression (it could be in a depression as an outlet)
                                         if (GlobalMethods.dtm[row + i, col + j] != -9999)
                                         {  //if the cell has no NODATA
@@ -6439,14 +6440,14 @@ namespace LORICA4
                                             }//end if dh  
                                         }//end if novalues
                                     }  // end if not in depression
-                                    if ((GlobalMethods.drainingoutlet_col[depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 0] == col)
-                                        || (GlobalMethods.drainingoutlet_col[depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 1] == col)
-                                        || (GlobalMethods.drainingoutlet_col[depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 2] == col)
-                                        || (GlobalMethods.drainingoutlet_col[depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 3] == col)
-                                        || (GlobalMethods.drainingoutlet_col[depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 4] == col))
+                                    if ((GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == col)
+                                        || (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == col)
+                                        || (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == col)
+                                        || (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == col)
+                                        || (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == col))
                                     {    // this cell is one of the draining outlets and is only allowed to drain to cells not in the lake																											
                                          // if the lake has been filled at this time, then all its (by now non-lake) cells have an altitude > outlet, and will not be considered for that reason
-                                        if (depression[row + i, col + j] != depression[row, col])
+                                        if (GlobalMethods.depression[row + i, col + j] != GlobalMethods.depression[row, col])
                                         {
                                             if ((row != row + i) && (col != col + j)) { GlobalMethods.d_x = GlobalMethods.dx * Math.Sqrt(2); } else { GlobalMethods.d_x = GlobalMethods.dx; }
                                             dh = GlobalMethods.dtm[row, col] - GlobalMethods.dtm[row + i, col + j];
@@ -6492,7 +6493,7 @@ namespace LORICA4
                                         {  //we have found one of the lower nbs
                                             //if (row == 24 && col == 81) { Debug.WriteLine("this is a lower nb " + i + j + "dh" + dh + " " + GlobalMethods.waterflow_m3[row, col]); }
                                             if ((row != row + i) && (col != col + j)) { GlobalMethods.d_x = GlobalMethods.dx * Math.Sqrt(2); } else { GlobalMethods.d_x = GlobalMethods.dx; }
-                                            if ((depression[row, col] != 0 && depression[row + i, col + j] != depression[row, col]) || (depression[row, col] == 0))
+                                            if ((GlobalMethods.depression[row, col] != 0 && GlobalMethods.depression[row + i, col + j] != GlobalMethods.depression[row, col]) || (GlobalMethods.depression[row, col] == 0))
                                             {   //if cell == outlet of current lake and nb not member of that lake OR if not a lake member
 
 
@@ -6504,13 +6505,13 @@ namespace LORICA4
                                                 fraction = Math.Pow(dh, conv_fac) / powered_slope_sum;
                                                 if (GlobalMethods.waterflow_m3[row, col] < 0) { GlobalMethods.waterflow_m3[row, col] = 0; }    // this can have happened if water enters a drier zone in the landscape
                                                 flow_between_cells_m3_per_m = fraction * GlobalMethods.waterflow_m3[row, col] / GlobalMethods.dx;
-                                                if (depression[row + i, col + j] == 0)
+                                                if (GlobalMethods.depression[row + i, col + j] == 0)
                                                 {  // if receiving cell is not in a depression, its waterflow is increased 
                                                     GlobalMethods.waterflow_m3[row + i, col + j] += flow_between_cells_m3_per_m * GlobalMethods.dx;
                                                 }
-                                                if (depression[row + i, col + j] != 0)
+                                                if (GlobalMethods.depression[row + i, col + j] != 0)
                                                 {  // if receiving cell is in a depression, its outlets' waterflow is increased 
-                                                    currentdepression = Math.Abs(depression[row + i, col + j]); // this Abs stuff should not be necessary and is included for stability!
+                                                    currentdepression = Math.Abs(GlobalMethods.depression[row + i, col + j]); // this Abs stuff should not be necessary and is included for stability!
                                                     int outletcounter = 0;
                                                     while (GlobalMethods.drainingoutlet_col[currentdepression, outletcounter] != -1)
                                                     {
@@ -6760,9 +6761,9 @@ namespace LORICA4
             total_average_altitude = 0; total_altitude = 0;
             total_rain = 0; total_evap = 0; total_infil = 0; total_outflow = 0;
             wet_cells = 0; eroded_cells = 0; deposited_cells = 0;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     if (GlobalMethods.dtm[row, col] != -9999)
                     {
@@ -6851,7 +6852,7 @@ namespace LORICA4
                     Debug.WriteLine(" on m-basis: sedimented into " + depressions_delta + " of " + totaldepressions + " depressions, " + sediment_delta + "  sediment used");
                 } */
             }
-            guiVariables.InfoStatusPanel = "calc movement has been finished";
+            this.InfoStatusPanel.Text = "calc movement has been finished";
             this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
 
 
@@ -6920,9 +6921,9 @@ namespace LORICA4
             // the soil physical / hydrological / slope stability parameters:
             //	 Transmissivity, Bulk Density,              
             //   Combined Cohesion and Internal riction.
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     //currently spatially uniform
                     GlobalMethods.T_fac[row, col] = System.Convert.ToDouble(textBox_ls_trans.Text);
@@ -6970,9 +6971,9 @@ namespace LORICA4
             //set all start q values effective precipitation at time GlobalMethods.t
             nb_ok = 0; nb_check = 0; all_grids = 0;
             maximum_allowed_deposition = -9999; dh_tol = 0.00025;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     GlobalMethods.camf[row, col] = 1;    // contributing area multiple flow matrix = 1
                     GlobalMethods.stslope[row, col] = 0;
@@ -6983,7 +6984,8 @@ namespace LORICA4
             int runner;
             for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
             {           // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
-                row = row_index[runner]; col = col_index[runner];
+                int row, col;
+                row = GlobalMethods.row_index[runner]; col = GlobalMethods.col_index[runner];
                 // into loop for surounding grids of certain grid
                 // Start first the slope_sum loop for all lower neighbour grids
                 powered_slope_sum = 0; max_allowed_erosion = 0; dz_min = -9999.99;
@@ -7054,9 +7056,9 @@ namespace LORICA4
             }   // end for
 
             // Calculation of steepest descent local slope, 8 cell window
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     direct = 20; dz_max = -1;
                     for (i = (-1); i <= 1; i++)
@@ -7172,14 +7174,14 @@ namespace LORICA4
         {
             try
             {
-                guiVariables.InfoStatusPanel = "landslide calculation";
+                this.InfoStatusPanel.Text = "landslide calculation";
                 int tell;
                 //set all start q values effective precipitation at time GlobalMethods.t
                 nb_ok = 0; nb_check = 0; all_grids = 0.0;
                 maximum_allowed_deposition = -9999.0; dh_tol = 0.00025; erotot = 0.0;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         GlobalMethods.slidemap[row, col] -= 1;  // terug opbouwen van 'landslide potential' bij meerdere tijdstappen
                         if (GlobalMethods.slidemap[row, col] < 0) { GlobalMethods.slidemap[row, col] = 0; }
@@ -7195,7 +7197,8 @@ namespace LORICA4
                 int runner;
                 for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
-                    row = row_index[runner]; col = col_index[runner];
+                    int row, col;
+                    row = GlobalMethods.row_index[runner]; col = col_index[runner];
 
                     // into loop for surrounding grids of certain grid
                     // Start first the slope_sum loop for all lower neighbour grids
@@ -7264,9 +7267,9 @@ namespace LORICA4
                         //2 Second while loop to process slide deposition with a 'cell distance' and 'double' multiple flow
                 nb_ok = 0; nb_check = 0; all_grids = 0.0; tell = 0;
                 maximum_allowed_deposition = -9999.0; dh_tol = 0.00025; sedtot = 0.0; strsed = 0.0; startsed = 0.0;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         GlobalMethods.cel_dist[row, col] = ((0.4 * GlobalMethods.dh_slid[row, col]) / GlobalMethods.dx); // FACTOR 2 calculate 'celdistance', empirical fraction of runout set at 0.4 (Lit.)
                         startsed += GlobalMethods.sed_bud[row, col]; // 'startsed'-counter = only to display initial sediment budget in ero-sed balance in model run
@@ -7275,7 +7278,8 @@ namespace LORICA4
                 //2 into while loop for all grids if not all neighbours are processed
                 for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
-                    row = row_index[runner]; col = col_index[runner];
+                    int row, col;
+                    row = GlobalMethods.row_index[runner]; col = GlobalMethods.col_index[runner];
                     //2 into loop for surounding grids of certain grid
                     //2 Start first the slope_sum loop for all lower neighbour grids
                     powered_slope_sum = 0.0; max_allowed_erosion = 0.0; dz_min = -9999.99; GlobalMethods.d_x = GlobalMethods.dx;
@@ -7383,9 +7387,9 @@ namespace LORICA4
                     }//2 end if GlobalMethods.sed_bud
                 } //2 end for all cells 2
 
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.ero_slid[row, col] < 0.0)
                         {
@@ -7413,9 +7417,9 @@ namespace LORICA4
                             slope;
 
                 nb_ok = 0; nb_check = 0;
-                for (row = 0; row < nr; row++)
+                for (row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < nc; col++)
+                    for (col = 0; col < GlobalMethods.nc; col++)
                     {
                         GlobalMethods.till_result[row, col] = 0;
                         // if (GlobalMethods.dtm[row, col] < -9900 && GlobalMethods.dtm[row, col] != -9999) { Debug.WriteLine(" Cell " + row + " " + col + " has altitude " + GlobalMethods.dtm[row, col] + " till " + GlobalMethods.till_result[row, col]); }
@@ -7425,7 +7429,7 @@ namespace LORICA4
                 int runner = 0;
                 for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
-                    row = row_index[runner]; col = col_index[runner];
+                    row = GlobalMethods.row_index[runner]; col = GlobalMethods.col_index[runner];
                     // Debug.WriteLine("till1");
 
                     if (GlobalMethods.tillfields[row, col] == 1)
@@ -8037,7 +8041,7 @@ namespace LORICA4
 
                 for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
-                    row = row_index[runner]; col = col_index[runner];
+                    row = GlobalMethods.row_index[runner]; col = GlobalMethods.col_index[runner];
                     if (GlobalMethods.dtm[row, col] != -9999)
                     {
                         //Debug.WriteLine("cr1");
@@ -8502,9 +8506,9 @@ namespace LORICA4
                 // int P_fall = Convert.ToInt32(Math.Round(1730 / GlobalMethods.dx / GlobalMethods.dx)); // 1/P_fall is the chance of tree fall, per m2, that's why we correct for cell size 
                 // Debug.WriteLine("elevation of row 57 and col 40 at GlobalMethods.t {0} is {1}", GlobalMethods.t, GlobalMethods.dtm[57, 40]);
                 int rowsource = 0, colsource = 0, rowsink = 0, colsink = 0;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.dtm[row, col] != -9999 & aridity_vegetation[row, col] > 1) // if cell exists, and if there is no grass growing
                         {
@@ -8855,9 +8859,9 @@ namespace LORICA4
             if (daily_water.Checked)
             {
                 int Icount = 0;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.dtm[row, col] != -9999)
                         {
@@ -8871,9 +8875,9 @@ namespace LORICA4
                 Iavg /= Icount;
             }
             int soil_layer, lowest_soil_layer;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     if (GlobalMethods.dtm[row, col] != -9999)
                     {
@@ -8957,9 +8961,9 @@ namespace LORICA4
             //while ( dh > 150;dh / (GlobalMethods.d_x * Math.Sqrt(2)) > 7.5)
             {
                 last_time_activity = false;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {        //visit all cells in the DEM and  ...
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         for (i = (-1); i <= 1; i++)
                         {   // maakt een rondje om de cel
@@ -9301,7 +9305,7 @@ namespace LORICA4
             {
                 for (discol = lowercol; discol < (uppercol + 1); discol++)
                 {
-                    mess = String.Format("  {0:D10}", depression[disrow, discol]); Debug.Write(mess);
+                    mess = String.Format("  {0:D10}", GlobalMethods.depression[disrow, discol]); Debug.Write(mess);
                 }
                 Debug.Write(" \n"); if ((disrow + 1) <= upperrow) { mess = String.Format(" {0:D10}", (disrow + 1)); Debug.Write(mess); }
             }
@@ -9412,7 +9416,7 @@ namespace LORICA4
 
         void findsinks()
         {
-            guiVariables.InfoStatusPanel = "findtrouble has been entered";
+            this.InfoStatusPanel.Text = "findtrouble has been entered";
             int number, twoequals = 0, threeequals = 0, moreequals = 0;
             int[] intoutlet = new int[9];
             int x;
@@ -9472,7 +9476,7 @@ namespace LORICA4
 
             //reports
 
-            guiVariables.InfoStatusPanel = "found " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells";
+            this.InfoStatusPanel.Text = "found " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells";
             Debug.WriteLine("\n\n--sinks overview at GlobalMethods.t = " + GlobalMethods.t + "--");
 
             if (numsinks / (GlobalMethods.nr * GlobalMethods.nc) > 0.0075) { Debug.WriteLine("this DEM contains " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells\n That's a lot!"); }
@@ -9488,7 +9492,7 @@ namespace LORICA4
         void searchdepressions()
         {
             int z;
-            guiVariables.InfoStatusPanel = "searchdepressions has been entered";
+            this.InfoStatusPanel.Text = "searchdepressions has been entered";
             for (row = 0; row < GlobalMethods.nr; row++)
             {        //visit all cells in the DEM and  ...
                 for (col = 0; col < GlobalMethods.nc; col++)
@@ -9890,7 +9894,7 @@ namespace LORICA4
             // to membercells so they drain towards the outlet.
             // we cannot simply use distance_to_outlet for each member cell, since depressions can round corners....
 
-            guiVariables.InfoStatusPanel = "def fillheight has been entered";
+            this.InfoStatusPanel.Text = "def fillheight has been entered";
             //Debug.WriteLine("defining fillheight\n");
             int notyetdone, done, depressiontt;
 
@@ -10703,9 +10707,9 @@ namespace LORICA4
                     GlobalMethods.waterflow_m3 = new double[GlobalMethods.nr, GlobalMethods.nc];
                     vegetation_type = new int[GlobalMethods.nr, GlobalMethods.nc];
 
-                    for (row = 0; row < GlobalMethods.nr; row++)
+                    for (int row = 0; row < GlobalMethods.nr; row++)
                     {
-                        for (col = 0; col < GlobalMethods.nc; col++)
+                        for (int col = 0; col < GlobalMethods.nc; col++)
                         {
                             veg_correction_factor[row, col] = 1;
                             vegetation_type[row, col] = 0;
@@ -10802,9 +10806,9 @@ namespace LORICA4
             try
             {
                 // Debug.WriteLine(" assigning starting values for geomorph  ");
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         GlobalMethods.dz_soil[row, col] = 0;
                         if (Creep_Checkbox.Checked) { GlobalMethods.sum_creep_grid[row, col] = 0; GlobalMethods.creep[row, col] = 0; }
@@ -10937,9 +10941,9 @@ namespace LORICA4
                     {
                         searchdepressions();
                         //define_fillheight_new();
-                        for (row = 0; row < GlobalMethods.nr; row++)
+                        for (int row = 0; row < GlobalMethods.nr; row++)
                         {
-                            for (col = 0; col < GlobalMethods.nc; col++)
+                            for (int col = 0; col < GlobalMethods.nc; col++)
                             {
                                 if (GlobalMethods.dtm[row, col] < GlobalMethods.dtmfill_A[row, col] && GlobalMethods.dtm[row, col] != -9999) { GlobalMethods.dtm[row, col] = GlobalMethods.dtmfill_A[row, col]; }
                             }
@@ -11043,9 +11047,9 @@ namespace LORICA4
             double clayfrac = Convert.ToDouble(soildata.claybox.Text) / 100;
             double fclayfrac = Convert.ToDouble(soildata.fineclaybox.Text) / 100;
             double location_bd;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     depth_m = 0;
                     if (creep_testing.Checked)
@@ -11206,9 +11210,9 @@ namespace LORICA4
             double fclayfrac = Convert.ToDouble(soildata.fineclaybox.Text) / 100;
             double location_bd;
             double dz_standard = 0.1;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     depth_m = 0;
                     if (creep_testing.Checked)
@@ -11305,9 +11309,9 @@ namespace LORICA4
         {
             if (guivariables.Check_time_till_fields && check_space_till_fields.Checked == false)
             {
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         GlobalMethods.tillfields[row, col] = 1 * till_record[GlobalMethods.t];
                     }
@@ -11319,9 +11323,9 @@ namespace LORICA4
         void initialise_every()                         //fills the inputgrids with values
         {
             int corrected_t;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     // time runs from 1 to guiVariables.End_time - compensate for that when taking values from records
                     // also compensate for records shorter than guiVariables.End_time
@@ -11386,9 +11390,9 @@ namespace LORICA4
                 {
                     searchdepressions();
                     //define_fillheight_new();
-                    for (row = 0; row < GlobalMethods.nr; row++)
+                    for (int row = 0; row < GlobalMethods.nr; row++)
                     {
-                        for (col = 0; col < GlobalMethods.nc; col++)
+                        for (int col = 0; col < GlobalMethods.nc; col++)
                         {
                             if (GlobalMethods.dtm[row, col] < GlobalMethods.dtmfill_A[row, col] && GlobalMethods.dtm[row, col] != -9999) { GlobalMethods.dtm[row, col] = GlobalMethods.dtmfill_A[row, col]; }
                         }
@@ -11599,9 +11603,9 @@ namespace LORICA4
             double total_bulk_density = 0;
             double average_bulk_density = 0;
             int objective_function_cells = 0;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     if (GlobalMethods.dtm[row, col] != -9999)
                     {
