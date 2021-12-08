@@ -826,11 +826,6 @@ namespace LORICAVariables
                 }
             }
 
-
-
-            //******************************************************
-
-
         }
         public class output_profile
         {
@@ -843,6 +838,249 @@ namespace LORICAVariables
             {
                 updateProfile = up;
             }
+
+            ReaderWriterLock Radio_pro1_colRWL = new ReaderWriterLock();
+            protected bool radio_pro1_col = false;
+            public bool Radio_pro1_col
+            {
+                get
+                {
+                    Radio_pro1_colRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = radio_pro1_col;
+                    Radio_pro1_colRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Radio_pro1_colRWL.AcquireWriterLock(Timeout.Infinite);
+                    radio_pro1_col = value;
+                    Radio_pro1_colRWL.ReleaseWriterLock();
+
+                    UpdateProfile();
+                }
+            }
+
+            ReaderWriterLock Check_altitude_profile1RWL = new ReaderWriterLock();
+            protected bool check_altitude_profile1 = false;
+            public bool Check_altitude_profile1
+            {
+                get
+                {
+                    Check_altitude_profile1RWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = check_altitude_profile1;
+                    Check_altitude_profile1RWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Check_altitude_profile1RWL.AcquireWriterLock(Timeout.Infinite);
+                    check_altitude_profile1 = value;
+                    Check_altitude_profile1RWL.ReleaseWriterLock();
+
+                    UpdateProfile();
+                }
+            }
+
+            ReaderWriterLock Check_waterflow_profile1RWL = new ReaderWriterLock();
+            protected bool check_waterflow_profile1 = false;
+            public bool Check_waterflow_profile1
+            {
+                get
+                {
+                    Check_waterflow_profile1RWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = check_waterflow_profile1;
+                    Check_waterflow_profile1RWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Check_waterflow_profile1RWL.AcquireWriterLock(Timeout.Infinite);
+                    check_waterflow_profile1 = value;
+                    Check_waterflow_profile1RWL.ReleaseWriterLock();
+
+                    UpdateProfile();
+                }
+            }
+
+            ReaderWriterLock Radio_pro1_rowRWL = new ReaderWriterLock();
+            protected bool radio_pro1_row = false;
+            public bool Radio_pro1_row
+            {
+                get
+                {
+                    Radio_pro1_rowRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = radio_pro1_row;
+                    Radio_pro1_rowRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Radio_pro1_rowRWL.AcquireWriterLock(Timeout.Infinite);
+                    radio_pro1_row = value;
+                    Radio_pro1_rowRWL.ReleaseWriterLock();
+
+                    UpdateProfile();
+                }
+            }
+
+            ReaderWriterLock Radio_pro2_colRWL = new ReaderWriterLock();
+            protected bool radio_pro2_col = false;
+            public bool Radio_pro2_col
+            {
+                get
+                {
+                    Radio_pro2_colRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = radio_pro2_col;
+                    Radio_pro2_colRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Radio_pro2_colRWL.AcquireWriterLock(Timeout.Infinite);
+                    radio_pro2_col = value;
+                    Radio_pro2_colRWL.ReleaseWriterLock();
+
+                    UpdateProfile();
+                }
+            }
+
+            ReaderWriterLock Radio_pro2_rowRWL = new ReaderWriterLock();
+            protected bool radio_pro2_row = false;
+            public bool Radio_pro2_row
+            {
+                get
+                {
+                    Radio_pro2_rowRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = radio_pro2_row;
+                    Radio_pro2_rowRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Radio_pro2_rowRWL.AcquireWriterLock(Timeout.Infinite);
+                    radio_pro2_row = value;
+                    Radio_pro2_rowRWL.ReleaseWriterLock();
+
+                    UpdateProfile();
+                }
+            }
+
+            ReaderWriterLock Radio_pro3_colRWL = new ReaderWriterLock();
+            protected bool radio_pro3_col = false;
+            public bool Radio_pro3_col
+            {
+                get
+                {
+                    Radio_pro3_colRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = radio_pro3_col;
+                    Radio_pro3_colRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Radio_pro3_colRWL.AcquireWriterLock(Timeout.Infinite);
+                    radio_pro3_col = value;
+                    Radio_pro3_colRWL.ReleaseWriterLock();
+
+                    UpdateProfile();
+                }
+            }
+
+            ReaderWriterLock Radio_pro3_rowRWL = new ReaderWriterLock();
+            protected bool radio_pro3_row = false;
+            public bool Radio_pro3_row
+            {
+                get
+                {
+                    Radio_pro3_rowRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = radio_pro3_row;
+                    Radio_pro3_rowRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Radio_pro3_rowRWL.AcquireWriterLock(Timeout.Infinite);
+                    radio_pro3_row = value;
+                    Radio_pro3_rowRWL.ReleaseWriterLock();
+
+                    UpdateProfile();
+                }
+            }
+
+            ReaderWriterLock P1_row_col_boxRWL = new ReaderWriterLock();
+            protected string p1_row_col_box = "";
+            public string P1_row_col_box
+            {
+                get
+                {
+                    P1_row_col_boxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = p1_row_col_box;
+                    P1_row_col_boxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    P1_row_col_boxRWL.AcquireWriterLock(Timeout.Infinite);
+                    p1_row_col_box = value;
+                    P1_row_col_boxRWL.ReleaseWriterLock();
+
+                    UpdateProfile();
+                }
+            }
+
+            ReaderWriterLock P2_row_col_boxRWL = new ReaderWriterLock();
+            protected string p2_row_col_box = "";
+            public string P2_row_col_box
+            {
+                get
+                {
+                    P2_row_col_boxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = p2_row_col_box;
+                    P2_row_col_boxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    P2_row_col_boxRWL.AcquireWriterLock(Timeout.Infinite);
+                    p2_row_col_box = value;
+                    P2_row_col_boxRWL.ReleaseWriterLock();
+
+                    UpdateProfile();
+                }
+            }
+
+            ReaderWriterLock P3_row_col_boxRWL = new ReaderWriterLock();
+            protected string p3_row_col_box = "";
+            public string P3_row_col_box
+            {
+                get
+                {
+                    P3_row_col_boxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = p3_row_col_box;
+                    P3_row_col_boxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    P3_row_col_boxRWL.AcquireWriterLock(Timeout.Infinite);
+                    p3_row_col_box = value;
+                    P3_row_col_boxRWL.ReleaseWriterLock();
+
+                    UpdateProfile();
+                }
+            }
+
         }
         public class landuse_determinator
         {

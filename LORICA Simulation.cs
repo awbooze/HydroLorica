@@ -1544,81 +1544,81 @@ namespace LORICA4
                     }
                 }
 
-                if (profile.radio_pro1_col.Checked)
+                if (guiVariables.Profile.Radio_pro1_col)
                 {
-                    if (profile.check_altitude_profile1.Checked)
+                    if (guiVariables.Profile.Check_altitude_profile1)
                     {
-                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(guiVariables.Profile.P1_row_col_box)); }
                         catch { MessageBox.Show("profile_1_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
-                    if (profile.check_waterflow_profile1.Checked)
+                    if (guiVariables.Profile.Check_waterflow_profile1)
                     {
-                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(guiVariables.Profile.P1_row_col_box)); }
                         catch { MessageBox.Show("profile_1_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
-                if (profile.radio_pro1_row.Checked)
+                if (guiVariables.Profile.Radio_pro1_row)
                 {
-                    if (profile.check_altitude_profile1.Checked)
+                    if (guiVariables.Profile.Check_altitude_profile1)
                     {
-                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(guiVariables.Profile.P1_row_col_box)); }
                         catch { MessageBox.Show("profile_1_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
-                    if (profile.check_waterflow_profile1.Checked)
+                    if (guiVariables.Profile.Check_waterflow_profile1)
                     {
-                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(guiVariables.Profile.P1_row_col_box)); }
                         catch { MessageBox.Show("profile_1_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
-                if (profile.radio_pro2_col.Checked)
+                if (guiVariables.Profile.Radio_pro2_col)
                 {
-                    if (profile.check_altitude_profile1.Checked)
+                    if (guiVariables.Profile.Check_altitude_profile1)
                     {
-                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(guiVariables.Profile.P2_row_col_box)); }
                         catch { MessageBox.Show("profile_2_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
-                    if (profile.check_waterflow_profile1.Checked)
+                    if (guiVariables.Profile.Check_waterflow_profile1)
                     {
-                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(guiVariables.Profile.P2_row_col_box)); }
                         catch { MessageBox.Show("profile_2_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
-                if (profile.radio_pro2_row.Checked)
+                if (guiVariables.Profile.Radio_pro2_row)
                 {
-                    if (profile.check_altitude_profile1.Checked)
+                    if (guiVariables.Profile.Check_altitude_profile1)
                     {
-                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(guiVariables.Profile.P2_row_col_box)); }
                         catch { MessageBox.Show("profile_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
-                    if (profile.check_waterflow_profile1.Checked)
+                    if (guiVariables.Profile.Check_waterflow_profile1)
                     {
-                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(guiVariables.Profile.P2_row_col_box)); }
                         catch { MessageBox.Show("profile_2_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
-                if (profile.radio_pro3_col.Checked)
+                if (guiVariables.Profile.Radio_pro3_col)
                 {
-                    if (profile.check_altitude_profile1.Checked)
+                    if (guiVariables.Profile.Check_altitude_profile1)
                     {
-                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(guiVariables.Profile.P3_row_col_box)); }
                         catch { MessageBox.Show("profile_3_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
-                    if (profile.check_waterflow_profile1.Checked)
+                    if (guiVariables.Profile.Check_waterflow_profile1)
                     {
-                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(guiVariables.Profile.P3_row_col_box)); }
                         catch { MessageBox.Show("profile_3_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
-                if (profile.radio_pro3_row.Checked)
+                if (guiVariables.Profile.Radio_pro3_row)
                 {
-                    if (profile.check_altitude_profile1.Checked)
+                    if (guiVariables.Profile.Check_altitude_profile1)
                     {
-                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(guiVariables.Profile.P3_row_col_box)); }
                         catch { MessageBox.Show("profile_3_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
-                    if (profile.check_waterflow_profile1.Checked)
+                    if (guiVariables.Profile.Check_waterflow_profile1)
                     {
-                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(guiVariables.Profile.P3_row_col_box)); }
                         catch { MessageBox.Show("profile_3_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
