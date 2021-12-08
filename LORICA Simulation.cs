@@ -1448,7 +1448,7 @@ namespace LORICA4
                 }
                 if (guiVariables.Depressions_output_checkbox)
                 {
-                    try { GlobalMethods.out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_depress.asc", depression); }
+                    try { GlobalMethods.out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_depress.asc", GlobalMethods.depression); }
                     catch { MessageBox.Show("depressions have not been written"); }
                     try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_dtmfillA.asc", GlobalMethods.dtmfill_A); }
                     catch { MessageBox.Show("dfmfill has not been written"); }
@@ -1475,7 +1475,7 @@ namespace LORICA4
                         catch { MessageBox.Show("water erosion has not been written"); }
                     }
                 }
-                if (creep_active_checkbox.Checked)
+                if (guiVariables.Creep_active_checkbox)
                 {
                     // Debug.WriteLine("before writing GlobalMethods.creep");
 
@@ -1484,11 +1484,11 @@ namespace LORICA4
 
                 }
 
-                if (Tillage_checkbox.Checked)
+                if (guiVariables.Tillage_checkbox)
                 {
                     // Debug.WriteLine("before writing tillage erosion");
 
-                    if (all_process_output_checkbox.Checked)
+                    if (guiVariables.All_process_output_checkbox)
                     {
                         try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_tillage.asc", GlobalMethods.sum_tillage); }
                         catch { MessageBox.Show("tillage has not been written"); }
@@ -1626,13 +1626,13 @@ namespace LORICA4
 
             }
             //Google Earth Animation
-            if ((googleAnimationCheckbox.Checked) && (GlobalMethods.t % (int.Parse(googAnimationSaveInterval.Text)) == 0))
+            if ((guiVariables.GoogleAnimationCheckbox) && (GlobalMethods.t % (int.Parse(guiVariables.GoogAnimationSaveInterval)) == 0))
             {
                 try { Google_Earth_Output(); }
                 catch { Debug.WriteLine("Error writing Google Output"); }
             }
             //AVI file output
-            if ((checkBoxGenerateAVIFile.Checked) && (GlobalMethods.t % (int.Parse(saveintervalbox.Text)) == 0))
+            if ((guiVariables.CheckBoxGenerateAVIFile) && (GlobalMethods.t % (int.Parse(guiVariables.Saveintervalbox)) == 0))
             {
                 try { AVI_Output(); }
                 catch { Debug.WriteLine("Error writing video Output"); }
@@ -1648,7 +1648,7 @@ namespace LORICA4
                 try
                 {
                     //close google earth animation
-                    if (googleAnimationCheckbox.Checked == true)
+                    if (guiVariables.GoogleAnimationCheckbox == true)
                     {
                         StreamWriter kmlsr = File.AppendText(KML_FILE_NAME);
                         kml = "\n</Folder>"
@@ -1664,7 +1664,7 @@ namespace LORICA4
                 //close AVI file
                 try
                 {
-                    if (checkBoxGenerateAVIFile.Checked)
+                    if (guiVariables.CheckBoxGenerateAVIFile)
                         aw.Close();  //JMW 20041109
                 }
                 catch (Exception ex)
@@ -1672,7 +1672,7 @@ namespace LORICA4
                     Debug.WriteLine("Error finishing video output");
                 }
 
-                this.InfoStatusPanel.Text = " --finished--";
+                guiVariables.InfoStatusPanel = " --finished--";
                 stopwatch.Stop();
                 Debug.WriteLine("Elapsed time: " + stopwatch.Elapsed);
                 //Timeseries output
@@ -3944,7 +3944,7 @@ namespace LORICA4
             }
             catch
             {
-                Debug.WriteLine("Failed at combining layer at row {0}, col {1} at time {2}", row, col, GlobalMethods.t);
+                Debug.WriteLine("Failed at combining layer at row {0}, col {1} at time {2}", rowwer, coller, GlobalMethods.t);
             }
         }
 
@@ -4289,7 +4289,7 @@ namespace LORICA4
             }
             catch
             {
-                Debug.WriteLine("Failed at splitting layer at row {0}, col {1} at time {2}", row, col, GlobalMethods.t);
+                Debug.WriteLine("Failed at splitting layer at row {0}, col {1} at time {2}", rowwer, coller, GlobalMethods.t);
             }
         }
 
@@ -5093,7 +5093,7 @@ namespace LORICA4
 
                 //this line keeps young (hornbeam) OM completely gone from the surface every second year (reflecting that,
                 //in reality, part of the year is unprotected). MvdM I added the else to rest the decomposition rate
-                if (GlobalMethods.t % 2 == 0) { potential_young_decomp_rate = 1; } else { potential_young_decomp_rate = Convert.ToDouble(carbon_y_decomp_rate_textbox.Text); }
+                if (GlobalMethods.t % 2 == 0) { potential_young_decomp_rate = 1; } else { potential_young_decomp_rate = Convert.ToDouble(guiVariables.Carbon_y_decomp_rate_textbox); }
 
                 calculate_TPI(7);
                 double a = -0.33;
@@ -5150,7 +5150,7 @@ namespace LORICA4
                     }
                     //this line keeps young (hornbeam) OM completely gone from the surface every second year (reflecting that,
                     //in reality, part of the year is unprotected). MvdM I added the else to rest the decomposition rate
-                    if (GlobalMethods.t % 2 == 0) { potential_young_decomp_rate = 1; } else { potential_young_decomp_rate = Convert.ToDouble(carbon_y_decomp_rate_textbox.Text); }
+                    if (GlobalMethods.t % 2 == 0) { potential_young_decomp_rate = 1; } else { potential_young_decomp_rate = Convert.ToDouble(guiVariables.Carbon_y_decomp_rate_textbox); }
                 }
 
                 if (NA_in_map(GlobalMethods.dtm) > 0 | NA_in_map(GlobalMethods.soildepth_m) > 0)
@@ -5319,8 +5319,8 @@ namespace LORICA4
         void soil_clay_translocation_Jagercikova()
         {
             double ct_adv0, ct_adv0_all, ct_dd, ct_dd_all;
-            ct_adv0_all = Convert.ToDouble(ct_v0_Jagercikova.Text);
-            ct_dd_all = Convert.ToDouble(ct_dd_Jagercikova.Text);
+            ct_adv0_all = Convert.ToDouble(guiVariables.Ct_v0_Jagercikova);
+            ct_dd_all = Convert.ToDouble(guiVariables.Ct_dd_Jagercikova);
             ct_adv0 = ct_adv0_all;
             ct_dd = ct_dd_all;
 
@@ -5708,7 +5708,7 @@ namespace LORICA4
                 for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     {
-                        if (only_waterflow_checkbox.Checked == false)
+                        if (guiVariables.Only_waterflow_checkbox == false)
                         {
 
                             for (size = 0; size < GlobalMethods.n_texture_classes; size++)
@@ -6176,7 +6176,7 @@ namespace LORICA4
                 {
                     if (GlobalMethods.dtm[row, col] != -9999)
                     {
-                        if (only_waterflow_checkbox.Checked == false)
+                        if (!guiVariables.Only_waterflow_checkbox)
                         {
                             double old_thickness = GlobalMethods.soildepth_m[row, col];
                             update_all_soil_thicknesses(row, col);
@@ -6197,11 +6197,11 @@ namespace LORICA4
                         }
 
                         // 7: Update timeseries
-                        if (check_space_rain.Checked == true) { total_rain += GlobalMethods.rain[row, col]; }
+                        if (guiVariables.Check_space_rain) { total_rain += GlobalMethods.rain[row, col]; }
                         total_rain += rain_value_m;
-                        if (check_space_evap.Checked == true) { total_evap += GlobalMethods.evapotranspiration[row, col]; }
+                        if (guiVariables.Check_space_evap) { total_evap += GlobalMethods.evapotranspiration[row, col]; }
                         total_evap += evap_value_m;
-                        if (check_space_infil.Checked == true) { total_infil += GlobalMethods.infil[row, col]; }
+                        if (guiVariables.Check_space_infil) { total_infil += GlobalMethods.infil[row, col]; }
                         total_infil += infil_value_m;
                         if (GlobalMethods.waterflow_m3[row, col] * GlobalMethods.dx * GlobalMethods.dx > guiVariables.Timeseries.Timeseries_waterflow_threshold) { wet_cells++; }
                     } // end for nodata
@@ -6223,7 +6223,7 @@ namespace LORICA4
             total_outflow = total_rain - total_evap - total_infil;
             //Debug.WriteLine("\n--erosion and deposition overview--");
             //Debug.WriteLine("GlobalMethods.rain " + total_rain + " evap " + total_evap + " total_infil " + total_infil);
-            if (only_waterflow_checkbox.Checked == false)
+            if (!guiVariables.Only_waterflow_checkbox)
             {
                 double total_kg_eroded = 0, total_kg_deposited = 0;
                 for (size = 0; size < 7; size++)
@@ -6232,8 +6232,8 @@ namespace LORICA4
                     total_kg_deposited += total_mass_deposited[size];
                 }
             }
-            this.InfoStatusPanel.Text = "calc movement has been finished";
-            this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
+            guiVariables.InfoStatusPanel = "calc movement has been finished";
+            guiVariables.Out_sed_statuspanel = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
 
             //double mass_after = total_catchment_mass();
             //if(mass_before != mass_after)
@@ -6305,9 +6305,9 @@ namespace LORICA4
                             (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == col) ||
                             (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == col))
                         {
-                            if (check_space_evap.Checked == true) { evap_value_m = GlobalMethods.evapotranspiration[row, col]; }
-                            if (check_space_rain.Checked == true) { rain_value_m = GlobalMethods.rain[row, col]; }
-                            if (check_space_infil.Checked == true) { infil_value_m = GlobalMethods.infil[row, col]; }
+                            if (guiVariables.Check_space_evap == true) { evap_value_m = GlobalMethods.evapotranspiration[row, col]; }
+                            if (guiVariables.Check_space_rain == true) { rain_value_m = GlobalMethods.rain[row, col]; }
+                            if (guiVariables.Check_space_infil == true) { infil_value_m = GlobalMethods.infil[row, col]; }
                             //ArT // development required to account for f(GlobalMethods.t) situations
                             GlobalMethods.waterflow_m3[row, col] += (rain_value_m - infil_value_m - evap_value_m) * GlobalMethods.dx * GlobalMethods.dx;
                             if (GlobalMethods.waterflow_m3[row, col] < 0) { GlobalMethods.waterflow_m3[row, col] = 0; }
@@ -8258,7 +8258,7 @@ namespace LORICA4
                 //Debug.WriteLine("Cr3.1, GlobalMethods.dtm = {0}", GlobalMethods.dtm[row1, col1]);
                 //displaysoil(row1, col1);
                 int layerreceiver = 0;
-                double creep_depth_decay_constant = Convert.ToDouble(bioturbation_depth_decay_textbox.Text);
+                double creep_depth_decay_constant = Convert.ToDouble(guiVariables.Bioturbation_depth_decay_textbox);
 
                 double frac_dz_lay, frac_overlap_lay, upperdepthdonor = 0, lowerdepthdonor = 0, upperdepthreceiver = 0, lowerdepthreceiver = 0, dsoil = 0, upp_z_lay = 0, int_curve_total, int_curve_lay, mass_export_lay_kg;
                 bool C_done = false, lastlayer = false;
@@ -9493,11 +9493,11 @@ namespace LORICA4
         {
             int z;
             this.InfoStatusPanel.Text = "searchdepressions has been entered";
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {        //visit all cells in the DEM and  ...
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
-                    depression[row, col] = 0;     // set depression to zero
+                    GlobalMethods.depression[row, col] = 0;     // set depression to zero
                 }
             }
 
@@ -9524,11 +9524,11 @@ namespace LORICA4
 
             totaldepressions = 0; totaldepressionsize = 0; maxsize = 0; totaldepressionvolume = 0; largestdepression = -1;
             depressionnumber = 0;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {        //visit all cells in the DEM and  ...
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
-                    if (GlobalMethods.status_map[row, col] == 1 && depression[row, col] == 0)
+                    if (GlobalMethods.status_map[row, col] == 1 && GlobalMethods.depression[row, col] == 0)
                     {   // sink  -NODATA cells are never sinks, no need to exclude them explicitly here
                         numberoflowestneighbours = 0;
                         for (lowestneighbourcounter = 0; lowestneighbourcounter < maxlowestnbs; lowestneighbourcounter++)
@@ -9540,7 +9540,7 @@ namespace LORICA4
                         if (depressionnumber == 1153000) { diagnostic_mode = 1; } else { diagnostic_mode = 0; }
                         //Debug.WriteLine(" depressionvolume of depression " + depressionnumber + " is initially " + depressionvolume[depressionnumber]); 
                         totaldepressions++;
-                        depressionlevel[depressionnumber] = GlobalMethods.dtm[row, col];
+                        GlobalMethods.depressionlevel[depressionnumber] = GlobalMethods.dtm[row, col];
                         iloedge[depressionnumber] = row - 1;
                         iupedge[depressionnumber] = row + 1;
                         jloedge[depressionnumber] = col - 1;
@@ -9551,10 +9551,10 @@ namespace LORICA4
                             Debug.WriteLine(" edges : " + iloedge[depressionnumber] + ", " + iupedge[depressionnumber] + ", " + jloedge[depressionnumber] + ", " + jupedge[depressionnumber]);
                         }
                         depressionsize[depressionnumber] = 1;
-                        depression[row, col] = depressionnumber;
-                        if (depression[row, col] < 0)
+                        GlobalMethods.depression[row, col] = depressionnumber;
+                        if (GlobalMethods.depression[row, col] < 0)
                         {
-                            MessageBox.Show("Depression error at row " + row + " col " + col + " dep " + depression[row, col]);
+                            MessageBox.Show("Depression error at row " + row + " col " + col + " dep " + GlobalMethods.depression[row, col]);
                         }
                         iupradius = 1; jupradius = 1; iloradius = 1; jloradius = 1;
                         depressionready = 0; depressiondrainsout = 0;
@@ -9576,16 +9576,16 @@ namespace LORICA4
                                             {
                                                 if (((row + i + alpha) >= 0) && ((row + i + alpha) < GlobalMethods.nr) && ((col + j + beta) >= 0) && ((col + j + beta) < GlobalMethods.nc) && !((alpha == 0) && (beta == 0)))
                                                 {
-                                                    if (depression[row + i + alpha, col + j + beta] == depressionnumber)
+                                                    if (GlobalMethods.depression[row + i + alpha, col + j + beta] == depressionnumber)
                                                     {   //and only if the cell is an actual neighbour of a cell that is member of the depression
                                                         nbismemberofdepression = 1;
                                                     } // end if nb = member of depression
                                                 } // end if boundary
                                             }
                                         } // end for first alpha-beta circle to see if any nb = member of depression. It could have been no neighbour of the current depression but still within ilorarius, iupradius etc.
-                                        if (nbismemberofdepression == 1 && depression[row + i, col + j] != depressionnumber)
+                                        if (nbismemberofdepression == 1 && GlobalMethods.depression[row + i, col + j] != depressionnumber)
                                         {   // only in case cell row+i, col+j  has a nb that is already member, we are interested in its altitude diff with depressionlevel
-                                            altidiff = depressionlevel[depressionnumber] - GlobalMethods.dtm[row + i, col + j];
+                                            altidiff = GlobalMethods.depressionlevel[depressionnumber] - GlobalMethods.dtm[row + i, col + j];
                                             if (diagnostic_mode == 1)
                                             {
                                                 Debug.WriteLine((row + i) + ", " + (col + j) + " is neighbour of depression , altidifference " + altidiff);
@@ -9598,10 +9598,10 @@ namespace LORICA4
                                                 collowestnb[lowestneighbourcounter] = (col + j);
                                                 // in this way, we can add all equally high lowest higher neighbours to the current depression (maximum = maxlowestnbs)
                                             } //end if higher neighbour, equal as before
-                                            if (altidiff > minaltidiff || GlobalMethods.dtm[row + i, col + j] < depressionlevel[depressionnumber])  // this INCLUDES nodata cells bordering the lake!!
+                                            if (altidiff > minaltidiff || GlobalMethods.dtm[row + i, col + j] < GlobalMethods.depressionlevel[depressionnumber])  // this INCLUDES nodata cells bordering the lake!!
                                             {   //het hoogteverschil met deze buur telt alleen als minder hoog dan vorige buren OF lager dan meerniveau 
                                                 minaltidiff = altidiff;
-                                                if (GlobalMethods.dtm[row + i, col + j] < depressionlevel[depressionnumber] && already_lower_than_lakelevel == 1)
+                                                if (GlobalMethods.dtm[row + i, col + j] < GlobalMethods.depressionlevel[depressionnumber] && already_lower_than_lakelevel == 1)
                                                 {  // the new lowest neighbour is lower than lakelevel!! 
                                                     // We want to know all lowest nbs that are lower than lakelevel, so we do not zero the rowlowestnb 
                                                     // and colllowestnb arrays
@@ -9613,7 +9613,7 @@ namespace LORICA4
                                                 }
                                                 else  // the new lowest neighbour is higher than lakelevel or is the first lowest nb that is lower than lakelevel
                                                 {
-                                                    if (GlobalMethods.dtm[row + i, col + j] < depressionlevel[depressionnumber]) { already_lower_than_lakelevel = 1; }
+                                                    if (GlobalMethods.dtm[row + i, col + j] < GlobalMethods.depressionlevel[depressionnumber]) { already_lower_than_lakelevel = 1; }
                                                     for (lowestneighbourcounter = 0; lowestneighbourcounter < maxlowestnbs; lowestneighbourcounter++)
                                                     {
                                                         rowlowestnb[lowestneighbourcounter] = -1; collowestnb[lowestneighbourcounter] = -1;
@@ -9646,18 +9646,18 @@ namespace LORICA4
                                 if (rowlowestnb[lowestneighbourcounter] <= iloedge[depressionnumber]) { iloedge[depressionnumber] = rowlowestnb[lowestneighbourcounter] - 1; }
                                 if (collowestnb[lowestneighbourcounter] >= jupedge[depressionnumber]) { jupedge[depressionnumber] = collowestnb[lowestneighbourcounter] + 1; }
                                 if (collowestnb[lowestneighbourcounter] <= jloedge[depressionnumber]) { jloedge[depressionnumber] = collowestnb[lowestneighbourcounter] - 1; }
-                                if (diagnostic_mode == 1) { Debug.WriteLine(" minaltidiff = " + minaltidiff + "; depression " + depressionnumber + " row " + rowlowestnb[lowestneighbourcounter] + " col " + collowestnb[lowestneighbourcounter] + " alt " + GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] + " is lower than depressionlevel " + depressionlevel[depressionnumber]); }
+                                if (diagnostic_mode == 1) { Debug.WriteLine(" minaltidiff = " + minaltidiff + "; depression " + depressionnumber + " row " + rowlowestnb[lowestneighbourcounter] + " col " + collowestnb[lowestneighbourcounter] + " alt " + GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] + " is lower than depressionlevel " + GlobalMethods.depressionlevel[depressionnumber]); }
 
                                 if (minaltidiff <= 0.0)
                                 { // if the cell is higher than depressionlevel
                                     // it can either be a cell of another depression
 
-                                    if (diagnostic_mode == 1) { Debug.WriteLine(rowlowestnb[lowestneighbourcounter] + "," + collowestnb[lowestneighbourcounter] + " is member of depression " + depression[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]]); }
-                                    if (depression[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] != 0 && depression[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] != depressionnumber)
+                                    if (diagnostic_mode == 1) { Debug.WriteLine(rowlowestnb[lowestneighbourcounter] + "," + collowestnb[lowestneighbourcounter] + " is member of depression " + GlobalMethods.depression[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]]); }
+                                    if (GlobalMethods.depression[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] != 0 && GlobalMethods.depression[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] != depressionnumber)
                                     {  // then we have touched upon a depression that was previously analysed
                                         //GlobalMethods.status_map[rowlowestnb[lowestneighbourcounter],collowestnb[lowestneighbourcounter]] = 0;
                                         otherdepressionsize = 0;
-                                        otherdepression = depression[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]];
+                                        otherdepression = GlobalMethods.depression[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]];
                                         if (GlobalMethods.t > 1000000) { diagnostic_mode = 1; }
                                         totaldepressions--;
                                         totaldepressionvolume -= depressionvolume_m[otherdepression];
@@ -9668,10 +9668,10 @@ namespace LORICA4
                                         }
                                         depressionvolume_m[depressionnumber] += depressionvolume_m[otherdepression];
                                         //if (diagnostic_mode == 1) { Debug.WriteLine(" depressionvolume of depression " + depressionnumber + " was increased to " + depressionvolume[depressionnumber] + " with " + depressionvolume[otherdepression] + " of depression " + otherdepression); }
-                                        depressionvolume_m[depressionnumber] += (depressionsize[depressionnumber] * (GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] - depressionlevel[depressionnumber]));  //
+                                        depressionvolume_m[depressionnumber] += (depressionsize[depressionnumber] * (GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] - GlobalMethods.depressionlevel[depressionnumber]));  //
                                         //if (diagnostic_mode == 1) { Debug.WriteLine(" added " + depressionsize[depressionnumber] * (GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] - depressionlevel[depressionnumber]) + " to depressionvolume of depression " + depressionnumber + ". Dtm " + GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] + ", depressionlevel " + depressionlevel[depressionnumber]); }
                                         depressionvolume_m[otherdepression] = 0;
-                                        depressionlevel[depressionnumber] = GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]];
+                                        GlobalMethods.depressionlevel[depressionnumber] = GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]];
                                         //if (diagnostic_mode == 1) { Debug.WriteLine(" first: ilo = " + iloradius + " , iup = " + iupradius + " , jlo = " + jloradius + " , jup = " + jupradius + "  around sink " + row + " " + col); }
                                         //if (diagnostic_mode == 1) { Debug.WriteLine(" depression " + otherdepression + " : iloedge " + iloedge[otherdepression] + " , iupedge " + iupedge[otherdepression] + " , jloedge " + jloedge[otherdepression] + " , jupedge " + jupedge[otherdepression]); }
                                         if (jloedge[otherdepression] < (col - jloradius)) { jloradius = Math.Abs(jloedge[otherdepression] - col) + 1; jloedge[depressionnumber] = col - jloradius; }     // we enlarge the area around the sink of the current depression that is to be checked
@@ -9687,16 +9687,16 @@ namespace LORICA4
                                                 if (((row + alpha) >= 0) && ((row + alpha) < GlobalMethods.nr) &&   // insofar that the circle is within the boundaries, excluding the centre cell itself
                                                     ((col + beta) >= 0) && ((col + beta) < GlobalMethods.nc) && !((alpha == 0) && (beta == 0)) && GlobalMethods.dtm[row + alpha, col + beta] != -9999)
                                                 {
-                                                    if (depression[row + alpha, col + beta] == otherdepression)
+                                                    if (GlobalMethods.depression[row + alpha, col + beta] == otherdepression)
                                                     {
-                                                        depression[row + alpha, col + beta] = depressionnumber;
+                                                        GlobalMethods.depression[row + alpha, col + beta] = depressionnumber;
                                                         otherdepressionsize++;
                                                         if (diagnostic_mode == 1) { Debug.WriteLine(" moved cell " + (row + alpha) + " , " + (col + beta) + "(" + GlobalMethods.dtm[row + alpha, col + beta] + ") from depression " + otherdepression + " to depression " + depressionnumber + " "); }
                                                     } // end if cell belonged to other depression
                                                 }
                                             }
                                         } // double end for second alpha-beta square : around the sink to change depressionnumber of previously checked depression
-                                        if (diagnostic_mode == 1) { Debug.WriteLine(" All " + otherdepressionsize + "  cells of depression " + otherdepression + "  were added to depression " + depressionnumber + "  (prvsly " + depressionsize[depressionnumber] + " ), level now " + depressionlevel[depressionnumber]); }
+                                        if (diagnostic_mode == 1) { Debug.WriteLine(" All " + otherdepressionsize + "  cells of depression " + otherdepression + "  were added to depression " + depressionnumber + "  (prvsly " + depressionsize[depressionnumber] + " ), level now " + GlobalMethods.depressionlevel[depressionnumber]); }
                                         depressionsize[depressionnumber] += otherdepressionsize;
                                         depressionsize[otherdepression] = 0;
                                         totaldepressionsize -= otherdepressionsize;
@@ -9713,9 +9713,9 @@ namespace LORICA4
                                                     ((collowestnb[lowestneighbourcounter] + beta) >= 0) && ((collowestnb[lowestneighbourcounter] + beta) < GlobalMethods.nc) &&
                                                     !((alpha == 0) && (beta == 0)) && GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] != -9999)
                                                 {  // insofar that the circle is within the boundaries, excluding the centre cell itself
-                                                    if (depression[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] != depressionnumber)
+                                                    if (GlobalMethods.depression[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] != depressionnumber)
                                                     {
-                                                        if (GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] < depressionlevel[depressionnumber])
+                                                        if (GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] < GlobalMethods.depressionlevel[depressionnumber])
                                                         {
                                                             depressionready = 1;
                                                             GlobalMethods.drainingoutlet_col[depressionnumber, 0] = rowlowestnb[lowestneighbourcounter];
@@ -9738,15 +9738,15 @@ namespace LORICA4
                                     else
                                     {      // so we did not touch another depression with our lowest nb , but it was a higher or equally high nb so the depression is not yet ready
                                         if (diagnostic_mode == 1) { Debug.WriteLine(" this lowest neighbour: second option: no depression "); }
-                                        depression[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] = depressionnumber;
+                                        GlobalMethods.depression[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] = depressionnumber;
                                         if (diagnostic_mode == 1) { Debug.WriteLine(" depressionvolume of depression " + depressionnumber + " is " + depressionvolume_m[depressionnumber]); }
-                                        depressionvolume_m[depressionnumber] += (depressionsize[depressionnumber] * (GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] - depressionlevel[depressionnumber]));  // add the amount of water added to the surface already part of depression
-                                        if (diagnostic_mode == 1) { Debug.WriteLine(" added " + (depressionsize[depressionnumber] * (GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] - depressionlevel[depressionnumber])) + " to depressionvolume of depression " + depressionnumber + ". depressionsize: " + depressionsize[depressionnumber] + ", GlobalMethods.dtm %6.6f, depressionlevel " + GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]], depressionlevel[depressionnumber]); }
+                                        depressionvolume_m[depressionnumber] += (depressionsize[depressionnumber] * (GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] - GlobalMethods.depressionlevel[depressionnumber]));  // add the amount of water added to the surface already part of depression
+                                        if (diagnostic_mode == 1) { Debug.WriteLine(" added " + (depressionsize[depressionnumber] * (GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] - GlobalMethods.depressionlevel[depressionnumber])) + " to depressionvolume of depression " + depressionnumber + ". depressionsize: " + depressionsize[depressionnumber] + ", GlobalMethods.dtm %6.6f, depressionlevel " + GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]], GlobalMethods.depressionlevel[depressionnumber]); }
                                         depressionsize[depressionnumber]++;
-                                        depressionlevel[depressionnumber] = GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]];
+                                        GlobalMethods.depressionlevel[depressionnumber] = GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]];
                                         if (diagnostic_mode == 1) { Debug.WriteLine(" added " + rowlowestnb[lowestneighbourcounter] + ", " + collowestnb[lowestneighbourcounter] + "  with level " + GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] + " to depression " + depressionnumber + " , size now " + depressionsize[depressionnumber] + " "); }
-                                        if (diagnostic_mode == 1) { Debug.WriteLine(" lowest neighbour of depression " + depressionnumber + "  is " + rowlowestnb[lowestneighbourcounter] + " , " + collowestnb[lowestneighbourcounter] + " ," + depressionlevel[depressionnumber] + "  "); }
-                                        if (diagnostic_mode == 1) { Debug.WriteLine(" depressionlevel for this depression is currently: " + depressionlevel[depressionnumber]); }  // laagste buur is nog niet betrokken bij een ander meer
+                                        if (diagnostic_mode == 1) { Debug.WriteLine(" lowest neighbour of depression " + depressionnumber + "  is " + rowlowestnb[lowestneighbourcounter] + " , " + collowestnb[lowestneighbourcounter] + " ," + GlobalMethods.depressionlevel[depressionnumber] + "  "); }
+                                        if (diagnostic_mode == 1) { Debug.WriteLine(" depressionlevel for this depression is currently: " + GlobalMethods.depressionlevel[depressionnumber]); }  // laagste buur is nog niet betrokken bij een ander meer
 
                                         if (GlobalMethods.status_map[rowlowestnb[lowestneighbourcounter], collowestnb[lowestneighbourcounter]] == 3)
                                         { // then this depression drains out of the DEM...
@@ -9779,9 +9779,9 @@ namespace LORICA4
                                                     ((collowestnb[lowestneighbourcounter] + beta) >= 0) && ((collowestnb[lowestneighbourcounter] + beta) < GlobalMethods.nc) &&
                                                     !((alpha == 0) && (beta == 0)) && GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] != -9999)
                                             {  // insofar that the circle is within the boundaries, excluding the centre cell itself
-                                                if (depression[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] == depressionnumber)
+                                                if (GlobalMethods.depression[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] == depressionnumber)
                                                 {
-                                                    if (GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] == depressionlevel[depressionnumber])
+                                                    if (GlobalMethods.dtm[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] == GlobalMethods.depressionlevel[depressionnumber])
                                                     {
                                                         //Debug.WriteLine(" At lower cell  " + rowlowestnb[lowestneighbourcounter] + " " + collowestnb[lowestneighbourcounter] + ", looking back at " + (rowlowestnb[lowestneighbourcounter] + alpha) + " " + (collowestnb[lowestneighbourcounter] + beta));
                                                         if (GlobalMethods.drainingoutlet_col[depressionnumber, outletnumber] != -1) //ArT is outletnumber put to zero before here somewhere?
@@ -9849,8 +9849,8 @@ namespace LORICA4
                         //if (depressionnumber == 180) {diagnostic_mode = 1;}
                         if (diagnostic_mode == 1)
                         {
-                            Debug.WriteLine(" depression " + depressionnumber + "  (" + depressionlevel[depressionnumber] + "  m) is ready and contains " + depressionsize[depressionnumber] + "  cells. Volume = " + depressionvolume_m[depressionnumber] + " ");
-                            if (depressiondrainsout == 1) { Debug.WriteLine(" depression " + depressionnumber + "  (" + depressionlevel[depressionnumber] + "  m) drains outside the DEM "); }
+                            Debug.WriteLine(" depression " + depressionnumber + "  (" + GlobalMethods.depressionlevel[depressionnumber] + "  m) is ready and contains " + depressionsize[depressionnumber] + "  cells. Volume = " + depressionvolume_m[depressionnumber] + " ");
+                            if (depressiondrainsout == 1) { Debug.WriteLine(" depression " + depressionnumber + "  (" + GlobalMethods.depressionlevel[depressionnumber] + "  m) drains outside the DEM "); }
                             minimaps(row, col);
                         }
                         totaldepressionsize += depressionsize[depressionnumber];
@@ -9900,9 +9900,9 @@ namespace LORICA4
 
             once_dtm_fill = 0;
 
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     GlobalMethods.dtmfill_A[row, col] = -1;
                 } //for
@@ -9915,11 +9915,11 @@ namespace LORICA4
 
                 if (depressionsize[depressiontt] > 0)
                 {      // if they exist, so have not been intermediate depressions
-                    GlobalMethods.dtmfill_A[GlobalMethods.drainingoutlet_col[depressiontt, 0], GlobalMethods.drainingoutlet_col[depressiontt, 0]] = depressionlevel[depressiontt];
-                    if (GlobalMethods.drainingoutlet_col[depressiontt, 1] != -1) { GlobalMethods.dtmfill_A[GlobalMethods.drainingoutlet_col[depressiontt, 1], GlobalMethods.drainingoutlet_col[depressiontt, 1]] = depressionlevel[depressiontt]; }
-                    if (GlobalMethods.drainingoutlet_col[depressiontt, 2] != -1) { GlobalMethods.dtmfill_A[GlobalMethods.drainingoutlet_col[depressiontt, 2], GlobalMethods.drainingoutlet_col[depressiontt, 2]] = depressionlevel[depressiontt]; }
-                    if (GlobalMethods.drainingoutlet_col[depressiontt, 3] != -1) { GlobalMethods.dtmfill_A[GlobalMethods.drainingoutlet_col[depressiontt, 3], GlobalMethods.drainingoutlet_col[depressiontt, 3]] = depressionlevel[depressiontt]; }
-                    if (GlobalMethods.drainingoutlet_col[depressiontt, 4] != -1) { GlobalMethods.dtmfill_A[GlobalMethods.drainingoutlet_col[depressiontt, 4], GlobalMethods.drainingoutlet_col[depressiontt, 4]] = depressionlevel[depressiontt]; }
+                    GlobalMethods.dtmfill_A[GlobalMethods.drainingoutlet_col[depressiontt, 0], GlobalMethods.drainingoutlet_col[depressiontt, 0]] = GlobalMethods.depressionlevel[depressiontt];
+                    if (GlobalMethods.drainingoutlet_col[depressiontt, 1] != -1) { GlobalMethods.dtmfill_A[GlobalMethods.drainingoutlet_col[depressiontt, 1], GlobalMethods.drainingoutlet_col[depressiontt, 1]] = GlobalMethods.depressionlevel[depressiontt]; }
+                    if (GlobalMethods.drainingoutlet_col[depressiontt, 2] != -1) { GlobalMethods.dtmfill_A[GlobalMethods.drainingoutlet_col[depressiontt, 2], GlobalMethods.drainingoutlet_col[depressiontt, 2]] = GlobalMethods.depressionlevel[depressiontt]; }
+                    if (GlobalMethods.drainingoutlet_col[depressiontt, 3] != -1) { GlobalMethods.dtmfill_A[GlobalMethods.drainingoutlet_col[depressiontt, 3], GlobalMethods.drainingoutlet_col[depressiontt, 3]] = GlobalMethods.depressionlevel[depressiontt]; }
+                    if (GlobalMethods.drainingoutlet_col[depressiontt, 4] != -1) { GlobalMethods.dtmfill_A[GlobalMethods.drainingoutlet_col[depressiontt, 4], GlobalMethods.drainingoutlet_col[depressiontt, 4]] = GlobalMethods.depressionlevel[depressiontt]; }
 
                     notyetdone = 1; done = 0;
                     while (notyetdone > 0)
@@ -9927,15 +9927,15 @@ namespace LORICA4
                         notyetdone = 0;
                         //if (diagnostic_mode == 1) { Debug.WriteLine("depressioncells depression " + depressiontt + " size " + depressionsize[depressiontt] + " " +GlobalMethods.drainingoutlet_col[depressiontt]+ " " + GlobalMethods.drainingoutlet_col[depressiontt]); }
                         //diagnostic_mode = 0;
-                        for (row = iloedge[depressiontt]; row <= iupedge[depressiontt]; row++)
+                        for (int row = iloedge[depressiontt]; row <= iupedge[depressiontt]; row++)
                         {
-                            for (col = jloedge[depressiontt]; col <= jupedge[depressiontt]; col++)
+                            for (int col = jloedge[depressiontt]; col <= jupedge[depressiontt]; col++)
                             {
                                 if (((row) >= 0) && ((row) < GlobalMethods.nr) && ((col) >= 0) && ((col) < GlobalMethods.nc) && GlobalMethods.dtm[row, col] != -9999)
                                 {  //bnd
                                     if (GlobalMethods.t > 1000000) { diagnostic_mode = 1; } else { diagnostic_mode = 0; }
                                     if (diagnostic_mode == 1) { Debug.WriteLine("GlobalMethods.dtmfill_A of " + row + " " + col + " = " + GlobalMethods.dtmfill_A[row, col] + ", checking on behalf of depression " + depressiontt); }
-                                    if (GlobalMethods.dtmfill_A[row, col] == -1 && depression[row, col] == depressiontt)
+                                    if (GlobalMethods.dtmfill_A[row, col] == -1 && GlobalMethods.depression[row, col] == depressiontt)
                                     {  // if this is a cell of the current depression that has not yet got a dtmfill
                                         // and remember that this is the only place where this cell could have gotten that DTMfill
                                         notyetdone++;       // then we are not yet ready
@@ -9947,7 +9947,7 @@ namespace LORICA4
                                             {
                                                 if (((row + i) >= 0) && ((row + i) < GlobalMethods.nr) && ((col + j) >= 0) && ((col + j) < GlobalMethods.nc) && !((i == 0) && (j == 0)) && GlobalMethods.dtm[row + i, col + j] != -9999)
                                                 {  //bnd
-                                                    if (depression[row + i, col + j] == depressiontt && GlobalMethods.dtmfill_A[row + i, col + j] > 0.0)
+                                                    if (GlobalMethods.depression[row + i, col + j] == depressiontt && GlobalMethods.dtmfill_A[row + i, col + j] > 0.0)
                                                     { // if it IS a depression-nb and DOES have a dtmfill
                                                         if ((i == 0 || j == 0) && (GlobalMethods.dtmfill_A[row, col] == -1 || (GlobalMethods.dtmfill_A[row, col] > GlobalMethods.dtmfill_A[row + i, col + j] + epsilon * GlobalMethods.dx)))
                                                         {
@@ -9979,16 +9979,16 @@ namespace LORICA4
         void cleardelta(int iloradius, int iupradius, int jloradius, int jupradius, int clear_row, int clear_col)   //clears a delta
         {
             int epsilon, eta;
-            if (diagnostic_mode == 1) { Debug.WriteLine(" clearing delta lake " + Math.Abs(depression[clear_row, clear_col]) + " around " + clear_row + " " + clear_col); }
+            if (diagnostic_mode == 1) { Debug.WriteLine(" clearing delta lake " + Math.Abs(GlobalMethods.depression[clear_row, clear_col]) + " around " + clear_row + " " + clear_col); }
             for (epsilon = -(iloradius + 3); epsilon <= iupradius + 3; epsilon++)
             {
                 for (eta = -(jloradius + 3); eta <= jupradius + 3; eta++)
                 {
                     if (((clear_row + epsilon) >= 0) && ((clear_row + epsilon) < GlobalMethods.nr) && ((clear_col + eta) >= 0) && ((clear_col + eta) < GlobalMethods.nc))
                     { // boundaries
-                        if (depression[clear_row + epsilon, clear_col + eta] < 0)
+                        if (GlobalMethods.depression[clear_row + epsilon, clear_col + eta] < 0)
                         {
-                            depression[clear_row + epsilon, clear_col + eta] = Math.Abs(depression[clear_row, clear_col]);
+                            GlobalMethods.depression[clear_row + epsilon, clear_col + eta] = Math.Abs(GlobalMethods.depression[clear_row, clear_col]);
                             if (diagnostic_mode == 1) { Debug.WriteLine(" membership of delta has been cancelled for " + (clear_row + epsilon) + " " + (clear_col + eta)); }
                         }  // end if depression < 0
                     }   // end if boundary
@@ -10024,9 +10024,9 @@ namespace LORICA4
                 {
                     if (((urow) >= 0) && ((urow) < GlobalMethods.nr) && ((ucol) >= 0) && ((ucol) < GlobalMethods.nc) && GlobalMethods.dtm[urow, ucol] != -9999)
                     {  //bnd
-                        if (depression[urow, ucol] == depressionnumber)
+                        if (GlobalMethods.depression[urow, ucol] == depressionnumber)
                         {
-                            if (only_waterflow_checkbox.Checked == false)
+                            if (!guiVariables.Only_waterflow_checkbox)
                             {
                                 if (!(GlobalMethods.dz_ero_m[urow, ucol] == 0 && GlobalMethods.dz_sed_m[urow, ucol] == 0))
                                 {
@@ -10037,7 +10037,7 @@ namespace LORICA4
                             }
                             // if they are member of the lake : add the diff between fillheight and GlobalMethods.dtm to the volume that must be filled, and add the sedintrans to what is available for filling
                             depressionsum_water_m += GlobalMethods.waterflow_m3[urow, ucol] / GlobalMethods.dx / GlobalMethods.dx;
-                            if (only_waterflow_checkbox.Checked == false)
+                            if (!guiVariables.Only_waterflow_checkbox)
                             {
                                 for (size = 0; size < GlobalMethods.n_texture_classes; size++)
                                 {
@@ -10068,7 +10068,7 @@ namespace LORICA4
                     {
                         if (((urow) >= 0) && ((urow) < GlobalMethods.nr) && ((ucol) >= 0) && ((ucol) < GlobalMethods.nc) && GlobalMethods.dtm[urow, ucol] != -9999)
                         {  //bnd
-                            if (depression[urow, ucol] != depressionnumber && GlobalMethods.dtm[urow, ucol] > depressionlevel[depressionnumber]) // the second part of the condition should ensure that no cells on the downstream side of outlets are added. 
+                            if (GlobalMethods.depression[urow, ucol] != depressionnumber && GlobalMethods.dtm[urow, ucol] > GlobalMethods.depressionlevel[depressionnumber]) // the second part of the condition should ensure that no cells on the downstream side of outlets are added. 
                             {
                                 double lowest_dtm_fill = 9999;
                                 // we have now found a cell that should potentiall added to the lake - however, it should have a lake-neighbour for that to be really true. We look around to check this.
@@ -10079,9 +10079,9 @@ namespace LORICA4
                                         if ((urow + alpha) >= 0 && (urow + alpha) < GlobalMethods.nr && (ucol + beta) >= 0 && (ucol + beta) < GlobalMethods.nc && !((alpha) == 0 && (beta) == 0) && GlobalMethods.dtm[urow + alpha, ucol + beta] != -9999)
                                         {
                                             if ((urow != urow + alpha) && (ucol != ucol + beta)) { GlobalMethods.d_x = GlobalMethods.dx * Math.Sqrt(2); } else { GlobalMethods.d_x = GlobalMethods.dx; }
-                                            if (only_waterflow_checkbox.Checked == false)
+                                            if (guiVariables.Only_waterflow_checkbox)
                                             {
-                                                if (depression[urow + alpha, ucol + beta] == depressionnumber && (GlobalMethods.dtm[urow, ucol] + GlobalMethods.dz_ero_m[urow, ucol] + GlobalMethods.dz_sed_m[urow, ucol]) < (GlobalMethods.dtmfill_A[urow + alpha, ucol + beta] + epsilon * GlobalMethods.d_x))
+                                                if (GlobalMethods.depression[urow + alpha, ucol + beta] == depressionnumber && (GlobalMethods.dtm[urow, ucol] + GlobalMethods.dz_ero_m[urow, ucol] + GlobalMethods.dz_sed_m[urow, ucol]) < (GlobalMethods.dtmfill_A[urow + alpha, ucol + beta] + epsilon * GlobalMethods.d_x))
                                                 // if this cell has a lake neighbour and has a current altitude lower than the fillheight resulting from that neighbour, we store that fillheight until we find the lowest fillheight resulting from any lake-nbs of this cell
                                                 {
                                                     if ((GlobalMethods.dtmfill_A[urow + alpha, ucol + beta] + epsilon * GlobalMethods.d_x) < lowest_dtm_fill)
@@ -10093,7 +10093,7 @@ namespace LORICA4
                                             }
                                             else
                                             {
-                                                if (depression[urow + alpha, ucol + beta] == depressionnumber && (GlobalMethods.dtm[urow, ucol]) < (GlobalMethods.dtmfill_A[urow + alpha, ucol + beta] + epsilon * GlobalMethods.d_x))
+                                                if (GlobalMethods.depression[urow + alpha, ucol + beta] == depressionnumber && (GlobalMethods.dtm[urow, ucol]) < (GlobalMethods.dtmfill_A[urow + alpha, ucol + beta] + epsilon * GlobalMethods.d_x))
                                                 // if this cell has a lake neighbour and has a current altitude lower than the fillheight resulting from that neighbour, we store that fillheight until we find the lowest fillheight resulting from any lake-nbs of this cell
                                                 {
                                                     if ((GlobalMethods.dtmfill_A[urow + alpha, ucol + beta] + epsilon * GlobalMethods.d_x) < lowest_dtm_fill)
@@ -10109,10 +10109,10 @@ namespace LORICA4
                                 // after checking, if this cell had any lake-nb and was low enough itself, it is added to the lake and the search window is enlarged.
                                 if (lowest_dtm_fill < 9999)
                                 {
-                                    depression[urow, ucol] = depressionnumber;
+                                    GlobalMethods.depression[urow, ucol] = depressionnumber;
                                     depressionsize[depressionnumber]++;
                                     GlobalMethods.dtmfill_A[urow, ucol] = lowest_dtm_fill;
-                                    if (only_waterflow_checkbox.Checked == false)
+                                    if (!guiVariables.Only_waterflow_checkbox)
                                     {
                                         needed_to_fill_depression_m += GlobalMethods.dtmfill_A[urow, ucol] - (GlobalMethods.dtm[urow, ucol] + GlobalMethods.dz_ero_m[urow, ucol] + GlobalMethods.dz_sed_m[urow, ucol]);
                                         for (size = 0; size < GlobalMethods.n_texture_classes; size++)
@@ -10155,7 +10155,7 @@ namespace LORICA4
                 {
                     if (((fillrow) >= 0) && ((fillrow) < GlobalMethods.nr) && ((fillcol) >= 0) && ((fillcol) < GlobalMethods.nc) && GlobalMethods.dtm[fillrow, fillcol] != -9999)
                     {  //bnd
-                        if (depression[fillrow, fillcol] == this_depression)
+                        if (GlobalMethods.depression[fillrow, fillcol] == this_depression)
                         {
                             //Debug.WriteLine(" adding "  +(GlobalMethods.dtmfill_A[fillrow, fillcol] - GlobalMethods.dz_ero_m[fillrow, fillcol] - GlobalMethods.dz_sed_m[fillrow, fillcol] - GlobalMethods.dtm[fillrow, fillcol])+" sed to " + fillrow + " "+ fillcol ); 
                             //sediment_filled2 += GlobalMethods.dtmfill_A[fillrow, fillcol] - GlobalMethods.dz_ero_m[fillrow, fillcol] - GlobalMethods.dz_sed_m[fillrow, fillcol] - GlobalMethods.dtm[fillrow, fillcol];   //sediment_filled2 SHOULD BE sediment_filled at the end
@@ -10250,7 +10250,7 @@ namespace LORICA4
                             if (GlobalMethods.sediment_in_transport_kg[startrow, startcol, size] > 0)
                             { sediment_present = 1; }
                         }
-                        if (depression[startrow, startcol] == active_depression && sediment_present == 1)
+                        if (GlobalMethods.depression[startrow, startcol] == active_depression && sediment_present == 1)
                         // so, for all cells in the depression that have a non-zero sediment in transport (and EXCLUDING the outlets) 
                         {
                             if (!(GlobalMethods.drainingoutlet_col[active_depression, 0] == startrow && GlobalMethods.drainingoutlet_col[active_depression, 0] == startcol) &&
@@ -10281,7 +10281,7 @@ namespace LORICA4
 
                                     find_lowest_oblique_neighbour(active_depression);  // to start in the right location with building the delta
                                     // this may be lower in the lake than at the side-cell, at location rowlowestobnb,collowestobnb
-                                    depression[rowlowestobnb, collowestobnb] = -active_depression;   // we have found the start of this delta
+                                    GlobalMethods.depression[rowlowestobnb, collowestobnb] = -active_depression;   // we have found the start of this delta
                                     deltasize = 1;    // therefore we give delta a value of 1
                                     dhobliquemax2 = 99999.99;
                                     II = 0; JJ = 0;
@@ -10373,8 +10373,8 @@ namespace LORICA4
                     {
                         if ((startrow + i >= 0) && (startrow + i < GlobalMethods.nr) && (startcol + j >= 0) && (startcol + j < GlobalMethods.nc) && !((i == 0) && (j == 0)) && GlobalMethods.dtm[startrow + i, startcol + j] != -9999) //&& !((startrow + i == row) && (startcol + j == col))
                         { // boundary check while looking around startrow startcol for the neighbours of the entire current delta
-                            if (diagnostic_mode == 1) { Debug.WriteLine(" oblique neighbour now " + (startrow + i) + " " + (startcol + j) + ", depression " + depression[startrow + i, startcol + j] + " GlobalMethods.dtm " + (GlobalMethods.dtm[startrow + i, startcol + j] + GlobalMethods.dz_ero_m[startrow + i, startcol + j] + GlobalMethods.dz_sed_m[startrow + i, startcol + j])); }
-                            if (depression[startrow + i, startcol + j] == this_depression || depression[startrow + i, startcol + j] == -this_depression)
+                            if (diagnostic_mode == 1) { Debug.WriteLine(" oblique neighbour now " + (startrow + i) + " " + (startcol + j) + ", depression " + GlobalMethods.depression[startrow + i, startcol + j] + " GlobalMethods.dtm " + (GlobalMethods.dtm[startrow + i, startcol + j] + GlobalMethods.dz_ero_m[startrow + i, startcol + j] + GlobalMethods.dz_sed_m[startrow + i, startcol + j])); }
+                            if (GlobalMethods.depression[startrow + i, startcol + j] == this_depression || GlobalMethods.depression[startrow + i, startcol + j] == -this_depression)
                             {  // if you are a member of this depression
                                 dhoblique = (GlobalMethods.dtm[startrow, startcol] + GlobalMethods.dz_ero_m[startrow, startcol] + GlobalMethods.dz_sed_m[startrow, startcol]) - (GlobalMethods.dtm[startrow + i, startcol + j] + GlobalMethods.dz_ero_m[startrow + i, startcol + j] + GlobalMethods.dz_sed_m[startrow + i, startcol + j]) - (Math.Sqrt((i * i) + (j * j)) * GlobalMethods.dx * tangent_of_delta);
                                 if (diagnostic_mode == 1) { Debug.WriteLine(" oblique neighbour now " + (startrow + i) + " " + (startcol + j) + " :" + dhoblique); }
@@ -10432,7 +10432,7 @@ namespace LORICA4
                     {
                         if (((rowlowestobnb + i) >= 0) && ((rowlowestobnb + i) < GlobalMethods.nr) && ((collowestobnb + j) >= 0) && ((collowestobnb + j) < GlobalMethods.nc) && !((i == 0) && (j == 0)))
                         { // boundaries
-                            if (depression[rowlowestobnb + i, collowestobnb + j] == here_depression)
+                            if (GlobalMethods.depression[rowlowestobnb + i, collowestobnb + j] == here_depression)
                             {
                                 dhoblique = -((GlobalMethods.dtm[rowlowestobnb, collowestobnb]) + GlobalMethods.dz_ero_m[rowlowestobnb, collowestobnb] + GlobalMethods.dz_sed_m[rowlowestobnb, collowestobnb]) + (GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] + GlobalMethods.dz_ero_m[rowlowestobnb + i, collowestobnb + j] + GlobalMethods.dz_sed_m[rowlowestobnb + i, collowestobnb + j]) + (Math.Sqrt(Math.Pow((rowlowestobnb + i - startrow), 2) + Math.Pow((collowestobnb + j - startcol), 2)) - Math.Sqrt(Math.Pow((rowlowestobnb - startrow), 2) + Math.Pow((collowestobnb - startcol), 2))) * GlobalMethods.dx * tangent_of_delta;
                                 if (dhoblique != 0 && dhoblique < dhobliquemax2)
@@ -10448,7 +10448,7 @@ namespace LORICA4
                                     //then filled this new delta to the point that we are as high as the previous one
                                     // we therefore encounter one or more cells with dhoblique = 0
                                     //we must incorporate these cells into the delta and increase the searchradius
-                                    depression[rowlowestobnb + i, collowestobnb + j] = -here_depression;
+                                    GlobalMethods.depression[rowlowestobnb + i, collowestobnb + j] = -here_depression;
                                     deltasize++;
                                     readysearching = 0;
                                     if (diagnostic_mode == 1) { Debug.WriteLine("added " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " (dhoblique 0.0000) to the delta and will increase searchradius for lowest higher nbour"); }
@@ -10492,7 +10492,7 @@ namespace LORICA4
                 {
                     if (((rowlowestobnb + i) >= 0) && ((rowlowestobnb + i) < GlobalMethods.nr) && ((collowestobnb + j) >= 0) && ((collowestobnb + j) < GlobalMethods.nc) && !(rowlowestobnb + i == row && collowestobnb + j == col) && GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] != -9999)
                     { // boundaries, note that i==0 && j==0 is allowed  ;we can raise rowlowestobnb,colloewsobnb when it is part of the delta.
-                        if (depression[rowlowestobnb + i, collowestobnb + j] == -this_depression) // i.e. if cell is part of present delta
+                        if (GlobalMethods.depression[rowlowestobnb + i, collowestobnb + j] == -this_depression) // i.e. if cell is part of present delta
                         {
                             GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] += dhobliquemax2;
                             available_for_delta_m -= dhobliquemax2;
@@ -10519,9 +10519,9 @@ namespace LORICA4
                                 if (GlobalMethods.lake_sed_m[rowlowestobnb + i, collowestobnb + j] < -0.0000001) { Debug.WriteLine("1 Warning: negative lake deposition in " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " of " + GlobalMethods.lake_sed_m[rowlowestobnb + i, collowestobnb + j] + " GlobalMethods.dtm " + GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] + " fill " + GlobalMethods.dtmfill_A[rowlowestobnb + i, collowestobnb + j]); minimaps(rowlowestobnb + i, collowestobnb + j); }
                                 GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] = GlobalMethods.dtmfill_A[rowlowestobnb + i, collowestobnb + j] - GlobalMethods.dz_ero_m[rowlowestobnb + i, collowestobnb + j] - GlobalMethods.dz_sed_m[rowlowestobnb + i, collowestobnb + j];
                                 if (GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] == -1) { Debug.WriteLine("A2 cell " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " has an altitude of -1 now"); minimaps((rowlowestobnb + i), (collowestobnb + j)); }
-                                depression[rowlowestobnb + i, collowestobnb + j] = 0;
+                                GlobalMethods.depression[rowlowestobnb + i, collowestobnb + j] = 0;
                                 deltasize--;
-                                if (diagnostic_mode == 1) { Debug.WriteLine("1: " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " (depressionlevel " + depressionlevel[depression[row, col]] + ") now at " + GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] + " = fill_A " + GlobalMethods.dtmfill_A[rowlowestobnb + i, collowestobnb + j] + " sed for delta " + available_for_delta_m); }
+                                if (diagnostic_mode == 1) { Debug.WriteLine("1: " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " (depressionlevel " + GlobalMethods.depressionlevel[GlobalMethods.depression[row, col]] + ") now at " + GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] + " = fill_A " + GlobalMethods.dtmfill_A[rowlowestobnb + i, collowestobnb + j] + " sed for delta " + available_for_delta_m); }
                                 if (diagnostic_mode == 1) { Debug.WriteLine("decreased deltasize with 1 to " + deltasize); }
                             } // end if GlobalMethods.dtm > depressionlevel
                         }   // end if member of delta
@@ -10531,9 +10531,9 @@ namespace LORICA4
             if (diagnostic_mode == 1)
             {
                 Debug.WriteLine(" raised and now move on to enlarge delta with " + (rowlowestobnb + II) + " " + (collowestobnb + JJ) + " available for delta now " + available_for_delta_m + "m");
-                Debug.WriteLine(" by changing " + (rowlowestobnb + II) + "," + (collowestobnb + JJ) + " from " + depression[rowlowestobnb + II, collowestobnb + JJ] + " into " + (-this_depression));
+                Debug.WriteLine(" by changing " + (rowlowestobnb + II) + "," + (collowestobnb + JJ) + " from " + GlobalMethods.depression[rowlowestobnb + II, collowestobnb + JJ] + " into " + (-this_depression));
             }
-            depression[rowlowestobnb + II, collowestobnb + JJ] = -this_depression;
+            GlobalMethods.depression[rowlowestobnb + II, collowestobnb + JJ] = -this_depression;
             deltasize++;
             if (diagnostic_mode == 1) { Debug.WriteLine(" raised deltasize with 1 to " + deltasize + ". " + (rowlowestobnb + II) + " " + (collowestobnb + JJ) + " now negative lakevalue"); }
             //dhobliquemax2 = 0;
@@ -10559,7 +10559,7 @@ namespace LORICA4
                 {
                     if (((tempx + i) >= 0) && ((tempx + i) < GlobalMethods.nr) && ((tempy + j) >= 0) && ((tempy + j) < GlobalMethods.nc) && !(tempx + i == row && tempy + j == col) && GlobalMethods.dtm[tempx + i, tempy + j] != -9999)
                     { // boundaries
-                        if (depression[tempx + i, tempy + j] == -this_depression)
+                        if (GlobalMethods.depression[tempx + i, tempy + j] == -this_depression)
                         {
                             GlobalMethods.dtm[tempx + i, tempy + j] += mem_m;
                             GlobalMethods.lake_sed_m[tempx + i, tempy + j] += mem_m;
@@ -10577,15 +10577,15 @@ namespace LORICA4
                                 }
                                 available_for_delta_m += calc_thickness_from_mass(local_s_i_t_kg, 0, 0);
                                 if (available_for_delta_m < 0) { Debug.WriteLine("9 negative sediment in transport (m) remaining for delta " + available_for_delta_m + "m"); }
-                                if (diagnostic_mode == 1) { Debug.WriteLine(" A we change the altitude of " + (tempx + i) + " " + (tempy + j) + " (depressionlevel " + depressionlevel[this_depression] + ") from " + (GlobalMethods.dtm[tempx + i, tempy + j] + GlobalMethods.dz_ero_m[tempx + i, tempy + j] + GlobalMethods.dz_sed_m[tempx + i, tempy + j]) + " to " + GlobalMethods.dtmfill_A[tempx + i, tempy + j]); }
+                                if (diagnostic_mode == 1) { Debug.WriteLine(" A we change the altitude of " + (tempx + i) + " " + (tempy + j) + " (depressionlevel " + GlobalMethods.depressionlevel[this_depression] + ") from " + (GlobalMethods.dtm[tempx + i, tempy + j] + GlobalMethods.dz_ero_m[tempx + i, tempy + j] + GlobalMethods.dz_sed_m[tempx + i, tempy + j]) + " to " + GlobalMethods.dtmfill_A[tempx + i, tempy + j]); }
                                 if (tempx + i == row && tempy + j == col) { Debug.WriteLine("we are changing outlet " + tempx + " " + tempy + " into 0"); }
                                 GlobalMethods.lake_sed_m[tempx + i, tempy + j] -= ((GlobalMethods.dtm[tempx + i, tempy + j] + GlobalMethods.dz_ero_m[tempx + i, tempy + j] + GlobalMethods.dz_sed_m[tempx + i, tempy + j]) - GlobalMethods.dtmfill_A[tempx + i, tempy + j]);
                                 if (GlobalMethods.lake_sed_m[tempx + i, tempy + j] < -0.0000001) { Debug.WriteLine("3 Warning: negative lake deposition in " + (tempx + i) + " " + (tempy + j) + " of " + GlobalMethods.lake_sed_m[tempx + i, tempy + j] + " alt " + (GlobalMethods.dtm[tempx + i, tempy + j] + GlobalMethods.dz_ero_m[tempx + i, tempy + j] + GlobalMethods.dz_sed_m[tempx + i, tempy + j]) + " fill " + GlobalMethods.dtmfill_A[tempx + i, tempy + j]); minimaps(tempx + i, tempy + j); }
                                 GlobalMethods.dtm[tempx + i, tempy + j] = (GlobalMethods.dtmfill_A[tempx + i, tempy + j] - GlobalMethods.dz_ero_m[tempx + i, tempy + j] - GlobalMethods.dz_sed_m[tempx + i, tempy + j]); //so that with ero and sed, it equals dtmfill
                                 if (GlobalMethods.dtm[tempx + i, tempy + j] == -1) { Debug.WriteLine("C cell " + (tempx + i) + " " + (tempy + j) + " has an altitude of -1 now"); minimaps(tempx + i, tempy + j); } //
-                                if (diagnostic_mode == 1) { Debug.WriteLine(" will change depressionmembership of " + (tempx + i) + " " + (tempy + j) + " from " + depression[tempx + i, tempy + j] + " to 0"); }
+                                if (diagnostic_mode == 1) { Debug.WriteLine(" will change depressionmembership of " + (tempx + i) + " " + (tempy + j) + " from " + GlobalMethods.depression[tempx + i, tempy + j] + " to 0"); }
                                 if (diagnostic_mode == 1) { Debug.WriteLine(" II = " + II + ", JJ = " + JJ); }
-                                depression[tempx + i, tempy + j] = 0;
+                                GlobalMethods.depression[tempx + i, tempy + j] = 0;
                                 if (diagnostic_mode == 1) { Debug.WriteLine(" obnbchanged? - row " + row + " col " + col + " startrow " + startrow + " startcol " + startcol + " rowobnb " + rowlowestobnb + " colobnb " + collowestobnb + " tempx+i " + (tempx + i) + " tempy+j " + (tempy + j)); }
                                 obnbchanged = 1;  // if there is at least one cell that has been raised above dtmfill, then that is the lowest oblique neighbour: the cell with rowlowestobnb, collowestobnb. 
                                 // In that case, we must move to a new rowlowestobnb collowestobnb to build the remainder of the delta from there. There is a remainder because some of the sediment used to raise the original
@@ -10614,19 +10614,19 @@ namespace LORICA4
                     if (diagnostic_mode == 1) { Debug.WriteLine("lowest oblique neighbour now " + rowlowestobnb + " " + collowestobnb + ", will be: " + (tempx + II) + " " + (tempy + JJ)); }
                     rowlowestobnb = tempx + II;
                     collowestobnb = tempy + JJ;
-                    if (diagnostic_mode == 1) { Debug.WriteLine(" will change depressionmembership of " + rowlowestobnb + " " + collowestobnb + " from " + depression[rowlowestobnb, collowestobnb] + " to " + (-this_depression)); }
-                    depression[rowlowestobnb, collowestobnb] = -this_depression;
+                    if (diagnostic_mode == 1) { Debug.WriteLine(" will change depressionmembership of " + rowlowestobnb + " " + collowestobnb + " from " + GlobalMethods.depression[rowlowestobnb, collowestobnb] + " to " + (-this_depression)); }
+                    GlobalMethods.depression[rowlowestobnb, collowestobnb] = -this_depression;
                 }
-                if (deltasize > 0 && depression[rowlowestobnb, collowestobnb] != -this_depression)
+                if (deltasize > 0 && GlobalMethods.depression[rowlowestobnb, collowestobnb] != -this_depression)
                 {
-                    if (depression[rowlowestobnb + 1, collowestobnb + 1] == -this_depression) { rowlowestobnb = rowlowestobnb + 1; collowestobnb = collowestobnb + 1; }
-                    if (depression[rowlowestobnb + 1, collowestobnb] == -this_depression) { rowlowestobnb = rowlowestobnb + 1; }
-                    if (depression[rowlowestobnb + 1, collowestobnb - 1] == -this_depression) { rowlowestobnb = rowlowestobnb + 1; collowestobnb = collowestobnb - 1; }
-                    if (depression[rowlowestobnb, collowestobnb + 1] == -this_depression) { collowestobnb = collowestobnb + 1; }
-                    if (depression[rowlowestobnb, collowestobnb - 1] == -this_depression) { collowestobnb = collowestobnb - 1; }
-                    if (depression[rowlowestobnb - 1, collowestobnb + 1] == -this_depression) { rowlowestobnb = rowlowestobnb - 1; collowestobnb = collowestobnb + 1; }
-                    if (depression[rowlowestobnb - 1, collowestobnb] == -this_depression) { rowlowestobnb = rowlowestobnb - 1; }
-                    if (depression[rowlowestobnb - 1, collowestobnb - 1] == -this_depression) { rowlowestobnb = rowlowestobnb - 1; collowestobnb = collowestobnb - 1; }
+                    if (GlobalMethods.depression[rowlowestobnb + 1, collowestobnb + 1] == -this_depression) { rowlowestobnb = rowlowestobnb + 1; collowestobnb = collowestobnb + 1; }
+                    if (GlobalMethods.depression[rowlowestobnb + 1, collowestobnb] == -this_depression) { rowlowestobnb = rowlowestobnb + 1; }
+                    if (GlobalMethods.depression[rowlowestobnb + 1, collowestobnb - 1] == -this_depression) { rowlowestobnb = rowlowestobnb + 1; collowestobnb = collowestobnb - 1; }
+                    if (GlobalMethods.depression[rowlowestobnb, collowestobnb + 1] == -this_depression) { collowestobnb = collowestobnb + 1; }
+                    if (GlobalMethods.depression[rowlowestobnb, collowestobnb - 1] == -this_depression) { collowestobnb = collowestobnb - 1; }
+                    if (GlobalMethods.depression[rowlowestobnb - 1, collowestobnb + 1] == -this_depression) { rowlowestobnb = rowlowestobnb - 1; collowestobnb = collowestobnb + 1; }
+                    if (GlobalMethods.depression[rowlowestobnb - 1, collowestobnb] == -this_depression) { rowlowestobnb = rowlowestobnb - 1; }
+                    if (GlobalMethods.depression[rowlowestobnb - 1, collowestobnb - 1] == -this_depression) { rowlowestobnb = rowlowestobnb - 1; collowestobnb = collowestobnb - 1; }
                 }
             }
             if (diagnostic_mode == 1) { Debug.WriteLine(" sed_for_delta is now " + available_for_delta_m + " and deltasize = " + deltasize); }
@@ -10730,64 +10730,64 @@ namespace LORICA4
                 catch { Debug.WriteLine(" problem preparing for hourly water balance "); }
             }
 
-            if (check_space_soildepth.Checked && GlobalMethods.input_data_error == false)
+            if (guiVariables.Check_space_soildepth && GlobalMethods.input_data_error == false)
             {
                 filename = this.soildepth_input_filename_textbox.Text;
                 GlobalMethods.read_double(filename, GlobalMethods.soildepth_m);
                 Debug.WriteLine("read soildepth");
             }
-            if (check_space_till_fields.Checked && GlobalMethods.input_data_error == false)
+            if (guiVariables.Check_space_till_fields && GlobalMethods.input_data_error == false)
             {
-                filename = guivariables.Tillfields_input_filename_textbox;
+                filename = guiVariables.Tillfields_input_filename_textbox;
                 GlobalMethods.read_integer(filename, GlobalMethods.tillfields);
                 Debug.WriteLine("read GlobalMethods.tillfields");
             }
-            if (check_space_landuse.Checked && GlobalMethods.input_data_error == false)
+            if (guiVariables.Check_space_landuse && GlobalMethods.input_data_error == false)
             {
                 filename = this.landuse_input_filename_textbox.Text;
                 GlobalMethods.read_integer(filename, GlobalMethods.landuse);
                 Debug.WriteLine("read GlobalMethods.landuse");
             }
-            if (check_space_evap.Checked && GlobalMethods.input_data_error == false)
+            if (guiVariables.Check_space_evap && GlobalMethods.input_data_error == false)
             {
                 filename = this.evap_input_filename_textbox.Text;
                 GlobalMethods.read_double(filename, GlobalMethods.evapotranspiration);
             }
-            if (check_space_infil.Checked && GlobalMethods.input_data_error == false)
+            if (guiVariables.Check_space_infil && GlobalMethods.input_data_error == false)
             {
                 filename = this.infil_input_filename_textbox.Text;
                 GlobalMethods.read_double(filename, GlobalMethods.infil);
             }
-            if (check_space_rain.Checked && GlobalMethods.input_data_error == false)
+            if (guiVariables.Check_space_rain && GlobalMethods.input_data_error == false)
             {
                 filename = this.rain_input_filename_textbox.Text;
                 GlobalMethods.read_double(filename, GlobalMethods.rain);
             }
             // If required, read timeseries instead.
-            if (check_time_landuse.Checked && GlobalMethods.input_data_error == false)
+            if (guiVariables.Check_time_landuse && GlobalMethods.input_data_error == false)
             {
                 filename = this.landuse_input_filename_textbox.Text;
                 GlobalMethods.read_integer(filename, GlobalMethods.landuse);
             }
-            if (check_time_evap.Checked && GlobalMethods.input_data_error == false)
+            if (guiVariables.Check_time_evap && GlobalMethods.input_data_error == false)
             {
                 filename = this.evap_input_filename_textbox.Text;
                 if (memory_records == false) { makerecords(filename); }
                 GlobalMethods.read_record(filename, evap_record);
             }
-            if (check_time_infil.Checked && GlobalMethods.input_data_error == false)
+            if (guiVariables.Check_time_infil && GlobalMethods.input_data_error == false)
             {
                 filename = this.infil_input_filename_textbox.Text;
                 if (memory_records == false) { makerecords(filename); }
                 GlobalMethods.read_record(filename, infil_record);
             }
-            if (check_time_rain.Checked && GlobalMethods.input_data_error == false)
+            if (guiVariables.Check_time_rain && GlobalMethods.input_data_error == false)
             {
                 filename = this.rain_input_filename_textbox.Text;
                 if (memory_records == false) { makerecords(filename); }
                 GlobalMethods.read_record(filename, rainfall_record);
             }
-            if (check_time_T.Checked && GlobalMethods.input_data_error == false)
+            if (guiVariables.Check_time_T && GlobalMethods.input_data_error == false)
             {
                 filename = this.temp_input_filename_textbox.Text;
                 if (memory_records == false) { makerecords(filename); }
@@ -10795,9 +10795,9 @@ namespace LORICA4
             }
 
 
-            if (guivariables.Check_time_till_fields && GlobalMethods.input_data_error == false) 
+            if (guiVariables.Check_time_till_fields && GlobalMethods.input_data_error == false) 
             {
-                filename = guivariables.Tillfields_input_filename_textbox;
+                filename = guiVariables.Tillfields_input_filename_textbox;
                 if (memory_records == false) { makerecords(filename); }
                 GlobalMethods.read_record(filename, till_record);
                 Debug.WriteLine("Tillage time parameters read");
@@ -11035,11 +11035,11 @@ namespace LORICA4
             // We do not yet know how many layers that corresponds to.
             // If soildepth is not zero, we will calculate the number of layers and assign thicknesses and material to them.
             int soil_layer, texture_class;
-            upper_particle_size[0] = Convert.ToDouble(upper_particle_coarse_textbox.Text);
-            upper_particle_size[1] = Convert.ToDouble(upper_particle_sand_textbox.Text);
-            upper_particle_size[2] = Convert.ToDouble(upper_particle_silt_textbox.Text);
-            upper_particle_size[3] = Convert.ToDouble(upper_particle_clay_textbox.Text);
-            upper_particle_size[4] = Convert.ToDouble(upper_particle_fine_clay_textbox.Text);
+            upper_particle_size[0] = Convert.ToDouble(guiVariables.Upper_particle_coarse_textbox);
+            upper_particle_size[1] = Convert.ToDouble(guiVariables.Upper_particle_sand_textbox);
+            upper_particle_size[2] = Convert.ToDouble(guiVariables.Upper_particle_silt_textbox);
+            upper_particle_size[3] = Convert.ToDouble(guiVariables.Upper_particle_clay_textbox);
+            upper_particle_size[4] = Convert.ToDouble(guiVariables.Upper_particle_fine_clay_textbox);
             //calculate bulk density so that we know how much kg of material goes into a layer.  //ART this will go wrong when there are different textures in different locations, but is faster up until that time.
             double coarsefrac = Convert.ToDouble(soildata.coarsebox.Text) / 100;
             double sandfrac = Convert.ToDouble(soildata.sandbox.Text) / 100;
@@ -11197,11 +11197,11 @@ namespace LORICA4
             // We do not yet know how many layers that corresponds to.
             // If soildepth is not zero, we will calculate the number of layers and assign thicknesses and material to them.
             int soil_layer, texture_class;
-            upper_particle_size[0] = Convert.ToDouble(upper_particle_coarse_textbox.Text);
-            upper_particle_size[1] = Convert.ToDouble(upper_particle_sand_textbox.Text);
-            upper_particle_size[2] = Convert.ToDouble(upper_particle_silt_textbox.Text);
-            upper_particle_size[3] = Convert.ToDouble(upper_particle_clay_textbox.Text);
-            upper_particle_size[4] = Convert.ToDouble(upper_particle_fine_clay_textbox.Text);
+            upper_particle_size[0] = Convert.ToDouble(guiVariables.Upper_particle_coarse_textbox);
+            upper_particle_size[1] = Convert.ToDouble(guiVariables.Upper_particle_sand_textbox);
+            upper_particle_size[2] = Convert.ToDouble(guiVariables.Upper_particle_silt_textbox);
+            upper_particle_size[3] = Convert.ToDouble(guiVariables.Upper_particle_clay_textbox);
+            upper_particle_size[4] = Convert.ToDouble(guiVariables.Upper_particle_fine_clay_textbox);
             //calculate bulk density so that we know how much kg of material goes into a layer.  //ART this will go wrong when there are different textures in different locations, but is faster up until that time.
             double coarsefrac = Convert.ToDouble(soildata.coarsebox.Text) / 100;
             double sandfrac = Convert.ToDouble(soildata.sandbox.Text) / 100;
@@ -11329,7 +11329,7 @@ namespace LORICA4
                 {
                     // time runs from 1 to guiVariables.End_time - compensate for that when taking values from records
                     // also compensate for records shorter than guiVariables.End_time
-                    if (check_time_rain.Checked)
+                    if (guiVariables.Check_time_rain)
                     {
                         corrected_t = GlobalMethods.t;
                         while (corrected_t > rainfall_record.Length) { corrected_t -= rainfall_record.Length; }
@@ -11338,20 +11338,20 @@ namespace LORICA4
                                                                              // changed GlobalMethods.rain[row, col] to rain_value_m, due to errors, this is not spatial, but temporal variation
                                                                              //this should be improved for when rainfall is not also spatially variable //ArT
                     }
-                    if (check_time_infil.Checked)
+                    if (guiVariables.Check_time_infil)
                     {
                         corrected_t = GlobalMethods.t;
                         while (corrected_t > infil_record.Length) { corrected_t -= infil_record.Length; }
                         infil_value_m = 0.001 * infil_record[corrected_t];
                     }
-                    if (check_time_evap.Checked)
+                    if (guiVariables.Check_time_evap)
                     {
                         corrected_t = GlobalMethods.t;
                         while (corrected_t > evap_record.Length) { corrected_t -= evap_record.Length; }
                         evap_value_m = 0.001 * evap_record[corrected_t];
                     }
 
-                    if (check_time_T.Checked)
+                    if (guiVariables.Check_time_T)
                     {
                         corrected_t = GlobalMethods.t;
                         while (corrected_t > temp_record.Length) { corrected_t -= temp_record.Length; }
@@ -11365,25 +11365,25 @@ namespace LORICA4
 
 
 
-                    if (annual_output_checkbox.Checked)
+                    if (guiVariables.Annual_output_checkbox)
                     {
                         GlobalMethods.dz_soil[row, col] = 0;
-                        if (Creep_Checkbox.Checked) { GlobalMethods.sum_creep_grid[row, col] = 0; GlobalMethods.creep[row, col] = 0; }
-                        if (treefall_checkbox.Checked) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
-                        if (Solifluction_checkbox.Checked) { GlobalMethods.sum_solifluction[row, col] = 0; }
-                        if (Water_ero_checkbox.Checked) { GlobalMethods.sum_water_erosion[row, col] = 0; }
-                        if (Biological_weathering_checkbox.Checked) { GlobalMethods.sum_biological_weathering[row, col] = 0; }
-                        if (Frost_weathering_checkbox.Checked) { GlobalMethods.sum_frost_weathering[row, col] = 0; }
-                        if (Tillage_checkbox.Checked) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; }
+                        if (guiVariables.Creep_Checkbox) { GlobalMethods.sum_creep_grid[row, col] = 0; GlobalMethods.creep[row, col] = 0; }
+                        if (guiVariables.Treefall_checkbox) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
+                        if (guiVariables.Solifluction_checkbox) { GlobalMethods.sum_solifluction[row, col] = 0; }
+                        if (guiVariables.Water_ero_checkbox) { GlobalMethods.sum_water_erosion[row, col] = 0; }
+                        if (guiVariables.Biological_weathering_checkbox) { GlobalMethods.sum_biological_weathering[row, col] = 0; }
+                        if (guiVariables.Frost_weathering_checkbox) { GlobalMethods.sum_frost_weathering[row, col] = 0; }
+                        if (guiVariables.Tillage_checkbox) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; }
                         if (GlobalMethods.soildepth_m[row, col] < 0.0) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
                     }
                     if (GlobalMethods.soildepth_m[row, col] < 0.0) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
-                    if (Water_ero_checkbox.Checked) { GlobalMethods.waterflow_m3[row, col] = 0.0; }
+                    if (guiVariables.Water_ero_checkbox) { GlobalMethods.waterflow_m3[row, col] = 0.0; }
 
                 } //for
             } //for
 
-            if (fill_sinks_during_checkbox.Checked)
+            if (guiVariables.Fill_sinks_during_checkbox)
             {
                 findsinks();
                 if (GlobalMethods.numberofsinks > 0)
@@ -11429,11 +11429,11 @@ namespace LORICA4
                 GlobalMethods.input_data_error = true;
                 return;
             }
-            if (check_time_rain.Checked) { rainfall_record = new int[recordsize]; }
-            if (check_time_evap.Checked) { evap_record = new int[recordsize]; }
-            if (check_time_infil.Checked) { infil_record = new int[recordsize]; }
-            if (check_time_T.Checked) { temp_record = new int[recordsize]; }
-            if (guivariables.Check_time_till_fields) { till_record = new int[recordsize]; }
+            if (guiVariables.Check_time_rain) { rainfall_record = new int[recordsize]; }
+            if (guiVariables.Check_time_evap) { evap_record = new int[recordsize]; }
+            if (guiVariables.Check_time_infil) { infil_record = new int[recordsize]; }
+            if (guiVariables.Check_time_T) { temp_record = new int[recordsize]; }
+            if (guiVariables.Check_time_till_fields) { till_record = new int[recordsize]; }
 
             memory_records = true;
         }

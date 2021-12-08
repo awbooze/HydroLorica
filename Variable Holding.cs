@@ -1421,6 +1421,27 @@ namespace LORICAVariables
             }
         }
 
+        ReaderWriterLock Out_sed_statuspanelRWL = new ReaderWriterLock();
+        protected string out_sed_statuspanel = "";
+        public string Out_sed_statuspanel
+        {
+            get
+            {
+                Out_sed_statuspanelRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = out_sed_statuspanel;
+                Out_sed_statuspanelRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Out_sed_statuspanelRWL.AcquireWriterLock(Timeout.Infinite);
+                out_sed_statuspanel = value;
+                Out_sed_statuspanelRWL.ReleaseWriterLock();
+
+                UpdateStatusPannel();
+            }
+        }
 
         ReaderWriterLock DTM_input_filename_textboxRWL = new ReaderWriterLock();
         protected string dtm_input_filename_textbox = "";
@@ -2783,10 +2804,169 @@ namespace LORICAVariables
             }
         }
 
+        ReaderWriterLock Ct_v0_JagercikovaRWL = new ReaderWriterLock();
+        protected string ct_v0_Jagercikova = "";
+        public string Ct_v0_Jagercikova
+        {
+            get
+            {
+                Ct_v0_JagercikovaRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = ct_v0_Jagercikova;
+                Ct_v0_JagercikovaRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Ct_v0_JagercikovaRWL.AcquireWriterLock(Timeout.Infinite);
+                ct_v0_Jagercikova = value;
+                Ct_v0_JagercikovaRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Ct_dd_JagercikovaRWL = new ReaderWriterLock();
+        protected string ct_dd_Jagercikova = "";
+        public string Ct_dd_Jagercikova
+        {
+            get
+            {
+                Ct_dd_JagercikovaRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = ct_dd_Jagercikova;
+                Ct_dd_JagercikovaRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Ct_dd_JagercikovaRWL.AcquireWriterLock(Timeout.Infinite);
+                ct_dd_Jagercikova = value;
+                Ct_dd_JagercikovaRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Upper_particle_coarse_textboxRWL = new ReaderWriterLock();
+        protected string upper_particle_coarse_textbox = "";
+        public string Upper_particle_coarse_textbox
+        {
+            get
+            {
+                Upper_particle_coarse_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = upper_particle_coarse_textbox;
+                Upper_particle_coarse_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Upper_particle_coarse_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                Upper_particle_coarse_textbox = value;
+                Upper_particle_coarse_textboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Upper_particle_sand_textboxRWL = new ReaderWriterLock();
+        protected string upper_particle_sand_textbox = "";
+        public string Upper_particle_sand_textbox
+        {
+            get
+            {
+                Upper_particle_sand_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = upper_particle_sand_textbox;
+                Upper_particle_sand_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Upper_particle_sand_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                upper_particle_sand_textbox = value;
+                Upper_particle_sand_textboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Upper_particle_silt_textboxRWL = new ReaderWriterLock();
+        protected string upper_particle_silt_textbox = "";
+        public string Upper_particle_silt_textbox
+        {
+            get
+            {
+                Upper_particle_silt_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = upper_particle_silt_textbox;
+                Upper_particle_silt_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Upper_particle_silt_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                upper_particle_silt_textbox = value;
+                Upper_particle_silt_textboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Upper_particle_clay_textboxRWL = new ReaderWriterLock();
+        protected string upper_particle_clay_textbox = "";
+        public string Upper_particle_clay_textbox
+        {
+            get
+            {
+                Upper_particle_clay_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = upper_particle_clay_textbox;
+                Upper_particle_clay_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Upper_particle_clay_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                upper_particle_clay_textbox = value;
+                Upper_particle_clay_textboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Upper_particle_fine_clay_textboxRWL = new ReaderWriterLock();
+        protected string upper_particle_fine_clay_textbox = "";
+        public string Upper_particle_fine_clay_textbox
+        {
+            get
+            {
+                Upper_particle_fine_clay_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = upper_particle_fine_clay_textbox;
+                Upper_particle_fine_clay_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Upper_particle_fine_clay_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                upper_particle_fine_clay_textbox = value;
+                Upper_particle_fine_clay_textboxRWL.ReleaseWriterLock();
+            }
+        }
 
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3984,6 +4164,48 @@ namespace LORICAVariables
                 All_process_output_checkboxRWL.ReleaseWriterLock();
             }
         }
+
+        ReaderWriterLock Annual_output_checkboxRWL = new ReaderWriterLock();
+        protected bool annual_output_checkbox = false;
+        public bool Annual_output_checkbox
+        {
+            get
+            {
+                Annual_output_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = annual_output_checkbox;
+                Annual_output_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Annual_output_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                annual_output_checkbox = value;
+                Annual_output_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Fill_sinks_during_checkboxRWL = new ReaderWriterLock();
+        protected bool fill_sinks_during_checkbox = false;
+        public bool Fill_sinks_during_checkbox
+        {
+            get
+            {
+                Fill_sinks_during_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = fill_sinks_during_checkbox;
+                Fill_sinks_during_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Fill_sinks_during_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                fill_sinks_during_checkbox = value;
+                Fill_sinks_during_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        
 
 
     }
