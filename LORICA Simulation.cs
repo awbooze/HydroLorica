@@ -92,6 +92,7 @@ namespace LORICA4
                 deposited_cells;
 
         double soildepth_error, dtm00;
+        //int GlobalMethods.n_texture_classes = 5;
 
         //int GlobalMethods.n_texture_classes = 5;
 
@@ -1671,7 +1672,7 @@ namespace LORICA4
                     Debug.WriteLine("Error finishing video output");
                 }
 
-                this.InfoStatusPanel.Text = " --finished--";
+                guiVariables.InfoStatusPanel = " --finished--";
                 stopwatch.Stop();
                 Debug.WriteLine("Elapsed time: " + stopwatch.Elapsed);
                 //Timeseries output
@@ -1834,39 +1835,39 @@ namespace LORICA4
             initialise_once();
 
             filename = dir + "0_" + time + "_out_dtm.asc";
-            read_double(filename, GlobalMethods.dtm);
+            GlobalMethods.read_double(filename, GlobalMethods.dtm);
             Debug.WriteLine("read GlobalMethods.dtm");
 
             filename = dir + "0_" + time + "_out_soildepth.asc";
-            read_double(filename, GlobalMethods.soildepth_m);
+            GlobalMethods.read_double(filename, GlobalMethods.soildepth_m);
             Debug.WriteLine("read soildepth");
 
             filename = dir + "0_" + time + "_out_change.asc";
-            read_double(filename, GlobalMethods.dtmchange);
+            GlobalMethods.read_double(filename, GlobalMethods.dtmchange);
             Debug.WriteLine("read GlobalMethods.dtm change");
 
             filename = dir + "0_" + time + "_out_water_erosion.asc";
-            read_double(filename, GlobalMethods.sum_water_erosion);
+            GlobalMethods.read_double(filename, GlobalMethods.sum_water_erosion);
             Debug.WriteLine("read water erosion");
 
             filename = dir + "0_" + time + "_out_tillage.asc";
-            read_double(filename, GlobalMethods.sum_tillage);
+            GlobalMethods.read_double(filename, GlobalMethods.sum_tillage);
             Debug.WriteLine("read GlobalMethods.sum_tillage");
 
             filename = dir + "0_" + time + "_out_creep.asc";
-            read_double(filename, GlobalMethods.creep);
+            GlobalMethods.read_double(filename, GlobalMethods.creep);
             Debug.WriteLine("read GlobalMethods.creep");
 
             filename = dir + "0_" + time + "_out_dz_treefall.asc";
-            read_double(filename, GlobalMethods.dz_treefall);
+            GlobalMethods.read_double(filename, GlobalMethods.dz_treefall);
             Debug.WriteLine("read GlobalMethods.dz_treefall");
 
             filename = dir + "0_" + time + "_out_tillage.asc";
-            read_double(filename, GlobalMethods.sum_tillage);
+            GlobalMethods.read_double(filename, GlobalMethods.sum_tillage);
             Debug.WriteLine("read GlobalMethods.sum_tillage");
 
             filename = dir + "0_" + time + "_out_dz_soil.asc";
-            read_double(filename, GlobalMethods.dz_soil);
+            GlobalMethods.read_double(filename, GlobalMethods.dz_soil);
             Debug.WriteLine("read sum_dz_soil");
             // SOIL INFORMATION
             // reset old info
@@ -2343,8 +2344,7 @@ namespace LORICA4
                         fclay = 100 * (tex_topsoil[3] + tex_topsoil[4]) / (tex_topsoil[1] + tex_topsoil[2] + tex_topsoil[3] + tex_topsoil[4]); // only fine fraction
                         fOM = 100 * tex_topsoil[5] / (tex_topsoil[1] + tex_topsoil[2] + tex_topsoil[3] + tex_topsoil[4] + tex_topsoil[5]); // only fine fraction
                         BD_t = BD_topsoil.Average() / 1000;
-
-                        slope_rad = calc_slope_stdesc(row, col);
+                        slope_rad = GlobalMethods.calc_slope_stdesc(GlobalMethods.row, GlobalMethods.col);
                         double slope_test = Math.Cos(slope_rad);
 
                         // Debug.WriteLine("uks3a");
@@ -2640,7 +2640,7 @@ namespace LORICA4
                                     currentflow[OF_row, OF_col] += saddle_OF[0];
                                     // Debug.WriteLine("runner old: " + runner + ", " + saddle_OF[0] + " " + saddle_OF[1] + " " + saddle_OF[2]);
                                     string rowcol = OF_row.ToString() + "." + OF_col.ToString();
-                                    runner = Array.IndexOf(rowcol_index, rowcol) + 1; // GlobalMethods.index of selected row and col + 1, because in the next iteration of the for loop, 1 is subtracted from runner
+                                    runner = Array.IndexOf(GlobalMethods.rowcol_index, rowcol) + 1; // GlobalMethods.index of selected row and col + 1, because in the next iteration of the for loop, 1 is subtracted from runner
                                                                                       // Debug.WriteLine("runner new: " + runner);
                                 } // end of saddle overflow
                             }
@@ -4082,7 +4082,7 @@ namespace LORICA4
                         {
                             for (int tex = 0; tex < GlobalMethods.n_texture_classes; tex++)
                             {
-                                if (GlobalMethods.GlobalMethods.texture_kg[row, col, lay, tex] < 0) { neg = true; }
+                                if (GlobalMethods.texture_kg[row, col, lay, tex] < 0) { neg = true; }
                             }
                         }
                     }
@@ -4253,7 +4253,7 @@ namespace LORICA4
                 //Debug.WriteLine(" moved layers one down to make space for split layer ");
                 if ((lay1 + 1) == (GlobalMethods.max_soil_layers - 1))
                 {
-                    double div = 0.1 / (GlobalMethods.layerthickness_m[row, col, lay1]); // aim to have the split layer at 0.1 m
+                    double div = 0.1 / (GlobalMethods.layerthickness_m[rowwer, coller, lay1]); // aim to have the split layer at 0.1 m
                     if (div > 1) { div = 1; }
                     for (i = 0; i < 5; i++)
                     {
@@ -4375,9 +4375,9 @@ namespace LORICA4
             try
             {
                 //another parallelization opportunity
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         int tempcol = col;
                         depth = 0;
@@ -4442,9 +4442,9 @@ namespace LORICA4
             double depth;
             try
             {
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
 
                     //Parallel.For(0, GlobalMethods.nc-1, col =>                    //we should paralellize over cols. Problem so far seems to be that the GlobalMethods.nc-1 or layer limit is exceeded
                     {
@@ -4480,9 +4480,9 @@ namespace LORICA4
             //tricks the deposition process by playing with tillage fields. Tillage shoudl be ON - but with zero par values.
             try
             {
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.tillfields[row, col] == 1)
                         {
@@ -4504,9 +4504,9 @@ namespace LORICA4
             double depth, weathered_mass_kg, total_weath_mass, fraction_neoform;
             total_chem_weathered_mass_kg = 0;
             total_fine_neoformed_mass_kg = 0;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     //Main assumption: soils affect each other only through their surface interactions and not e.g. through throughflow
                     depth = 0; total_weath_mass = 0;
@@ -4633,9 +4633,9 @@ namespace LORICA4
                 double total_young_som_kg = 0, total_old_som_kg = 0;
 
                 //another parallelization opportunity
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.t == 7 && row == 192 && col == 59) { diagnostic_mode = 1; }
                         else { diagnostic_mode = 0; }
@@ -5098,9 +5098,9 @@ namespace LORICA4
                 calculate_TPI(7);
                 double a = -0.33;
                 double b = 28.33;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         //calculating hornbeam fraction
                         GlobalMethods.hornbeam_cover_fraction[row, col] = 1 - Math.Exp(a + b * GlobalMethods.tpi[row, col]) / (1 + Math.Exp(a + b * GlobalMethods.tpi[row, col]));
@@ -5140,9 +5140,9 @@ namespace LORICA4
                     calculate_TPI(7);
                     double a = -0.33;
                     double b = 28.33;
-                    for (row = 0; row < GlobalMethods.nr; row++)
+                    for (int row = 0; row < GlobalMethods.nr; row++)
                     {
-                        for (col = 0; col < GlobalMethods.nc; col++)
+                        for (int col = 0; col < GlobalMethods.nc; col++)
                         {
                             //calculating hornbeam fraction
                             GlobalMethods.hornbeam_cover_fraction[row, col] = 1 - Math.Exp(a + b * GlobalMethods.tpi[row, col]) / (1 + Math.Exp(a + b * GlobalMethods.tpi[row, col]));
@@ -5157,10 +5157,10 @@ namespace LORICA4
                 {
                     Debug.WriteLine("err_cc1");
                 }
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
                     //Parallel.For(0, GlobalMethods.nc, i =>                    //we parallelize over cols
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (daily_water.Checked)
                         {
@@ -5246,9 +5246,9 @@ namespace LORICA4
             if (daily_water.Checked)
             {
                 int Icount = 0;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.dtm[row, col] != -9999)
                         {
@@ -5267,9 +5267,9 @@ namespace LORICA4
             total_fine_eluviated_mass_kg = 0;
             try
             {
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
 
 
@@ -5332,9 +5332,9 @@ namespace LORICA4
 
 
                 double depth, f_clay, f_oc, d_depth, ct_advi, eluviated_kg, CEC_ct, CCEC_ct, wdclay;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.dtm[row, col] != -9999)
                         {
@@ -5442,9 +5442,9 @@ namespace LORICA4
             double eluviated_kg;
             try
             {
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         for (layer = 0; layer < GlobalMethods.max_soil_layers - 1; layer++)   // we loop through all layers except the lower one - clay translocation there has no lower recipient
                         {
@@ -5479,9 +5479,9 @@ namespace LORICA4
                 double CO3_loss;
                 // Carbonate losses [mol m-2 y-1] = 205.58 * percolation [m] - 12.392
                 // Infiltration / percolation is modeled in m, so adjustments have to be made for cell size. In every step? 
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.dtm[row, col] != -9999)
                         {
@@ -5703,9 +5703,9 @@ namespace LORICA4
             double[,] mass_difference_input_output = new double[GlobalMethods.nr, GlobalMethods.nc];
 
             // 1: set all water and sediment flow to 0
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     {
                         if (only_waterflow_checkbox.Checked == false)
@@ -5735,12 +5735,12 @@ namespace LORICA4
             int runner = 0;
             for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
             {
-
+                int row, col;
                 if (GlobalMethods.index[runner] != -9999)
                 {
                     //if (row == 40 & col == 31) { displaysoil(40, 31); Debugger.Break(); }
 
-                    row = row_index[runner]; col = col_index[runner];
+                    row = GlobalMethods.row_index[runner]; col = GlobalMethods.col_index[runner];
 
                     // local mass balance
                     local_mass_balance[row, col, 4] = guiVariables.OFy_m[row, col, 0];
@@ -6170,9 +6170,9 @@ namespace LORICA4
             total_average_altitude = 0; total_altitude = 0;
             total_rain = 0; total_evap = 0; total_infil = 0; total_outflow = 0;
             wet_cells = 0; eroded_cells = 0; deposited_cells = 0;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     if (GlobalMethods.dtm[row, col] != -9999)
                     {
@@ -6232,7 +6232,7 @@ namespace LORICA4
                     total_kg_deposited += total_mass_deposited[size];
                 }
             }
-            this.InfoStatusPanel.Text = "calc movement has been finished";
+            guiVariables.InfoStatusPanel = "calc movement has been finished";
             this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
 
             //double mass_after = total_catchment_mass();
@@ -6261,7 +6261,7 @@ namespace LORICA4
 
         void calculate_water_ero_sed()    //where the water starts flowing, eroding and transporting
         {
-            this.InfoStatusPanel.Text = "water erosion calculation";
+            guiVariables.InfoStatusPanel = "water erosion calculation";
             dhmax_errors = 0;
             //set all start q values effective precipitation at time GlobalMethods.t
             nb_ok = 0;  // nb_ok is 1 als er uberhaupt buren zijn, dus 0 als er alleen maar NODATA is
@@ -6851,7 +6851,7 @@ namespace LORICA4
                     Debug.WriteLine(" on m-basis: sedimented into " + depressions_delta + " of " + totaldepressions + " depressions, " + sediment_delta + "  sediment used");
                 } */
             }
-            this.InfoStatusPanel.Text = "calc movement has been finished";
+            guiVariables.InfoStatusPanel = "calc movement has been finished";
             this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
 
 
@@ -7172,7 +7172,7 @@ namespace LORICA4
         {
             try
             {
-                this.InfoStatusPanel.Text = "landslide calculation";
+                guiVariables.InfoStatusPanel = "landslide calculation";
                 int tell;
                 //set all start q values effective precipitation at time GlobalMethods.t
                 nb_ok = 0; nb_check = 0; all_grids = 0.0;
@@ -8014,15 +8014,14 @@ namespace LORICA4
                     Debugger.Break();
                 }
 
-                this.InfoStatusPanel.Text = "GlobalMethods.creep calculation";
-
+                guiVariables.InfoStatusPanel = "GlobalMethods.creep calculation";
                 int row, col,
                             i, j,
                             nb_ok,
                             NA_dem;
                 double
                             dhmin, dhe_tol, dhs_tol,
-                            slope_sum, dhmax, dz_min, d_x, dz_max, dh1, dh,
+                            slope_sum, dhmax, dz_min, dz_max, dh1, dh,
                             fraction,
                             temp, tempcreep, tempdep,
                             slope,
@@ -8917,8 +8916,7 @@ namespace LORICA4
 
         private void calculate_tilting()
         {
-            this.InfoStatusPanel.Text = "tilting calculation";
-
+            guiVariables.InfoStatusPanel = "tilting calculation";
             int row, col;
 
             for (row = 0; row < GlobalMethods.nr; row++)
@@ -8935,7 +8933,7 @@ namespace LORICA4
 
         private void calculate_uplift()
         {
-            this.InfoStatusPanel.Text = "uplift calculation";
+            guiVariables.InfoStatusPanel = "uplift calculation";
 
             int row, col;
 
@@ -9414,7 +9412,7 @@ namespace LORICA4
 
         void findsinks()
         {
-            this.InfoStatusPanel.Text = "findtrouble has been entered";
+            guiVariables.InfoStatusPanel = "findtrouble has been entered";
             int number, twoequals = 0, threeequals = 0, moreequals = 0;
             int[] intoutlet = new int[9];
             int x;
@@ -9474,7 +9472,7 @@ namespace LORICA4
 
             //reports
 
-            this.InfoStatusPanel.Text = "found " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells";
+            guiVariables.InfoStatusPanel = "found " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells";
             Debug.WriteLine("\n\n--sinks overview at GlobalMethods.t = " + GlobalMethods.t + "--");
 
             if (numsinks / (GlobalMethods.nr * GlobalMethods.nc) > 0.0075) { Debug.WriteLine("this DEM contains " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells\n That's a lot!"); }
@@ -9490,7 +9488,7 @@ namespace LORICA4
         void searchdepressions()
         {
             int z;
-            this.InfoStatusPanel.Text = "searchdepressions has been entered";
+            guiVariables.InfoStatusPanel = "searchdepressions has been entered";
             for (row = 0; row < GlobalMethods.nr; row++)
             {        //visit all cells in the DEM and  ...
                 for (col = 0; col < GlobalMethods.nc; col++)
@@ -9892,7 +9890,7 @@ namespace LORICA4
             // to membercells so they drain towards the outlet.
             // we cannot simply use distance_to_outlet for each member cell, since depressions can round corners....
 
-            this.InfoStatusPanel.Text = "def fillheight has been entered";
+            guiVariables.InfoStatusPanel = "def fillheight has been entered";
             //Debug.WriteLine("defining fillheight\n");
             int notyetdone, done, depressiontt;
 
