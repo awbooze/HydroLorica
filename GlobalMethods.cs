@@ -25,6 +25,8 @@ namespace LORICA4
 {
     public static class GlobalMethods
     {
+        public static Graphics mygraphics;
+
         public static int numberofsinks = 10000;           // run the program once to find out the number of sinks. The exact number and any higher number will do....
 
         public static int[,]

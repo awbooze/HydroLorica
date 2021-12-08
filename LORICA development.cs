@@ -324,8 +324,6 @@ namespace LORICA4
 
         #region global model parameters
         //AviWriter aw; // <JMW 20041018>
-        private Bitmap bmp;  // <JMW 20041018>
-        private Graphics mygraphics;
         private Label label87;
         private TextBox selectivity_constant_textbox;
         private TextBox bio_protection_constant_textbox;
@@ -412,9 +410,6 @@ namespace LORICA4
         private CheckBox version_lux_checkbox;
         private Button button4;
         private System.Drawing.Bitmap m_objDrawingSurface;// = new Bitmap(FILENAMENEEDED);
-        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
-        public static extern long BitBlt(IntPtr hdcDest, int nXDest, int nYDest, int nWidth,
-            int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, int dwROP);
         public static int plotType = 0;
         public static double magnifyValue = 0;
         public static int updateClick = 0;
@@ -470,7 +465,6 @@ namespace LORICA4
                 remembercol,
                 search,
                 twice_dtm_fill,
-                once_dtm_fill,
                 three_dtm_fill,
                 num_out,
                 //ntr,				//WVG 22-10-2010 number of rows (timesteps) in profile timeseries matrices			//unused
@@ -478,8 +472,7 @@ namespace LORICA4
                 cross2,
                 cross3,
                 GlobalMethods.nr,
-                GlobalMethods.nc,
-                P_scen;*/
+                GlobalMethods.nc;*/
 
         private void rain_input_filename_textbox_TextChanged_1(object sender, EventArgs e)
         {
@@ -691,7 +684,7 @@ namespace LORICA4
         /// </summary>
         private void InitializeComponent()
         {
-            guiVariables = new GUIVariables(UpdateAllFields, UpdateStatusPannel, UpdateTimePannel, DelUpdateVariables, UpdateTimeSeries, UpdateProfile, UpdateLanduse_determinator, UpdateSoildata);
+            guiVariables = new GUIVariables(UpdateAllFields, UpdateStatusPannel, UpdateTimePannel, DelUpdateVariables, UpdateTimeSeries, UpdateProfile, UpdateLanduse_determinator, UpdateSoildata, draw_map);
 
 
             GlobalMethods.Workdir = "D:\\PhD\\projects\\2g_clorpt effects on soil landscape diversity\\";
@@ -7283,7 +7276,7 @@ Example: rainfall.asc can look like:
         {
             contrastMultiplier = contrastFactor[trackBar1.Value];
             this.view_maps_checkbox.Checked = true;
-            draw_map(mygraphics);
+            draw_map(GlobalMethods.mygraphics);
         }
 
         private void trackBar2_Scroll(object sender, EventArgs e)
@@ -7297,7 +7290,7 @@ Example: rainfall.asc can look like:
             updateClick = 1;
             this.Refresh();
             this.view_maps_checkbox.Checked = true;
-            draw_map(mygraphics);
+            draw_map(GlobalMethods.mygraphics);
         }
 
         private void soil_specify_button_Click(object sender, EventArgs e)
@@ -7336,7 +7329,10 @@ Example: rainfall.asc can look like:
         private void UpdateAllFields()
         {
             this.Invoke(new MethodInvoker(() => {
+                this.Refresh(); // tjc to enable graphics to be drawn before sending to AVI
+
                 GlobalMethods.dx = guiVariables.DX;
+                rockweath_method.SelectedIndex = guiVariables.Rockweath_method;
 
                 InfoStatusPanel.Text = guiVariables.InfoStatusPanel;
                 dtm_input_filename_textbox.Text = guiVariables.DTM_input_filename_textbox;
@@ -7349,7 +7345,6 @@ Example: rainfall.asc can look like:
                 parameter_m_textbox.Text = guiVariables.Parameter_m_textbox;
                 parameter_n_textbox.Text = guiVariables.Parameter_n_textbox;
                 parameter_K_textbox.Text = guiVariables.Parameter_K_textbox;
-
                 bio_protection_constant_textbox.Text = guiVariables.Bio_protection_constant_textbox;
                 rock_protection_constant_textbox.Text = guiVariables.Rock_protection_constant_textbox;
                 selectivity_constant_textbox.Text = guiVariables.Selectivity_constant_textbox;
@@ -7408,6 +7403,30 @@ Example: rainfall.asc can look like:
                 calibration_ratio_reduction_parameter_textbox.Text = guiVariables.Calibration_ratio_reduction_parameter_textbox;
                 soildepth_constant_value_box.Text = guiVariables.Soildepth_constant_value_box;
                 Box_years_output.Text = guiVariables.Box_years_output;
+                soildepth_input_filename_textbox.Text = guiVariables.Soildepth_input_filename_textbox;
+                snow_threshold_textbox.Text = guiVariables.Snow_threshold_textbox;
+                snowmelt_factor_textbox.Text = guiVariables.Snowmelt_factor_textbox;
+                tillfields_input_filename_textbox.Text = guiVariables.Tillfields_input_filename_textbox;
+                landuse_input_filename_textbox.Text= guiVariables.Landuse_input_filename_textbox;
+                evap_input_filename_textbox.Text = guiVariables.Evap_input_filename_textbox;
+                infil_input_filename_textbox.Text = guiVariables.Infil_input_filename_textbox;
+                rain_input_filename_textbox.Text = guiVariables.Rain_input_filename_textbox;
+                temp_input_filename_textbox.Text = guiVariables.Temp_input_filename_textbox;
+                textBox_ls_trans.Text = guiVariables.TextBox_ls_trans;
+                textBox_ls_coh.Text = guiVariables.TextBox_ls_coh;
+                textBox_ls_bd.Text = guiVariables.TextBox_ls_bd;
+                textBox_ls_ifr.Text = guiVariables.TextBox_ls_ifr;
+                total_tillage_statuspanel.Text = guiVariables.Total_tillage_statuspanel;
+                dailyP.Text = guiVariables.DailyP;
+                dailyD.Text = guiVariables.DailyD;
+                dailyT_avg.Text = guiVariables.DailyT_avg;
+                dailyT_min.Text = guiVariables.DailyT_min;
+                dailyT_max.Text = guiVariables.DailyT_max;
+                googleBeginDate.Text = guiVariables.GoogleBeginDate;
+                textBoxAVIFile.Text = guiVariables.TextBoxAVIFile;
+                ini_CaCO3_content.Text = guiVariables.Ini_CaCO3_content;
+                calibration_levels_textbox.Text = guiVariables.Calibration_levels_textbox;
+
                 Water_ero_checkbox.Checked = guiVariables.Water_ero_checkbox;
                 Tillage_checkbox.Checked = guiVariables.Tillage_checkbox;
                 Landslide_checkbox.Checked = guiVariables.Landslide_checkbox;
@@ -7421,6 +7440,10 @@ Example: rainfall.asc can look like:
                 soil_bioturb_checkbox.Checked = guiVariables.Soil_bioturb_checkbox;
                 soil_clay_transloc_checkbox.Checked = guiVariables.Soil_clay_transloc_checkbox;
                 soil_carbon_cycle_checkbox.Checked = guiVariables.Soil_carbon_cycle_checkbox;
+                UTMsouthcheck.Checked = guiVariables.UTMsouthcheck;
+                check_time_till_fields.Checked = guiVariables.Check_time_till_fields;
+
+                this.Refresh(); // tjc to enable graphics to be drawn before sending to AVI
             }
             ));
         }
@@ -7442,7 +7465,14 @@ Example: rainfall.asc can look like:
         private void DelUpdateVariables()
         {
             this.Invoke(new MethodInvoker(() => {
+                this.Refresh(); // tjc to enable graphics to be drawn before sending to AVI
+
                 guiVariables.DX = GlobalMethods.dx;
+                guiVariables.Rockweath_method = rockweath_method.SelectedIndex;
+                guiVariables.Mapwindow.Size.Width = this.Mapwindow.Size.Width;
+                guiVariables.Mapwindow.Size.Height = this.Mapwindow.Size.Height;
+                guiVariables.Mapwindow.Location.X = this.Mapwindow.Location.X;
+                guiVariables.Mapwindow.Location.Y = this.Mapwindow.Location.Y;
 
                 guiVariables.InfoStatusPanel = InfoStatusPanel.Text;
                 guiVariables.DTM_input_filename_textbox = dtm_input_filename_textbox.Text;
@@ -7512,6 +7542,30 @@ Example: rainfall.asc can look like:
                 guiVariables.Calibration_ratio_reduction_parameter_textbox = calibration_ratio_reduction_parameter_textbox.Text;
                 guiVariables.Soildepth_constant_value_box = soildepth_constant_value_box.Text;
                 guiVariables.Box_years_output = Box_years_output.Text;
+                guiVariables.Soildepth_input_filename_textbox = soildepth_input_filename_textbox.Text;
+                guiVariables.Snow_threshold_textbox = snow_threshold_textbox.Text;
+                guiVariables.Snowmelt_factor_textbox = snowmelt_factor_textbox.Text;
+                guiVariables.Tillfields_input_filename_textbox = tillfields_input_filename_textbox.Text;
+                guiVariables.Landuse_input_filename_textbox = landuse_input_filename_textbox.Text;
+                guiVariables.Evap_input_filename_textbox = evap_input_filename_textbox.Text;
+                guiVariables.Infil_input_filename_textbox = infil_input_filename_textbox.Text;
+                guiVariables.Rain_input_filename_textbox = rain_input_filename_textbox.Text;
+                guiVariables.Temp_input_filename_textbox = temp_input_filename_textbox.Text;
+                guiVariables.TextBox_ls_trans = textBox_ls_trans.Text;
+                guiVariables.TextBox_ls_coh = textBox_ls_coh.Text;
+                guiVariables.TextBox_ls_bd = textBox_ls_bd.Text;
+                guiVariables.TextBox_ls_ifr = textBox_ls_ifr.Text;
+                guiVariables.Total_tillage_statuspanel = total_tillage_statuspanel.Text;
+                guiVariables.DailyP = dailyP.Text;
+                guiVariables.DailyD = dailyD.Text;
+                guiVariables.DailyT_avg = dailyT_avg.Text;
+                guiVariables.DailyT_min = dailyT_min.Text;
+                guiVariables.DailyT_max = dailyT_max.Text;
+                guiVariables.GoogleBeginDate = googleBeginDate.Text;
+                guiVariables.TextBoxAVIFile = textBoxAVIFile.Text;
+                guiVariables.Ini_CaCO3_content = ini_CaCO3_content.Text;
+                guiVariables.Calibration_levels_textbox = calibration_levels_textbox.Text;
+
                 guiVariables.Water_ero_checkbox = Water_ero_checkbox.Checked;
                 guiVariables.Tillage_checkbox = Tillage_checkbox.Checked;
                 guiVariables.Landslide_checkbox = Landslide_checkbox.Checked;
@@ -7525,6 +7579,8 @@ Example: rainfall.asc can look like:
                 guiVariables.Soil_bioturb_checkbox = soil_bioturb_checkbox.Checked;
                 guiVariables.Soil_clay_transloc_checkbox = soil_clay_transloc_checkbox.Checked;
                 guiVariables.Soil_carbon_cycle_checkbox = soil_carbon_cycle_checkbox.Checked;
+                guiVariables.UTMsouthcheck = UTMsouthcheck.Checked;
+                guiVariables.Check_time_till_fields = check_time_till_fields.Checked;
             }
             ));
 

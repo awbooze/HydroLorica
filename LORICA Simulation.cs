@@ -37,6 +37,12 @@ namespace LORICA4
         double urfinalLati, urfinalLongi, llfinalLati, llfinalLongi, yurcorner, xurcorner = 0;
         TimeSpan geo_t, pedo_t, hydro_t, ponding_t;
 
+        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+        public static extern long BitBlt(IntPtr hdcDest, int nXDest, int nYDest, int nWidth,
+            int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, int dwROP);
+
+        private Bitmap bmp;  // <JMW 20041018>
+
         #region weird public variables
         AviWriter aw; // <JMW 20041018>
         bool frost_weathering_active,
@@ -150,8 +156,10 @@ namespace LORICA4
             total_OM_input_kg,
         local_soil_depth_m,
         local_soil_mass_kg;
+
         int number_soil_thicker_than,
-        number_soil_coarser_than;
+        number_soil_coarser_than,
+                once_dtm_fill;
 
 
 
@@ -330,7 +338,8 @@ namespace LORICA4
                     error_m,            // To store error locations as integer
                     sinkmap,
                     soilmap,            // integer numbers for soil map
-                    vegetation_type;
+                    vegetation_type,
+                    P_scen;
 
         public string KML_FILE_NAME;
 
@@ -832,7 +841,7 @@ namespace LORICA4
                                 else { graphics_scale = System.Convert.ToInt32(Math.Floor(r_scale)); }
                                 if (graphics_scale < 1) { graphics_scale = 1; }
                                 m_objDrawingSurface = new Bitmap(GlobalMethods.nc * graphics_scale, GlobalMethods.nr * graphics_scale, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-                                mygraphics = this.CreateGraphics();
+                                GlobalMethods.mygraphics = this.CreateGraphics();
                                 Mapwindow.Visible = true;
                                 //map_controls.Visible = true; */
                             }
@@ -1091,7 +1100,7 @@ namespace LORICA4
             {
                 GlobalMethods.comb_sort();
                 int tilltime = 0;
-                //if (guivariables.Check_time_till_fields) { tilltime = till_record[GlobalMethods.t]; }
+                //if (guiVariables.UTMzonebox.Check_time_till_fields) { tilltime = till_record[GlobalMethods.t]; }
                 //else { tilltime = 1; }
 
                 if (GlobalMethods.t > (guiVariables.End_time - 500)) { tilltime = 1; }
@@ -1246,7 +1255,7 @@ namespace LORICA4
             #region write output
 
             // Debug.WriteLine("before output");
-            //if (view_maps_checkbox.Checked == true && GlobalMethods.t == guiVariables.End_time - 1) { draw_map(mygraphics); updateClick = 1; }
+            //if (view_maps_checkbox.Checked == true && GlobalMethods.t == guiVariables.End_time - 1) { guiVariables.DrawMap(GlobalMethods.mygraphics); updateClick = 1; }
             if (guiVariables.View_maps_checkbox == true && GlobalMethods.t == guiVariables.End_time - 1) { updateClick = 1; }
             numfile++;
 
@@ -1733,17 +1742,17 @@ namespace LORICA4
         private void Google_Earth_Output()
         {
             updateClick = 1;
-            this.Refresh();
-            draw_map(mygraphics);
+            //this.Refresh();
+            guiVariables.DrawMap(GlobalMethods.mygraphics);
 
             if (coordinateDone == 0)
             {
                 //transfrom coordinates
                 point testPoint = new point(GlobalMethods.xcoord, GlobalMethods.ycoord);
-                if (UTMgridcheckbox.Checked)
+                if (guiVariables.UTMgridcheckbox)
                 {
-                    testPoint.UTMzone = System.Convert.ToInt32(UTMzonebox.Text);
-                    testPoint.south = System.Convert.ToBoolean(UTMsouthcheck.Checked);
+                    testPoint.UTMzone = System.Convert.ToInt32(guiVariables.UTMzonebox);
+                    testPoint.south = System.Convert.ToBoolean(guiVariables.UTMsouthcheck);
                     testPoint.transformUTMPoint();
                 }
                 else
@@ -1753,10 +1762,10 @@ namespace LORICA4
                 yurcorner = GlobalMethods.ycoord + (System.Convert.ToDouble(GlobalMethods.nr) * System.Convert.ToDouble(GlobalMethods.dx)); //ART possibly incorrect GlobalMethods.nr = GlobalMethods.nc
                 xurcorner = GlobalMethods.xcoord + (System.Convert.ToDouble(GlobalMethods.nc) * System.Convert.ToDouble(GlobalMethods.dx));
                 point testPoint2 = new point(xurcorner, yurcorner);
-                if (UTMgridcheckbox.Checked)
+                if (guiVariables.UTMgridcheckbox)
                 {
-                    testPoint2.UTMzone = System.Convert.ToInt32(UTMzonebox.Text);
-                    testPoint2.south = System.Convert.ToBoolean(UTMsouthcheck.Checked);
+                    testPoint2.UTMzone = System.Convert.ToInt32(guiVariables.UTMzonebox);
+                    testPoint2.south = System.Convert.ToBoolean(guiVariables.UTMsouthcheck);
                     testPoint2.transformUTMPoint();
                 }
                 else
@@ -1816,28 +1825,27 @@ namespace LORICA4
 
         private void AVI_Output()
         {
-            this.Refresh(); // tjc to enable graphics to be drawn before sending to AVI
-            draw_map(mygraphics); // tjc
+            guiVariables.DrawMap(GlobalMethods.mygraphics); // tjc
             Graphics gbmp = Graphics.FromImage(bmp);
 
             if (gbmp != null)
             {
 
-                IntPtr dc1 = mygraphics.GetHdc();
+                IntPtr dc1 = GlobalMethods.mygraphics.GetHdc();
                 IntPtr dc2 = gbmp.GetHdc();
 
                 //BitBlt(dc2, 0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height,
                 //dc1, 0, 0, 13369376);
                 // this makes sure the entire LORICA window gets video-ed.
 
-                BitBlt(dc2, this.Mapwindow.Location.X, this.Mapwindow.Location.Y,
-                    this.Mapwindow.Size.Width + this.Mapwindow.Location.X,
-                    this.Mapwindow.Size.Height + this.Mapwindow.Location.Y,
+                BitBlt(dc2, guiVariables.Mapwindow.Location.X, guiVariables.Mapwindow.Location.Y,
+                    guiVariables.Mapwindow.Size.Width + guiVariables.Mapwindow.Location.X,
+                    guiVariables.Mapwindow.Size.Height + guiVariables.Mapwindow.Location.Y,
                     dc1, 0, 0, 13369376);
                 // this makes sure the video only gets made for the mapped area
 
 
-                mygraphics.ReleaseHdc(dc1);
+                GlobalMethods.mygraphics.ReleaseHdc(dc1);
                 gbmp.ReleaseHdc(dc2);
 
 
@@ -6309,7 +6317,7 @@ namespace LORICA4
 
         void calculate_water_ero_sed()    //where the water starts flowing, eroding and transporting
         {
-            this.InfoStatusPanel.Text = "water erosion calculation";
+            guiVariables.InfoStatusPanel = "water erosion calculation";
             dhmax_errors = 0;
             //set all start q values effective precipitation at time GlobalMethods.t
             nb_ok = 0;  // nb_ok is 1 als er uberhaupt buren zijn, dus 0 als er alleen maar NODATA is
@@ -6373,15 +6381,15 @@ namespace LORICA4
                             for (i = 0; i < outletcounter; i++)
                             {
 
-                                if (check_space_evap.Checked == true) { evap_value_m = GlobalMethods.evapotranspiration[row, col]; }
-                                if (check_space_rain.Checked == true) { rain_value_m = GlobalMethods.rain[row, col]; }
-                                if (check_space_infil.Checked == true) { infil_value_m = GlobalMethods.infil[row, col]; }
+                                if (guiVariables.Check_space_evap) { evap_value_m = GlobalMethods.evapotranspiration[row, col]; }
+                                if (guiVariables.Check_space_rain) { rain_value_m = GlobalMethods.rain[row, col]; }
+                                if (guiVariables.Check_space_infil) { infil_value_m = GlobalMethods.infil[row, col]; }
                                 //ArT // development required to account for f(GlobalMethods.t) situations
                                 //ArT remember to check for negative lake outflow once it happens
                                 GlobalMethods.waterflow_m3[GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], i], GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], i]] += GlobalMethods.dx * GlobalMethods.dx * (rain_value_m - infil_value_m - evap_value_m) / outletcounter;
                             }
                         }
-                        if (only_waterflow_checkbox.Checked == false)
+                        if (guiVariables.Only_waterflow_checkbox == false)
                         {
                             for (size = 0; size < GlobalMethods.n_texture_classes; size++)
                             {
@@ -6465,7 +6473,7 @@ namespace LORICA4
                                     {    // if the cell is not in a depression (it could be in a depression as an outlet)
                                         if (GlobalMethods.dtm[row + i, col + j] != -9999)
                                         {  //if the cell has no NODATA
-                                            if (only_waterflow_checkbox.Checked)
+                                            if (guiVariables.Only_waterflow_checkbox)
                                             {
                                                 dh = GlobalMethods.dtm[row, col] - GlobalMethods.dtm[row + i, col + j]; // in the case that we are not interested in erosion and deposition, then there is no ero and sed to query                                            }
                                             }
@@ -6529,7 +6537,7 @@ namespace LORICA4
                                     //if (row == 24 && col == 81) { Debug.WriteLine("entered" + i + j); }
                                     if (GlobalMethods.dtm[row + i, col + j] != -9999)
                                     {
-                                        if (only_waterflow_checkbox.Checked)
+                                        if (guiVariables.Only_waterflow_checkbox)
                                         {
                                             dh = GlobalMethods.dtm[row, col] - GlobalMethods.dtm[row + i, col + j];
                                         }
@@ -6572,7 +6580,7 @@ namespace LORICA4
                                                     }
                                                 }
 
-                                                if (only_waterflow_checkbox.Checked == false)
+                                                if (guiVariables.Only_waterflow_checkbox == false)
                                                 {
 
                                                     organic_in_transport = fraction * (GlobalMethods.old_SOM_in_transport_kg[row, col] + GlobalMethods.young_SOM_in_transport_kg[row, col]);    //all in kg
@@ -6815,7 +6823,7 @@ namespace LORICA4
                 {
                     if (GlobalMethods.dtm[row, col] != -9999)
                     {
-                        if (only_waterflow_checkbox.Checked == false)
+                        if (guiVariables.Only_waterflow_checkbox == false)
                         {
                             //erosion and deposition affect only the top two layers of soil. All others: unaffected.
                             //So, we calculate the difference between the original and final thicknesses of these two layers to calculate GlobalMethods.dz_ero_m and GlobalMethods.dz_sed_m. 
@@ -6845,11 +6853,11 @@ namespace LORICA4
                             if (-GlobalMethods.dz_ero_m[row, col] > guiVariables.Timeseries.Timeseries_erosion_threshold) { eroded_cells++; }
                             if (GlobalMethods.dz_sed_m[row, col] + GlobalMethods.lake_sed_m[row, col] > guiVariables.Timeseries.Timeseries_deposition_threshold) { deposited_cells++; }
                         }
-                        if (check_space_rain.Checked == true) { total_rain += GlobalMethods.rain[row, col]; }
+                        if (guiVariables.Check_space_rain) { total_rain += GlobalMethods.rain[row, col]; }
                         total_rain += rain_value_m;
-                        if (check_space_evap.Checked == true) { total_evap += GlobalMethods.evapotranspiration[row, col]; }
+                        if (guiVariables.Check_space_evap) { total_evap += GlobalMethods.evapotranspiration[row, col]; }
                         total_evap += evap_value_m;
-                        if (check_space_infil.Checked == true) { total_infil += GlobalMethods.infil[row, col]; }
+                        if (guiVariables.Check_space_infil) { total_infil += GlobalMethods.infil[row, col]; }
                         total_infil += infil_value_m;
                         if (GlobalMethods.waterflow_m3[row, col] * GlobalMethods.dx * GlobalMethods.dx > guiVariables.Timeseries.Timeseries_waterflow_threshold) { wet_cells++; }
                     } // end for nodata
@@ -6861,7 +6869,7 @@ namespace LORICA4
             total_outflow = total_rain - total_evap - total_infil;
             //Debug.WriteLine("\n--erosion and deposition overview--");
             //Debug.WriteLine("GlobalMethods.rain " + total_rain + " evap " + total_evap + " total_infil " + total_infil);
-            if (only_waterflow_checkbox.Checked == false)
+            if (guiVariables.Only_waterflow_checkbox == false)
             {
                 double total_kg_eroded = 0, total_kg_deposited = 0;
                 for (size = 0; size < 5; size++)
@@ -6900,7 +6908,7 @@ namespace LORICA4
                     Debug.WriteLine(" on m-basis: sedimented into " + depressions_delta + " of " + totaldepressions + " depressions, " + sediment_delta + "  sediment used");
                 } */
             }
-            this.InfoStatusPanel.Text = "calc movement has been finished";
+            guiVariables.InfoStatusPanel = "calc movement has been finished";
             this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
 
 
@@ -6974,10 +6982,10 @@ namespace LORICA4
                 for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     //currently spatially uniform
-                    GlobalMethods.T_fac[row, col] = System.Convert.ToDouble(textBox_ls_trans.Text);
-                    GlobalMethods.C_fac[row, col] = System.Convert.ToDouble(textBox_ls_coh.Text);
-                    GlobalMethods.bulkd[row, col] = System.Convert.ToDouble(textBox_ls_bd.Text);
-                    GlobalMethods.intfr[row, col] = System.Convert.ToDouble(textBox_ls_ifr.Text);
+                    GlobalMethods.T_fac[row, col] = System.Convert.ToDouble(guiVariables.TextBox_ls_trans);
+                    GlobalMethods.C_fac[row, col] = System.Convert.ToDouble(guiVariables.TextBox_ls_coh);
+                    GlobalMethods.bulkd[row, col] = System.Convert.ToDouble(guiVariables.TextBox_ls_bd);
+                    GlobalMethods.intfr[row, col] = System.Convert.ToDouble(guiVariables.TextBox_ls_ifr);
 
                     // below, the old parameter values for New Zealand (spatially different) are kept
                     /*if (soilmap[row, col] == -9999)
@@ -7014,7 +7022,7 @@ namespace LORICA4
         {
             // from steepest local slope, contributing area and stability parameters
             // start calculation number of contributing draining cells by multiple flow algorithm
-            this.InfoStatusPanel.Text = "critical rainfall calculation";
+            guiVariables.InfoStatusPanel = "critical rainfall calculation";
             double beta;
             //set all start q values effective precipitation at time GlobalMethods.t
             nb_ok = 0; nb_check = 0; all_grids = 0;
@@ -7222,7 +7230,7 @@ namespace LORICA4
         {
             try
             {
-                this.InfoStatusPanel.Text = "landslide calculation";
+                guiVariables.InfoStatusPanel = "landslide calculation";
                 int tell;
                 //set all start q values effective precipitation at time GlobalMethods.t
                 nb_ok = 0; nb_check = 0; all_grids = 0.0;
@@ -7459,7 +7467,7 @@ namespace LORICA4
             try
             {
                 double mass_before = total_catchment_mass();
-                this.InfoStatusPanel.Text = "tillage calculation";
+                guiVariables.InfoStatusPanel = "tillage calculation";
                 int row, col, i, j;
                 double slope_sum, dz_min, d_x, dz_max, dh, fraction, temptill, tempdep, temptill_kg,
                             slope;
@@ -7746,7 +7754,7 @@ namespace LORICA4
                     }
                 }
 
-                total_tillage_statuspanel.Text = string.Format("till {0:F0} * 1000 m3", total_sum_tillage * GlobalMethods.dx * GlobalMethods.dx / 1000);
+                guiVariables.Total_tillage_statuspanel = string.Format("till {0:F0} * 1000 m3", total_sum_tillage * GlobalMethods.dx * GlobalMethods.dx / 1000);
                 // Debug.WriteLine("\n--tillage overview--");
                 // Debug.WriteLine(" tilled a total of " + total_sum_tillage * GlobalMethods.dx * GlobalMethods.dx / 1000 + " * 1000 m3");
                 double mass_after = total_catchment_mass();
@@ -7765,7 +7773,7 @@ namespace LORICA4
         /*
         private void calculate_creep()
         {
-            this.InfoStatusPanel.Text = "GlobalMethods.creep calculation";
+            guiVariables.InfoStatusPanel = "GlobalMethods.creep calculation";
             int row, col,
                         i, j,
                         nb_ok;
@@ -7884,7 +7892,7 @@ namespace LORICA4
         {
             try
             {
-                this.InfoStatusPanel.Text = "GlobalMethods.creep calculation";
+                guiVariables.InfoStatusPanel = "GlobalMethods.creep calculation";
                 int row, col,
                             i, j,
                             nb_ok,
@@ -8145,7 +8153,7 @@ namespace LORICA4
                         // calculate potential GlobalMethods.creep in kg
                         double maxslope = Math.Atan(dz_max); // max slope in radians
                         // potential_creep_kg = 4.5;
-                        potential_creep_kg = Convert.ToDouble(potential_bioturbation_textbox.Text);
+                        potential_creep_kg = Convert.ToDouble(guiVariables.Potential_bioturbation_textbox);
 
                         if (guiVariables.Daily_water)
                         {
@@ -8538,7 +8546,7 @@ namespace LORICA4
 
             try
             {
-                this.InfoStatusPanel.Text = "tree fall calculation";
+                guiVariables.InfoStatusPanel = "tree fall calculation";
 
                 bool fallen = false;
                 int i_tf = 0, j_tf = 0;
@@ -8931,19 +8939,19 @@ namespace LORICA4
                     {
 
                         // humped
-                        if (rockweath_method.SelectedIndex == 0)
+                        if (guiVariables.Rockweath_method == 0)
                         {
                             GlobalMethods.bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * GlobalMethods.soildepth_m[row, col]) - Math.Exp(-k2 * GlobalMethods.soildepth_m[row, col])) + Pa;
 
                         }
-                        if (rockweath_method.SelectedIndex == 1)
+                        if (guiVariables.Rockweath_method == 1)
                         {
                             // exponential (Heimsath, Chappell et al., 2000)
                             GlobalMethods.bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * GlobalMethods.soildepth_m[row, col]));
                         }
 
 
-                        if (rockweath_method.SelectedIndex == 2)
+                        if (guiVariables.Rockweath_method == 2)
                         {
                             if (guiVariables.Daily_water)
                             {
@@ -9464,7 +9472,7 @@ namespace LORICA4
 
         void findsinks()
         {
-            this.InfoStatusPanel.Text = "findtrouble has been entered";
+            guiVariables.InfoStatusPanel = "findtrouble has been entered";
             int number, twoequals = 0, threeequals = 0, moreequals = 0;
             int[] intoutlet = new int[9];
             int x;
@@ -9524,7 +9532,7 @@ namespace LORICA4
 
             //reports
 
-            this.InfoStatusPanel.Text = "found " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells";
+            guiVariables.InfoStatusPanel = "found " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells";
             Debug.WriteLine("\n\n--sinks overview at GlobalMethods.t = " + GlobalMethods.t + "--");
 
             if (numsinks / (GlobalMethods.nr * GlobalMethods.nc) > 0.0075) { Debug.WriteLine("this DEM contains " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells\n That's a lot!"); }
@@ -9539,8 +9547,8 @@ namespace LORICA4
 
         void searchdepressions()
         {
-            int z;
-            this.InfoStatusPanel.Text = "searchdepressions has been entered";
+
+            guiVariables.InfoStatusPanel = "searchdepressions has been entered";
             for (int row = 0; row < GlobalMethods.nr; row++)
             {        //visit all cells in the DEM and  ...
                 for (int col = 0; col < GlobalMethods.nc; col++)
@@ -9561,7 +9569,7 @@ namespace LORICA4
                 GlobalMethods.drainingoutlet_col[z, 3] = -1;
                 GlobalMethods.drainingoutlet_col[z, 4] = -1;
                 GlobalMethods.drainingoutlet_col[z, 4] = -1;
-                depressionlevel[z] = 0;
+                GlobalMethods.depressionlevel[z] = 0;
                 depressionsize[z] = 0;
                 depressionvolume_m[z] = 0;
                 iloedge[z] = 0;
@@ -9942,7 +9950,7 @@ namespace LORICA4
             // to membercells so they drain towards the outlet.
             // we cannot simply use distance_to_outlet for each member cell, since depressions can round corners....
 
-            this.InfoStatusPanel.Text = "def fillheight has been entered";
+            guiVariables.InfoStatusPanel = "def fillheight has been entered";
             //Debug.WriteLine("defining fillheight\n");
             int notyetdone, done, depressiontt;
 
@@ -10692,7 +10700,7 @@ namespace LORICA4
             {
                 try
                 {
-                    filename = this.dailyP.Text;
+                    filename = guiVariables.DailyP;
                     if (memory_records_d == false) { makedailyrecords(filename); }
                     // Debug.WriteLine("guiVariables.P_all record created successfully");
 
@@ -10708,22 +10716,22 @@ namespace LORICA4
                     //read_record(filename, guiVariables.ET0_all);
                     //Debug.WriteLine("guiVariables.ET0_all read successfully");
 
-                    filename = this.dailyD.Text;
+                    filename = guiVariables.DailyP;
                     if (memory_records_d == false) { makedailyrecords(filename); }
                     GlobalMethods.read_record(filename, guiVariables.D_all);
                     // Debug.WriteLine("guiVariables.D_all read successfully");
 
-                    filename = this.dailyT_avg.Text;
+                    filename = guiVariables.DailyT_avg;
                     if (memory_records_d == false) { makedailyrecords(filename); }
                     GlobalMethods.read_record(filename, guiVariables.Tavg_all);
                     // Debug.WriteLine("guiVariables.Tavg_all read successfully");
 
-                    filename = this.dailyT_min.Text;
+                    filename = guiVariables.DailyT_min;
                     if (memory_records_d == false) { makedailyrecords(filename); }
                     GlobalMethods.read_record(filename, guiVariables.Tmin_all);
                     // Debug.WriteLine("guiVariables.Tmin_all read successfully");
 
-                    filename = this.dailyT_max.Text;
+                    filename = guiVariables.DailyT_max;
                     if (memory_records_d == false) { makedailyrecords(filename); }
                     GlobalMethods.read_record(filename, guiVariables.Tmax_all);
                     // Debug.WriteLine("guiVariables.Tmax_all read successfully");
@@ -10770,8 +10778,8 @@ namespace LORICA4
                     snow_m = 0;
                     snow_start_m = 0;
                     snowfall_m = 0;
-                    snowmelt_factor_mTd = Convert.ToDouble(snowmelt_factor_textbox.Text);
-                    snow_threshold_C = Convert.ToDouble(snow_threshold_textbox.Text);
+                    snowmelt_factor_mTd = Convert.ToDouble(guiVariables.Snowmelt_factor_textbox);
+                    snow_threshold_C = Convert.ToDouble(guiVariables.Snow_threshold_textbox);
                     // snowmelt factor now assumed to be 0.004 m per degree per day, as a mean from the following paper: Hock 2003, https://www.sciencedirect.com/science/article/pii/S0022169403002579#BIB50
                     // DEVELOP I didn'GlobalMethods.t take the correct parameter (DDF instead of Fm, see paper). Change to right parameter based on the paper of Gottlieb, 1980. Other developments are varying melt factors, based on month, incoming radiation etc. (See Hock 2003)
                 }
@@ -10780,7 +10788,7 @@ namespace LORICA4
 
             if (guiVariables.Check_space_soildepth && GlobalMethods.input_data_error == false)
             {
-                filename = this.soildepth_input_filename_textbox.Text;
+                filename = guiVariables.Soildepth_input_filename_textbox;
                 GlobalMethods.read_double(filename, GlobalMethods.soildepth_m);
                 Debug.WriteLine("read soildepth");
             }
@@ -10792,52 +10800,52 @@ namespace LORICA4
             }
             if (guiVariables.Check_space_landuse && GlobalMethods.input_data_error == false)
             {
-                filename = this.landuse_input_filename_textbox.Text;
+                filename = guiVariables.Landuse_input_filename_textbox;
                 GlobalMethods.read_integer(filename, GlobalMethods.landuse);
                 Debug.WriteLine("read GlobalMethods.landuse");
             }
             if (guiVariables.Check_space_evap && GlobalMethods.input_data_error == false)
             {
-                filename = this.evap_input_filename_textbox.Text;
+                filename = guiVariables.Evap_input_filename_textbox;
                 GlobalMethods.read_double(filename, GlobalMethods.evapotranspiration);
             }
             if (guiVariables.Check_space_infil && GlobalMethods.input_data_error == false)
             {
-                filename = this.infil_input_filename_textbox.Text;
+                filename = guiVariables.Infil_input_filename_textbox;
                 GlobalMethods.read_double(filename, GlobalMethods.infil);
             }
             if (guiVariables.Check_space_rain && GlobalMethods.input_data_error == false)
             {
-                filename = this.rain_input_filename_textbox.Text;
+                filename = guiVariables.Rain_input_filename_textbox;
                 GlobalMethods.read_double(filename, GlobalMethods.rain);
             }
             // If required, read timeseries instead.
             if (guiVariables.Check_time_landuse && GlobalMethods.input_data_error == false)
             {
-                filename = this.landuse_input_filename_textbox.Text;
+                filename = guiVariables.Landuse_input_filename_textbox;
                 GlobalMethods.read_integer(filename, GlobalMethods.landuse);
             }
             if (guiVariables.Check_time_evap && GlobalMethods.input_data_error == false)
             {
-                filename = this.evap_input_filename_textbox.Text;
+                filename = guiVariables.Evap_input_filename_textbox;
                 if (memory_records == false) { makerecords(filename); }
                 GlobalMethods.read_record(filename, evap_record);
             }
             if (guiVariables.Check_time_infil && GlobalMethods.input_data_error == false)
             {
-                filename = this.infil_input_filename_textbox.Text;
+                filename = guiVariables.Infil_input_filename_textbox;
                 if (memory_records == false) { makerecords(filename); }
                 GlobalMethods.read_record(filename, infil_record);
             }
             if (guiVariables.Check_time_rain && GlobalMethods.input_data_error == false)
             {
-                filename = this.rain_input_filename_textbox.Text;
+                filename = guiVariables.Rain_input_filename_textbox;
                 if (memory_records == false) { makerecords(filename); }
                 GlobalMethods.read_record(filename, rainfall_record);
             }
             if (guiVariables.Check_time_T && GlobalMethods.input_data_error == false)
             {
-                filename = this.temp_input_filename_textbox.Text;
+                filename = guiVariables.Temp_input_filename_textbox;
                 if (memory_records == false) { makerecords(filename); }
                 GlobalMethods.read_record(filename, temp_record);
             }
@@ -11007,8 +11015,8 @@ namespace LORICA4
                 KML_FILE_NAME = GlobalMethods.Workdir + "\\animation\\animation.kml";
                 Debug.WriteLine("creating directory " + GlobalMethods.Workdir + @"\animation");
                 Directory.CreateDirectory(GlobalMethods.Workdir + @"\animation");
-                startDate = googleBeginDate.Text;
-                try { googleTime = System.DateTime.Parse(googleBeginDate.Text); }
+                startDate = guiVariables.GoogleBeginDate;
+                try { googleTime = System.DateTime.Parse(guiVariables.GoogleBeginDate); }
                 catch { GlobalMethods.input_data_error = true; MessageBox.Show("No valid Google Earth animation start date provided"); }
             }
             // AVI preparation
@@ -11018,7 +11026,7 @@ namespace LORICA4
                 {
                     aw = new AviWriter();
 
-                    string fname = GlobalMethods.Workdir + @"\" + textBoxAVIFile.Text;
+                    string fname = GlobalMethods.Workdir + @"\" + guiVariables.TextBoxAVIFile;
                     Debug.WriteLine("checking for existence of movie file " + fname);
                     //Delete the avi if it already exists, & wait for it to occur
                     if (File.Exists(fname))
@@ -11032,8 +11040,8 @@ namespace LORICA4
                             watcher.WaitForChanged(System.IO.WatcherChangeTypes.Deleted);
                         }
                     }
-                    bmp = aw.Open(fname, 25, this.Mapwindow.Size.Width,
-                        this.Mapwindow.Size.Height);  // <JMW 20041018>
+                    bmp = aw.Open(fname, 25, guiVariables.Mapwindow.Size.Width,
+                        guiVariables.Mapwindow.Size.Height);  // <JMW 20041018>
                 }
                 catch { GlobalMethods.input_data_error = true; MessageBox.Show("Video file can not be created"); }
 
@@ -11213,7 +11221,7 @@ namespace LORICA4
 
                                 if (guiVariables.Decalcification_checkbox)
                                 {
-                                    CO3_kg[row, col, soil_layer] = (location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * GlobalMethods.dx * GlobalMethods.dx) * Convert.ToDouble(ini_CaCO3_content.Text) * 40.08 / (40.08 + 60.01); // calculate total CO3: total mass * fraction of soil * fraction of CaCO3 molecule
+                                    CO3_kg[row, col, soil_layer] = (location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * GlobalMethods.dx * GlobalMethods.dx) * Convert.ToDouble(guiVariables.Ini_CaCO3_content) * 40.08 / (40.08 + 60.01); // calculate total CO3: total mass * fraction of soil * fraction of CaCO3 molecule
                                 }
 
                             }
@@ -11327,7 +11335,7 @@ namespace LORICA4
 
                                 if (guiVariables.Decalcification_checkbox)
                                 {
-                                    CO3_kg[row, col, soil_layer] = (location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * GlobalMethods.dx * GlobalMethods.dx) * Convert.ToDouble(ini_CaCO3_content.Text) * 40.08 / (40.08 + 60.01); // calculate total CO3: total mass * fraction of soil * fraction of CaCO3 molecule
+                                    CO3_kg[row, col, soil_layer] = (location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * GlobalMethods.dx * GlobalMethods.dx) * Convert.ToDouble(guiVariables.Ini_CaCO3_content) * 40.08 / (40.08 + 60.01); // calculate total CO3: total mass * fraction of soil * fraction of CaCO3 molecule
                                 }
 
                             }
@@ -11524,8 +11532,9 @@ namespace LORICA4
 
         private void calib_calculate_maxruns(int calibparacount)
         {
+            int GUcalib_levels;
             //this code calculates the total number of runs needed when calibrating
-            string calibration_ratio_string = calibration_ratios_textbox.Text;
+            string calibration_ratio_string = guiVariables.Calibration_ratios_textbox;
             string[] ratiowords = calibration_ratio_string.Split(';');
             int ratio;
             for (ratio = 0; ratio < ratiowords.Length; ratio++)
@@ -11537,7 +11546,7 @@ namespace LORICA4
                     }
                     catch { GlobalMethods.input_data_error = true; MessageBox.Show("Calibration ratio input error"); }
                 }
-            try { GUcalib_levels = Convert.ToInt32(calibration_levels_textbox.Text); }
+            try { GUcalib_levels = Convert.ToInt32(guiVariables.Calibration_levels_textbox); }
             catch { GlobalMethods.input_data_error = true; MessageBox.Show("Calibration iterations must be an integer"); }
             maxruns = calib_levels * Convert.ToInt32(Math.Pow(ratiowords.Length, calibparacount));
             Debug.WriteLine(" the number of runs for calibration will be " + maxruns);

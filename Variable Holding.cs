@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -9,7 +10,8 @@ namespace LORICAVariables
     public class GUIVariables
     {
         public GUIVariables(DelUpdateAllFields UAF, DelUpdateStatusPannel UPS, DelUpdateTimePannel UTP, DelUpdateVariables UF,
-                            DelUpdateTimeSeries uts, DelUpdateProfile up, DelUpdateLanduse_determinator uld, DelUpdateSoildata usd)
+                            DelUpdateTimeSeries uts, DelUpdateProfile up, DelUpdateLanduse_determinator uld, DelUpdateSoildata usd,
+                            DelDrawMap DM)
         {
             updateAllFields = UAF;
             updateStatusPannel = UPS;
@@ -18,10 +20,12 @@ namespace LORICAVariables
 
             Timeseries = new output_timeseries(uts);
             Profile = new output_profile(up);
-            Landuse_determinator = new landuse_determinator(uld) ;
+            Landuse_determinator = new landuse_determinator(uld);
             Soildata = new soil_specifier(usd);
 
-            updateVariables();
+            drawMap = DM;
+
+            //updateVariables();
         }
 
         public delegate void DelUpdateAllFields(); //Pushes Variables to GUI
@@ -2181,6 +2185,170 @@ namespace LORICAVariables
         }
 
 
+        public class mapwindow
+        {
+            public class size
+            {
+                ReaderWriterLock WidthRWL = new ReaderWriterLock();
+                protected int width;
+                public int Width
+                {
+                    get
+                    {
+                        WidthRWL.AcquireReaderLock(Timeout.Infinite);
+                        int temp = width;
+                        WidthRWL.ReleaseReaderLock();
+
+                        return temp;
+                    }
+                    set
+                    {
+                        WidthRWL.AcquireWriterLock(Timeout.Infinite);
+                        width = value;
+                        WidthRWL.ReleaseWriterLock();
+                    }
+                }
+                ReaderWriterLock HeightRWL = new ReaderWriterLock();
+                protected int height;
+                public int Height
+                {
+                    get
+                    {
+                        HeightRWL.AcquireReaderLock(Timeout.Infinite);
+                        int temp = height;
+                        HeightRWL.ReleaseReaderLock();
+
+                        return temp;
+                    }
+                    set
+                    {
+                        HeightRWL.AcquireWriterLock(Timeout.Infinite);
+                        height = value;
+                        HeightRWL.ReleaseWriterLock();
+                    }
+                }
+            }
+            public class location
+            {
+                ReaderWriterLock XRWL = new ReaderWriterLock();
+                protected int x;
+                public int X
+                {
+                    get
+                    {
+                        XRWL.AcquireReaderLock(Timeout.Infinite);
+                        int temp = x;
+                        XRWL.ReleaseReaderLock();
+
+                        return temp;
+                    }
+                    set
+                    {
+                        XRWL.AcquireWriterLock(Timeout.Infinite);
+                        x = value;
+                        XRWL.ReleaseWriterLock();
+                    }
+                }
+                ReaderWriterLock YRWL = new ReaderWriterLock();
+                protected int y;
+                public int Y
+                {
+                    get
+                    {
+                        YRWL.AcquireReaderLock(Timeout.Infinite);
+                        int temp = y;
+                        YRWL.ReleaseReaderLock();
+
+                        return temp;
+                    }
+                    set
+                    {
+                        YRWL.AcquireWriterLock(Timeout.Infinite);
+                        y = value;
+                        YRWL.ReleaseWriterLock();
+                    }
+                }
+            }
+
+            ReaderWriterLock SizeRWL = new ReaderWriterLock();
+            protected size s = new size();
+            public size Size
+            {
+                get
+                {
+                    SizeRWL.AcquireReaderLock(Timeout.Infinite);
+                    size temp = s;
+                    SizeRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    SizeRWL.AcquireWriterLock(Timeout.Infinite);
+                    s = value;
+                    SizeRWL.ReleaseWriterLock();
+                }
+            }
+
+            ReaderWriterLock LocationRWL = new ReaderWriterLock();
+            protected location l = new location();
+            public location Location
+            {
+                get
+                {
+                    LocationRWL.AcquireReaderLock(Timeout.Infinite);
+                    location temp = l;
+                    LocationRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LocationRWL.AcquireWriterLock(Timeout.Infinite);
+                    l = value;
+                    LocationRWL.ReleaseWriterLock();
+                }
+            }
+
+
+        }
+
+        ReaderWriterLock MapwindowRWL = new ReaderWriterLock();
+        protected mapwindow mp = new mapwindow();
+        public mapwindow Mapwindow
+        {
+            get
+            {
+                MapwindowRWL.AcquireReaderLock(Timeout.Infinite);
+                mapwindow temp = mp;
+                MapwindowRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                MapwindowRWL.AcquireWriterLock(Timeout.Infinite);
+                mp = value;
+                MapwindowRWL.ReleaseWriterLock();
+            }
+        }
+
+
+        public delegate void DelDrawMap(Graphics); //Pulls Values from GUI
+        DelDrawMap drawMap;
+
+        public void DrawMap(Graphics graphics)
+        {
+            UpdateFields();
+            drawMap(graphics);
+            updateVariables();
+        }
+
+
+
+
+
+
         ReaderWriterLock End_timeRWL = new ReaderWriterLock();
         protected double end_time;
         public double End_time
@@ -2385,6 +2553,46 @@ namespace LORICAVariables
                 CO3_kgRWL.ReleaseWriterLock();
             }
         }
+
+        ReaderWriterLock Rockweath_methodRWL = new ReaderWriterLock();
+        protected int rockweath_method;
+        public int Rockweath_method
+        {
+            get
+            {
+                Rockweath_methodRWL.AcquireReaderLock(Timeout.Infinite);
+                int temp = rockweath_method;
+                Rockweath_methodRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Rockweath_methodRWL.AcquireWriterLock(Timeout.Infinite);
+                rockweath_method = value;
+                Rockweath_methodRWL.ReleaseWriterLock();
+            }
+        }
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3957,6 +4165,452 @@ namespace LORICAVariables
             }
         }
 
+        ReaderWriterLock Soildepth_input_filename_textboxRWL = new ReaderWriterLock();
+        protected string soildepth_input_filename_textbox = "";
+        public string Soildepth_input_filename_textbox
+        {
+            get
+            {
+                Soildepth_input_filename_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = soildepth_input_filename_textbox;
+                Soildepth_input_filename_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Soildepth_input_filename_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                soildepth_input_filename_textbox = value;
+                Soildepth_input_filename_textboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Snowmelt_factor_textboxRWL = new ReaderWriterLock();
+        protected string snowmelt_factor_textbox = "";
+        public string Snowmelt_factor_textbox
+        {
+            get
+            {
+                Snowmelt_factor_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = snowmelt_factor_textbox;
+                Snowmelt_factor_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Snowmelt_factor_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                snowmelt_factor_textbox = value;
+                Snowmelt_factor_textboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Snow_threshold_textboxRWL = new ReaderWriterLock();
+        protected string snow_threshold_textbox = "";
+        public string Snow_threshold_textbox
+        {
+            get
+            {
+                Snow_threshold_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = snow_threshold_textbox;
+                Snow_threshold_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Snow_threshold_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                snow_threshold_textbox = value;
+                Snow_threshold_textboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Tillfields_input_filename_textboxRWL = new ReaderWriterLock();
+        protected string tillfields_input_filename_textbox = "";
+        public string Tillfields_input_filename_textbox
+        {
+            get
+            {
+                Tillfields_input_filename_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = tillfields_input_filename_textbox;
+                Tillfields_input_filename_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Tillfields_input_filename_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                tillfields_input_filename_textbox = value;
+                Tillfields_input_filename_textboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Landuse_input_filename_textboxRWL = new ReaderWriterLock();
+        protected string landuse_input_filename_textbox = "";
+        public string Landuse_input_filename_textbox
+        {
+            get
+            {
+                Landuse_input_filename_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = landuse_input_filename_textbox;
+                Landuse_input_filename_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Landuse_input_filename_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                landuse_input_filename_textbox = value;
+                Landuse_input_filename_textboxRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock Evap_input_filename_textboxRWL = new ReaderWriterLock();
+        protected string evap_input_filename_textbox = "";
+        public string Evap_input_filename_textbox
+        {
+            get
+            {
+                Evap_input_filename_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = evap_input_filename_textbox;
+                Evap_input_filename_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Evap_input_filename_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                evap_input_filename_textbox = value;
+                Evap_input_filename_textboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Infil_input_filename_textboxRWL = new ReaderWriterLock();
+        protected string infil_input_filename_textbox = "";
+        public string Infil_input_filename_textbox
+        {
+            get
+            {
+                Infil_input_filename_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = infil_input_filename_textbox;
+                Infil_input_filename_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Infil_input_filename_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                infil_input_filename_textbox = value;
+                Infil_input_filename_textboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Rain_input_filename_textboxRWL = new ReaderWriterLock();
+        protected string rain_input_filename_textbox = "";
+        public string Rain_input_filename_textbox
+        {
+            get
+            {
+                Rain_input_filename_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = rain_input_filename_textbox;
+                Rain_input_filename_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Rain_input_filename_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                rain_input_filename_textbox = value;
+                Rain_input_filename_textboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Temp_input_filename_textboxRWL = new ReaderWriterLock();
+        protected string temp_input_filename_textbox = "";
+        public string Temp_input_filename_textbox
+        {
+            get
+            {
+                Temp_input_filename_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = temp_input_filename_textbox;
+                Temp_input_filename_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Temp_input_filename_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                temp_input_filename_textbox = value;
+                Temp_input_filename_textboxRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock TextBox_ls_transRWL = new ReaderWriterLock();
+        protected string textBox_ls_trans = "";
+        public string TextBox_ls_trans
+        {
+            get
+            {
+                TextBox_ls_transRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = textBox_ls_trans;
+                TextBox_ls_transRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                TextBox_ls_transRWL.AcquireWriterLock(Timeout.Infinite);
+                textBox_ls_trans = value;
+                TextBox_ls_transRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock TextBox_ls_cohRWL = new ReaderWriterLock();
+        protected string textBox_ls_coh = "";
+        public string TextBox_ls_coh
+        {
+            get
+            {
+                TextBox_ls_cohRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = textBox_ls_coh;
+                TextBox_ls_cohRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                TextBox_ls_cohRWL.AcquireWriterLock(Timeout.Infinite);
+                textBox_ls_coh = value;
+                TextBox_ls_cohRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock TextBox_ls_bdRWL = new ReaderWriterLock();
+        protected string textBox_ls_bd = "";
+        public string TextBox_ls_bd
+        {
+            get
+            {
+                TextBox_ls_bdRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = textBox_ls_bd;
+                TextBox_ls_bdRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                TextBox_ls_bdRWL.AcquireWriterLock(Timeout.Infinite);
+                textBox_ls_bd = value;
+                TextBox_ls_bdRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock TextBox_ls_ifrRWL = new ReaderWriterLock();
+        protected string textBox_ls_ifr = "";
+        public string TextBox_ls_ifr
+        {
+            get
+            {
+                TextBox_ls_ifrRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = textBox_ls_ifr;
+                TextBox_ls_ifrRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                TextBox_ls_ifrRWL.AcquireWriterLock(Timeout.Infinite);
+                textBox_ls_ifr = value;
+                TextBox_ls_ifrRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock Total_tillage_statuspanelRWL = new ReaderWriterLock();
+        protected string total_tillage_statuspanel = "";
+        public string Total_tillage_statuspanel
+        {
+            get
+            {
+                Total_tillage_statuspanelRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = total_tillage_statuspanel;
+                Total_tillage_statuspanelRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Total_tillage_statuspanelRWL.AcquireWriterLock(Timeout.Infinite);
+                total_tillage_statuspanel = value;
+                Total_tillage_statuspanelRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock DailyPRWL = new ReaderWriterLock();
+        protected string dailyP = "";
+        public string DailyP
+        {
+            get
+            {
+                DailyPRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = dailyP;
+                DailyPRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                DailyPRWL.AcquireWriterLock(Timeout.Infinite);
+                dailyP = value;
+                DailyPRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock DailyDRWL = new ReaderWriterLock();
+        protected string dailyD = "";
+        public string DailyD
+        {
+            get
+            {
+                DailyDRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = dailyD;
+                DailyDRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                DailyDRWL.AcquireWriterLock(Timeout.Infinite);
+                dailyD = value;
+                DailyDRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock DailyT_avgRWL = new ReaderWriterLock();
+        protected string dailyT_avg = "";
+        public string DailyT_avg
+        {
+            get
+            {
+                DailyT_avgRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = dailyT_avg;
+                DailyT_avgRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                DailyT_avgRWL.AcquireWriterLock(Timeout.Infinite);
+                dailyT_avg = value;
+                DailyT_avgRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock DailyT_minRWL = new ReaderWriterLock();
+        protected string dailyT_min = "";
+        public string DailyT_min
+        {
+            get
+            {
+                DailyT_minRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = dailyT_min;
+                DailyT_minRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                DailyT_minRWL.AcquireWriterLock(Timeout.Infinite);
+                dailyT_min = value;
+                DailyT_minRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock DailyT_maxRWL = new ReaderWriterLock();
+        protected string dailyT_max = "";
+        public string DailyT_max
+        {
+            get
+            {
+                DailyT_maxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = dailyT_max;
+                DailyT_maxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                DailyT_maxRWL.AcquireWriterLock(Timeout.Infinite);
+                dailyT_max = value;
+                DailyT_maxRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock GoogleBeginDateRWL = new ReaderWriterLock();
+        protected string googleBeginDate = "";
+        public string GoogleBeginDate
+        {
+            get
+            {
+                GoogleBeginDateRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = googleBeginDate;
+                GoogleBeginDateRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                GoogleBeginDateRWL.AcquireWriterLock(Timeout.Infinite);
+                googleBeginDate = value;
+                GoogleBeginDateRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock TextBoxAVIFileRWL = new ReaderWriterLock();
+        protected string textBoxAVIFile = "";
+        public string TextBoxAVIFile
+        {
+            get
+            {
+                TextBoxAVIFileRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = textBoxAVIFile;
+                TextBoxAVIFileRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                TextBoxAVIFileRWL.AcquireWriterLock(Timeout.Infinite);
+                textBoxAVIFile = value;
+                TextBoxAVIFileRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock Ini_CaCO3_contentRWL = new ReaderWriterLock();
+        protected string ini_CaCO3_content = "";
+        public string Ini_CaCO3_content
+        {
+            get
+            {
+                Ini_CaCO3_contentRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = ini_CaCO3_content;
+                Ini_CaCO3_contentRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Ini_CaCO3_contentRWL.AcquireWriterLock(Timeout.Infinite);
+                ini_CaCO3_content = value;
+                Ini_CaCO3_contentRWL.ReleaseWriterLock();
+            }
+        }
+        ReaderWriterLock Calibration_levels_textboxRWL = new ReaderWriterLock();
+        protected string calibration_levels_textbox = "";
+        public string Calibration_levels_textbox
+        {
+            get
+            {
+                Calibration_levels_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = calibration_levels_textbox;
+                Calibration_levels_textboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Calibration_levels_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                calibration_levels_textbox = value;
+                Calibration_levels_textboxRWL.ReleaseWriterLock();
+            }
+        }
+
+
 
 
 
@@ -5215,6 +5869,46 @@ namespace LORICAVariables
                 Fill_sinks_during_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
                 fill_sinks_during_checkbox = value;
                 Fill_sinks_during_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock UTMsouthcheckRWL = new ReaderWriterLock();
+        protected bool uTMsouthcheck = false;
+        public bool UTMsouthcheck
+        {
+            get
+            {
+                UTMsouthcheckRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = uTMsouthcheck;
+                UTMsouthcheckRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                UTMsouthcheckRWL.AcquireWriterLock(Timeout.Infinite);
+                uTMsouthcheck = value;
+                UTMsouthcheckRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Check_time_till_fieldsRWL = new ReaderWriterLock();
+        protected bool check_time_till_fields = false;
+        public bool Check_time_till_fields
+        {
+            get
+            {
+                Check_time_till_fieldsRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = check_time_till_fields;
+                Check_time_till_fieldsRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Check_time_till_fieldsRWL.AcquireWriterLock(Timeout.Infinite);
+                check_time_till_fields = value;
+                Check_time_till_fieldsRWL.ReleaseWriterLock();
             }
         }
 
