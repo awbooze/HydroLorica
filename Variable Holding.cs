@@ -3645,7 +3645,345 @@ namespace LORICAVariables
             }
         }
 
+        ReaderWriterLock Daily_waterRWL = new ReaderWriterLock();
+        protected bool daily_water = false;
+        public bool Daily_water
+        {
+            get
+            {
+                Daily_waterRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = daily_water;
+                Daily_waterRWL.ReleaseReaderLock();
 
+                return temp;
+            }
+            set
+            {
+                Daily_waterRWL.AcquireWriterLock(Timeout.Infinite);
+                daily_water = value;
+                Daily_waterRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Ct_JagercikovaRWL = new ReaderWriterLock();
+        protected bool ct_Jagercikova = false;
+        public bool Ct_Jagercikova
+        {
+            get
+            {
+                Ct_JagercikovaRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = ct_Jagercikova;
+                Ct_JagercikovaRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Ct_JagercikovaRWL.AcquireWriterLock(Timeout.Infinite);
+                ct_Jagercikova = value;
+                Ct_JagercikovaRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock View_maps_checkboxRWL = new ReaderWriterLock();
+        protected bool view_maps_checkbox = false;
+        public bool View_maps_checkbox
+        {
+            get
+            {
+                View_maps_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = view_maps_checkbox;
+                View_maps_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                View_maps_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                view_maps_checkbox = value;
+                View_maps_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Final_output_checkboxRWL = new ReaderWriterLock();
+        protected bool final_output_checkbox = false;
+        public bool Final_output_checkbox
+        {
+            get
+            {
+                Final_output_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = final_output_checkbox;
+                Final_output_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Final_output_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                final_output_checkbox = value;
+                Final_output_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Regular_output_checkboxRWL = new ReaderWriterLock();
+        protected bool regular_output_checkbox = false;
+        public bool Regular_output_checkbox
+        {
+            get
+            {
+                Regular_output_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = regular_output_checkbox;
+                Regular_output_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Regular_output_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                regular_output_checkbox = value;
+                Regular_output_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Altitude_output_checkboxRWL = new ReaderWriterLock();
+        protected bool altitude_output_checkbox = false;
+        public bool Altitude_output_checkbox
+        {
+            get
+            {
+                Altitude_output_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = altitude_output_checkbox;
+                Altitude_output_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Altitude_output_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                altitude_output_checkbox = value;
+                Altitude_output_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Creep_CheckboxRWL = new ReaderWriterLock();
+        protected bool creep_Checkbox = false;
+        public bool Creep_Checkbox
+        {
+            get
+            {
+                Creep_CheckboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = creep_Checkbox;
+                Creep_CheckboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Creep_CheckboxRWL.AcquireWriterLock(Timeout.Infinite);
+                creep_Checkbox = value;
+                Creep_CheckboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Ulift_active_checkboxRWL = new ReaderWriterLock();
+        protected bool ulift_active_checkbox = false;
+        public bool Ulift_active_checkbox
+        {
+            get
+            {
+                Ulift_active_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = ulift_active_checkbox;
+                Ulift_active_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Ulift_active_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                ulift_active_checkbox = value;
+                Ulift_active_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Check_space_till_fieldsRWL = new ReaderWriterLock();
+        protected bool check_space_till_fields = false;
+        public bool Check_space_till_fields
+        {
+            get
+            {
+                Check_space_till_fieldsRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = check_space_till_fields;
+                Check_space_till_fieldsRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Check_space_till_fieldsRWL.AcquireWriterLock(Timeout.Infinite);
+                check_space_till_fields = value;
+                Check_space_till_fieldsRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Fill_sinks_before_checkboxRWL = new ReaderWriterLock();
+        protected bool fill_sinks_before_checkbox = false;
+        public bool Fill_sinks_before_checkbox
+        {
+            get
+            {
+                Fill_sinks_before_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = fill_sinks_before_checkbox;
+                Fill_sinks_before_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Fill_sinks_before_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                fill_sinks_before_checkbox = value;
+                Fill_sinks_before_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Creep_testingRWL = new ReaderWriterLock();
+        protected bool creep_testing = false;
+        public bool Creep_testing
+        {
+            get
+            {
+                Creep_testingRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = creep_testing;
+                Creep_testingRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Creep_testingRWL.AcquireWriterLock(Timeout.Infinite);
+                creep_testing = value;
+                Creep_testingRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Soildepth_output_checkboxRWL = new ReaderWriterLock();
+        protected bool soildepth_output_checkbox = false;
+        public bool Soildepth_output_checkbox
+        {
+            get
+            {
+                Soildepth_output_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = soildepth_output_checkbox;
+                Soildepth_output_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Soildepth_output_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                soildepth_output_checkbox = value;
+                Soildepth_output_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Alt_change_output_checkboxRWL = new ReaderWriterLock();
+        protected bool alt_change_output_checkbox = false;
+        public bool Alt_change_output_checkbox
+        {
+            get
+            {
+                Alt_change_output_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = alt_change_output_checkbox;
+                Alt_change_output_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Alt_change_output_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                alt_change_output_checkbox = value;
+                Alt_change_output_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Water_output_checkboxRWL = new ReaderWriterLock();
+        protected bool water_output_checkbox = false;
+        public bool Water_output_checkbox
+        {
+            get
+            {
+                Water_output_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = water_output_checkbox;
+                Water_output_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Water_output_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                water_output_checkbox = value;
+                Water_output_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Depressions_output_checkboxRWL = new ReaderWriterLock();
+        protected bool depressions_output_checkbox = false;
+        public bool Depressions_output_checkbox
+        {
+            get
+            {
+                Depressions_output_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = depressions_output_checkbox;
+                Depressions_output_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Depressions_output_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                depressions_output_checkbox = value;
+                Depressions_output_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock Diagnostic_output_checkboxRWL = new ReaderWriterLock();
+        protected bool diagnostic_output_checkbox = false;
+        public bool Diagnostic_output_checkbox
+        {
+            get
+            {
+                Diagnostic_output_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = diagnostic_output_checkbox;
+                Diagnostic_output_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Diagnostic_output_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                diagnostic_output_checkbox = value;
+                Diagnostic_output_checkboxRWL.ReleaseWriterLock();
+            }
+        }
+
+        ReaderWriterLock All_process_output_checkboxRWL = new ReaderWriterLock();
+        protected bool all_process_output_checkbox = false;
+        public bool All_process_output_checkbox
+        {
+            get
+            {
+                All_process_output_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                bool temp = all_process_output_checkbox;
+                All_process_output_checkboxRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                All_process_output_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                all_process_output_checkbox = value;
+                All_process_output_checkboxRWL.ReleaseWriterLock();
+            }
+        }
 
 
     }
