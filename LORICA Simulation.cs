@@ -37,10 +37,6 @@ namespace LORICA4
         double urfinalLati, urfinalLongi, llfinalLati, llfinalLongi, yurcorner, xurcorner = 0;
         TimeSpan geo_t, pedo_t, hydro_t, ponding_t;
 
-
-
-        public static int updateClick = 0;
-
         #region weird public variables
         AviWriter aw; // <JMW 20041018>
         bool frost_weathering_active,
@@ -221,29 +217,6 @@ namespace LORICA4
                old_depth_decay_constant,
                young_CTI_decay_constant;
 
-
-        double[,,]     //3D matrices for properties of soil layers in different x y (x,y,z)
-                    layerthickness_m,         // : thickness in m 
-                    young_SOM_kg,         // : OM mass in kgrams (per voxel = layer * thickness)
-                    old_SOM_kg,         // : OM mass in kgrams (per voxel = layer * thickness) 
-                    bulkdensity;            // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
-
-
-
-
-        int[,]  // integer matrices
-                    zones,
-                    mask,
-                    error_m,            // To store error locations as integer
-                    sinkmap,
-                    soilmap,            // integer numbers for soil map
-                    vegetation_type;
-
-
-
-        int calibration_length; // to assess if a process has to be calibrated mvdm, >1 is more runs
-
-
         // Decalcification parameters
         double[,,] CO3_kg;   // CaCO3, to track decalcification speed. Does not contribute to texture or soil mass (yet) MM
         double ini_CO3_content_frac;
@@ -356,7 +329,7 @@ namespace LORICA4
         {
             /*
             this.Invoke(new MethodInvoker(() => {
-                guiVariables.InfoStatusPanel = "Entered main program";
+                InfoStatusPanel.Text = "Entered main program";
             }
             ));
             */
@@ -955,7 +928,7 @@ namespace LORICA4
 
             //if (GlobalMethods.t == 0 | GlobalMethods.t == 1) { displaysoil(50, 0); }
             int i = 0;
-            guiVariables.TimeStatusPanel = "timestep " + (GlobalMethods.t + 1) + "/" + +guiVariables.End_time;
+            this.TimeStatusPanel.Text = "timestep " + (GlobalMethods.t + 1) + "/" + +guiVariables.End_time;
             updateClick = 1;
             // Debug.WriteLine("starting calculations - TIME " + GlobalMethods.t);
 
@@ -967,7 +940,7 @@ namespace LORICA4
             //Debug.WriteLine("before water {0}",texture_kg[0,0,0,2]);
             //Debug.WriteLine("before water balance");
             hydro_start = DateTime.Now;
-            if (guiVariables.Daily_Water)
+            if (daily_water.Checked)
             {
 
                 // Debug.WriteLine("Running daily water balance");
@@ -982,7 +955,7 @@ namespace LORICA4
 
             #region Vegetation
             // Debug.WriteLine("before vegetation");
-            if (guiVariables.Daily_Water)
+            if (daily_water.Checked)
             {
                 determine_vegetation_type();
                 change_vegetation_parameters();
@@ -1002,7 +975,7 @@ namespace LORICA4
                 initialise_every(); //fast
                 GlobalMethods.comb_sort();        //fast
 
-                if (guiVariables.Daily_Water)
+                if (daily_water.Checked)
                 {
                     //Debug.WriteLine("before WE2");
                     calculate_water_ero_sed_daily();
@@ -1028,7 +1001,7 @@ namespace LORICA4
             }
 
             // Debug.WriteLine("before TF");
-            if (guiVariables.Treefall_checkbox)
+            if (treefall_checkbox.Checked)
             {
                 if (GlobalMethods.t <= (guiVariables.End_time - 500)) // if there is no tillage
                 {
@@ -1245,7 +1218,7 @@ namespace LORICA4
                 // displaysoil(31, 12);
                 // Debug.WriteLine("Total catchment mass = " + total_catchment_mass());
 
-                if (guiVariables.Daily_Water)
+                if (daily_water.Checked)
                 {
                     Debug.WriteLine("writing daily water");
 
@@ -1428,7 +1401,7 @@ namespace LORICA4
                     //try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + GlobalMethods.t + "_out_dzsed.asc", GlobalMethods.dz_sed_m); }
                     //catch { MessageBox.Show("dzsed has not been written"); }
                 }
-                if (guiVariables.Treefall_checkbox)
+                if (treefall_checkbox.Checked)
                 {
                     try
                     {
@@ -1438,25 +1411,25 @@ namespace LORICA4
                     }
                     catch { MessageBox.Show("treefall has not been written"); }
                 }
-                if (guiVariables.Soildepth_output_checkbox)
+                if (Soildepth_output_checkbox.Checked)
                 {
                     try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_soildepth.asc", GlobalMethods.soildepth_m); }
                     catch { MessageBox.Show("soildepth has not been written"); }
                 }
-                if (guiVariables.Alt_change_output_checkbox)
+                if (Alt_change_output_checkbox.Checked)
                 {
                     try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_change.asc", GlobalMethods.dtmchange); }
                     catch { MessageBox.Show("change has not been written"); }
                 }
 
-                if (guiVariables.Water_output_checkbox & guiVariables.Water_ero_checkbox)
+                if (water_output_checkbox.Checked & Water_ero_checkbox.Checked)
                 {
                     // Debug.WriteLine("before writing water flow");
 
 
                     try
                     {
-                        if (guiVariables.Daily_Water)
+                        if (daily_water.Checked)
                         {
                             for (int roww = 0; roww < GlobalMethods.nr; roww++)
                             {
@@ -1470,7 +1443,7 @@ namespace LORICA4
                     }
                     catch { MessageBox.Show("water has not been written"); }
                 }
-                if (guiVariables.Depressions_output_checkbox)
+                if (depressions_output_checkbox.Checked)
                 {
                     try { GlobalMethods.out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_depress.asc", depression); }
                     catch { MessageBox.Show("depressions have not been written"); }
@@ -1489,17 +1462,17 @@ namespace LORICA4
                     catch { MessageBox.Show("lakesed has not been written"); }
                 }
 
-                if (guiVariables.Water_ero_checkbox)
+                if (Water_ero_checkbox.Checked)
                 {
                     // Debug.WriteLine("before writing water erosion");
 
-                    if (guiVariables.All_process_output_checkbox)
+                    if (all_process_output_checkbox.Checked)
                     {
                         try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_water_erosion.asc", GlobalMethods.sum_water_erosion); }
                         catch { MessageBox.Show("water erosion has not been written"); }
                     }
                 }
-                if (guiVariables.Creep_active_checkbox)
+                if (creep_active_checkbox.Checked)
                 {
                     // Debug.WriteLine("before writing GlobalMethods.creep");
 
@@ -1508,11 +1481,11 @@ namespace LORICA4
 
                 }
 
-                if (guiVariables.Tillage_checkbox)
+                if (Tillage_checkbox.Checked)
                 {
                     // Debug.WriteLine("before writing tillage erosion");
 
-                    if (guiVariables.All_process_output_checkbox)
+                    if (all_process_output_checkbox.Checked)
                     {
                         try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_tillage.asc", GlobalMethods.sum_tillage); }
                         catch { MessageBox.Show("tillage has not been written"); }
@@ -1696,7 +1669,7 @@ namespace LORICA4
                     Debug.WriteLine("Error finishing video output");
                 }
 
-                guiVariables.InfoStatusPanel = " --finished--";
+                this.InfoStatusPanel.Text = " --finished--";
                 stopwatch.Stop();
                 Debug.WriteLine("Elapsed time: " + stopwatch.Elapsed);
                 //Timeseries output
@@ -4541,7 +4514,7 @@ namespace LORICA4
                             {
                                 weathered_mass_kg = GlobalMethods.texture_kg[row, col, layer, tex_class] * chemical_weathering_constant / 10 * Math.Exp(-Cthree * depth) * Cfour * specific_area[tex_class] * dt;
 
-                                if (guiVariables.Daily_Water) { weathered_mass_kg *= waterfactor[row, col]; }
+                                if (daily_water.Checked) { weathered_mass_kg *= waterfactor[row, col]; }
 
                                 //Debug.WriteLine(" weath mass for layer " + layer + " class " + tex_class + " is " + weathered_mass_kg + " " + Math.Exp(-Cthree * depth));
                                 // note that the chem_weath constant is in kg/m2 mineral surface / y (in contrast to the original value from Salvador Blanes (mol/m2 mineral/s)
@@ -4602,7 +4575,7 @@ namespace LORICA4
                             //    Debug.WriteLine(" Warning: more than 100% of leached mass wants to become fine clay. This may indicate an error. Capping at 100%");
                             //    fraction_neoform = 1;
                             //}
-                            //if (guiVariables.Daily_Water) { fraction_neoform *= waterfactor[row,col]; }
+                            //if (daily_water.Checked) { fraction_neoform *= waterfactor[row,col]; }
                             //texture_kg[row, col, layer, 4] += total_weath_mass * fraction_neoform;
                             //total_fine_neoformed_mass_kg += total_weath_mass * fraction_neoform;
                             //total_weath_mass -= total_weath_mass * fraction_neoform;
@@ -4710,7 +4683,7 @@ namespace LORICA4
                             }
                             //select vegetation parameters, same as GlobalMethods.creep
                             potential_bioturbation_kg_m2_y = 4.5;
-                            if (guiVariables.Daily_Water)
+                            if (daily_water.Checked)
                             {
                                 if (aridity_vegetation[row, col] < 1) { potential_bioturbation_kg_m2_y = 4 + 0.3; } // grassland
                                 else { potential_bioturbation_kg_m2_y = 4 + 1.3; } // forest
@@ -4719,7 +4692,7 @@ namespace LORICA4
                             // if (findnegativetexture()) { Debugger.Break(); }
 
                             // geen split voor voor depth decay voor verschillende vegetaties. Depth decay van GlobalMethods.creep aanhouden. 
-                            //if(guiVariables.Daily_Water)
+                            //if(daily_water.Checked)
                             //{
                             //    if (aridity_vegetation[row, col] < 1)
                             //    {
@@ -5184,7 +5157,7 @@ namespace LORICA4
                     //Parallel.For(0, GlobalMethods.nc, i =>                    //we parallelize over cols
                     for (int col = 0; col < GlobalMethods.nc; col++)
                     {
-                        if (guiVariables.Daily_Water)
+                        if (daily_water.Checked)
                         {
                             if (aridity_vegetation[row, col] < 1) { potential_OM_input = 0.67; } // grassland
                             else { potential_OM_input = 0.62; } // forest
@@ -5265,7 +5238,7 @@ namespace LORICA4
             //possibly a function of local wetness / infiltration, but for now not/.
             double Iavg = 0, Imin = 10000000, Imax = 0;
 
-            if (guiVariables.Daily_Water)
+            if (daily_water.Checked)
             {
                 int Icount = 0;
                 for (int row = 0; row < GlobalMethods.nr; row++)
@@ -5308,7 +5281,7 @@ namespace LORICA4
                                     if (CT_depth_decay_checkbox.Checked) { eluviated_kg = max_eluviation * (1 - Math.Exp(-Cclay * GlobalMethods.texture_kg[row, col, layer, 4] / totalweight)) * Math.Exp(-ct_depthdec * depth) * dt * GlobalMethods.dx * GlobalMethods.dx; }
                                     else { eluviated_kg = max_eluviation * (1 - Math.Exp(-Cclay * GlobalMethods.texture_kg[row, col, layer, 4] / totalweight)) * dt * GlobalMethods.dx * GlobalMethods.dx; }
                                     //
-                                    if (guiVariables.Daily_Water)
+                                    if (daily_water.Checked)
                                     {
                                         eluviated_kg *= waterfactor[row, col];
                                         ;
@@ -5365,7 +5338,7 @@ namespace LORICA4
                                 Debug.WriteLine("ctj1");
                             }
 
-                            if (guiVariables.Daily_Water)
+                            if (daily_water.Checked)
                             {
                                 local_I = Math.Max(Iy[row, col], 0);
                                 ct_adv0 = ct_adv0_all * (1 - Math.Exp(-local_I / (2.0 * (1.0 / 3)))); // Exponential function to determine v0, based on infiltration. The function approaches a v0 of 1. I of 0.5~v0 of 0.5. the 2 indicates the range of the variogram. 
@@ -6253,7 +6226,7 @@ namespace LORICA4
                     total_kg_deposited += total_mass_deposited[size];
                 }
             }
-            guiVariables.InfoStatusPanel = "calc movement has been finished";
+            this.InfoStatusPanel.Text = "calc movement has been finished";
             this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
 
             //double mass_after = total_catchment_mass();
@@ -6282,7 +6255,7 @@ namespace LORICA4
 
         void calculate_water_ero_sed()    //where the water starts flowing, eroding and transporting
         {
-            guiVariables.InfoStatusPanel = "water erosion calculation";
+            this.InfoStatusPanel.Text = "water erosion calculation";
             dhmax_errors = 0;
             //set all start q values effective precipitation at time GlobalMethods.t
             nb_ok = 0;  // nb_ok is 1 als er uberhaupt buren zijn, dus 0 als er alleen maar NODATA is
@@ -6311,20 +6284,20 @@ namespace LORICA4
                 }
             }
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found before row col loop in water erosed"); }
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
 
                     if (GlobalMethods.dtm[row, col] != -9999)
                     {
                         // First, we apply rainwater to our landscape (in a two step approach - first normal cells and lake outlets)
-                        if (depression[row, col] == 0 ||
-                            (GlobalMethods.drainingoutlet_col[depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 0] == col) ||
-                            (GlobalMethods.drainingoutlet_col[depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 1] == col) ||
-                            (GlobalMethods.drainingoutlet_col[depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 2] == col) ||
-                            (GlobalMethods.drainingoutlet_col[depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 3] == col) ||
-                            (GlobalMethods.drainingoutlet_col[depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 4] == col))
+                        if (GlobalMethods.depression[row, col] == 0 ||
+                            (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == col) ||
+                            (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == col) ||
+                            (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == col) ||
+                            (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == col) ||
+                            (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == col))
                         {
                             if (check_space_evap.Checked == true) { evap_value_m = GlobalMethods.evapotranspiration[row, col]; }
                             if (check_space_rain.Checked == true) { rain_value_m = GlobalMethods.rain[row, col]; }
@@ -6338,7 +6311,7 @@ namespace LORICA4
                         { // for other lakecells, we send the rainwater directly (equally distributed) to that lake's outlet(s) (infiltration is not zero in the lake at the moment)
                             //Debug.WriteLine(" B at " + row + " col " + col + " alt " + GlobalMethods.dtm[row, col] + " dep " + depression[row, col]);
                             int outletcounter = 0; ;
-                            while (GlobalMethods.drainingoutlet_col[depression[row, col], outletcounter] != -1)
+                            while (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], outletcounter] != -1)
                             {
                                 outletcounter++;
                                 if (outletcounter == 5) { break; }
@@ -6351,7 +6324,7 @@ namespace LORICA4
                                 if (check_space_infil.Checked == true) { infil_value_m = GlobalMethods.infil[row, col]; }
                                 //ArT // development required to account for f(GlobalMethods.t) situations
                                 //ArT remember to check for negative lake outflow once it happens
-                                GlobalMethods.waterflow_m3[GlobalMethods.drainingoutlet_col[depression[row, col], i], GlobalMethods.drainingoutlet_col[depression[row, col], i]] += GlobalMethods.dx * GlobalMethods.dx * (rain_value_m - infil_value_m - evap_value_m) / outletcounter;
+                                GlobalMethods.waterflow_m3[GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], i], GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], i]] += GlobalMethods.dx * GlobalMethods.dx * (rain_value_m - infil_value_m - evap_value_m) / outletcounter;
                             }
                         }
                         if (only_waterflow_checkbox.Checked == false)
@@ -6377,26 +6350,27 @@ namespace LORICA4
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found before sorted row col loop in water erosed"); }
             for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
             {     // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
+                int row, col;
                 if (GlobalMethods.index[runner] != -9999)
                 {
 
-                    row = row_index[runner]; col = col_index[runner];
+                    row = GlobalMethods.row_index[runner]; col = GlobalMethods.col_index[runner];
                     //Debug.WriteLine(runner + " " + row + "  " + col + " GlobalMethods.nr " + GlobalMethods.nr + " GlobalMethods.nc " + GlobalMethods.nc + " GlobalMethods.nr*GlobalMethods.nc " + GlobalMethods.nr * GlobalMethods.nc + " data cells " + GlobalMethods.number_of_data_cells); 
                     if (GlobalMethods.t == 4 && row == 186 && col == 72) { diagnostic_mode = 1; }
                     else { diagnostic_mode = 0; }
                     powered_slope_sum = 0; max_allowed_erosion = 0; dz_min = -9999.99;
                     direct = 20; dz_max = -10; dhtemp = -99999.99; maximum_allowed_deposition = -9999.99;
-                    if (depression[row, col] < 0) { depression[row, col] = 0; }
-                    if ((GlobalMethods.drainingoutlet_col[depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 0] == col) ||
-                        (GlobalMethods.drainingoutlet_col[depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 1] == col) ||
-                        (GlobalMethods.drainingoutlet_col[depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 2] == col) ||
-                        (GlobalMethods.drainingoutlet_col[depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 3] == col) ||
-                        (GlobalMethods.drainingoutlet_col[depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 4] == col))
+                    if (GlobalMethods.depression[row, col] < 0) { GlobalMethods.depression[row, col] = 0; }
+                    if ((GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == col) ||
+                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == col) ||
+                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == col) ||
+                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == col) ||
+                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == col))
                     {
-                        if (depressionconsidered[depression[row, col]] == 0)
+                        if (depressionconsidered[GlobalMethods.depression[row, col]] == 0)
                         {
                             //diagnostic_mode = 1;
-                            depressionnumber = depression[row, col];
+                            depressionnumber = GlobalMethods.depression[row, col];
                             depressionconsidered[depressionnumber] = 1;
                             if (diagnostic_mode == 1) { Debug.WriteLine(" now considering dep " + depressionnumber + " GlobalMethods.index " + runner); }
                             update_depression(depressionnumber);
@@ -6412,14 +6386,14 @@ namespace LORICA4
                         }
                         //all cells of this lake have now been considered, except the outlets
                     }
-                    if (depression[row, col] < 0) { Debug.WriteLine(" error: negative depression value " + depression[row, col] + " at " + row + " " + col); minimaps(row, col); }
+                    if (GlobalMethods.depression[row, col] < 0) { Debug.WriteLine(" error: negative depression value " + GlobalMethods.depression[row, col] + " at " + row + " " + col); minimaps(row, col); }
                     // this check indicates a problem with the resetting of cells involved in a delta
-                    if (depression[row, col] == 0 ||
-                                                (GlobalMethods.drainingoutlet_col[depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 0] == col) ||
-                                                (GlobalMethods.drainingoutlet_col[depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 1] == col) ||
-                                                (GlobalMethods.drainingoutlet_col[depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 2] == col) ||
-                                                (GlobalMethods.drainingoutlet_col[depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 3] == col) ||
-                                                (GlobalMethods.drainingoutlet_col[depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 4] == col))
+                    if (GlobalMethods.depression[row, col] == 0 ||
+                                                (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == col) ||
+                                                (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == col) ||
+                                                (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == col) ||
+                                                (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == col) ||
+                                                (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == col))
                     { //for all cells outside a depression and for outlets, we use the stream power equations based on a multiple flow (D8) template
                         //if (row == 24 && col == 81) { Debug.WriteLine(" looking around cell " + row + " " + col); minimaps(row, col); }
                         for (i = (-1); i <= 1; i++)
@@ -6432,8 +6406,8 @@ namespace LORICA4
                                     // below, we calculate slope_sum for all cells either not in a depression, or being a outlet
                                     // slope_sum is needed to calculate flow in a multiple flow environment until someone thinks of something better
                                     // if (diagnostic_mode == 1) { Debug.WriteLine("checking " + (row + i) + " " + (col + j) + " from cell " + row + " " + col); }
-                                    if (depression[row, col] < 0) { Debug.WriteLine(" lakes error: cell has depression < 1"); } //out_integer("wrong_lakes.asc", depression); 
-                                    if (depression[row, col] == 0)
+                                    if (GlobalMethods.depression[row, col] < 0) { Debug.WriteLine(" lakes error: cell has depression < 1"); } //out_integer("wrong_lakes.asc", depression); 
+                                    if (GlobalMethods.depression[row, col] == 0)
                                     {    // if the cell is not in a depression (it could be in a depression as an outlet)
                                         if (GlobalMethods.dtm[row + i, col + j] != -9999)
                                         {  //if the cell has no NODATA
@@ -6460,14 +6434,14 @@ namespace LORICA4
                                             }//end if dh  
                                         }//end if novalues
                                     }  // end if not in depression
-                                    if ((GlobalMethods.drainingoutlet_col[depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 0] == col)
-                                        || (GlobalMethods.drainingoutlet_col[depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 1] == col)
-                                        || (GlobalMethods.drainingoutlet_col[depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 2] == col)
-                                        || (GlobalMethods.drainingoutlet_col[depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 3] == col)
-                                        || (GlobalMethods.drainingoutlet_col[depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[depression[row, col], 4] == col))
+                                    if ((GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == col)
+                                        || (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == col)
+                                        || (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == col)
+                                        || (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == col)
+                                        || (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == col))
                                     {    // this cell is one of the draining outlets and is only allowed to drain to cells not in the lake																											
                                          // if the lake has been filled at this time, then all its (by now non-lake) cells have an altitude > outlet, and will not be considered for that reason
-                                        if (depression[row + i, col + j] != depression[row, col])
+                                        if (GlobalMethods.depression[row + i, col + j] != GlobalMethods.depression[row, col])
                                         {
                                             if ((row != row + i) && (col != col + j)) { GlobalMethods.d_x = GlobalMethods.dx * Math.Sqrt(2); } else { GlobalMethods.d_x = GlobalMethods.dx; }
                                             dh = GlobalMethods.dtm[row, col] - GlobalMethods.dtm[row + i, col + j];
@@ -6513,7 +6487,7 @@ namespace LORICA4
                                         {  //we have found one of the lower nbs
                                             //if (row == 24 && col == 81) { Debug.WriteLine("this is a lower nb " + i + j + "dh" + dh + " " + GlobalMethods.waterflow_m3[row, col]); }
                                             if ((row != row + i) && (col != col + j)) { GlobalMethods.d_x = GlobalMethods.dx * Math.Sqrt(2); } else { GlobalMethods.d_x = GlobalMethods.dx; }
-                                            if ((depression[row, col] != 0 && depression[row + i, col + j] != depression[row, col]) || (depression[row, col] == 0))
+                                            if ((GlobalMethods.depression[row, col] != 0 && GlobalMethods.depression[row + i, col + j] != GlobalMethods.depression[row, col]) || (GlobalMethods.depression[row, col] == 0))
                                             {   //if cell == outlet of current lake and nb not member of that lake OR if not a lake member
 
 
@@ -6525,13 +6499,13 @@ namespace LORICA4
                                                 fraction = Math.Pow(dh, conv_fac) / powered_slope_sum;
                                                 if (GlobalMethods.waterflow_m3[row, col] < 0) { GlobalMethods.waterflow_m3[row, col] = 0; }    // this can have happened if water enters a drier zone in the landscape
                                                 flow_between_cells_m3_per_m = fraction * GlobalMethods.waterflow_m3[row, col] / GlobalMethods.dx;
-                                                if (depression[row + i, col + j] == 0)
+                                                if (GlobalMethods.depression[row + i, col + j] == 0)
                                                 {  // if receiving cell is not in a depression, its waterflow is increased 
                                                     GlobalMethods.waterflow_m3[row + i, col + j] += flow_between_cells_m3_per_m * GlobalMethods.dx;
                                                 }
-                                                if (depression[row + i, col + j] != 0)
+                                                if (GlobalMethods.depression[row + i, col + j] != 0)
                                                 {  // if receiving cell is in a depression, its outlets' waterflow is increased 
-                                                    currentdepression = Math.Abs(depression[row + i, col + j]); // this Abs stuff should not be necessary and is included for stability!
+                                                    currentdepression = Math.Abs(GlobalMethods.depression[row + i, col + j]); // this Abs stuff should not be necessary and is included for stability!
                                                     int outletcounter = 0;
                                                     while (GlobalMethods.drainingoutlet_col[currentdepression, outletcounter] != -1)
                                                     {
@@ -6582,7 +6556,7 @@ namespace LORICA4
                                                         {
 
                                                             //first, calculate how much we are going to erode. Not as much as we want to if the soil is protected by rocks or plants
-                                                            rock_fraction = texture_kg[row, col, 0, 0] / (texture_kg[row, col, 0, 0] + texture_kg[row, col, 0, 1] + texture_kg[row, col, 0, 2] + texture_kg[row, col, 0, 3] + texture_kg[row, col, 0, 4]);
+                                                            rock_fraction = GlobalMethods.texture_kg[row, col, 0, 0] / (GlobalMethods.texture_kg[row, col, 0, 0] + GlobalMethods.texture_kg[row, col, 0, 1] + GlobalMethods.texture_kg[row, col, 0, 2] + GlobalMethods.texture_kg[row, col, 0, 3] + GlobalMethods.texture_kg[row, col, 0, 4]);
                                                             if (version_lux_checkbox.Checked == false)
                                                             {
                                                                 mass_to_be_eroded = (transport_capacity_kg - total_sediment_in_transport_kg)
@@ -6626,51 +6600,51 @@ namespace LORICA4
                                                             for (size = 0; size < 5; size++)
                                                             {
                                                                 selectivity_fraction = (1 / Math.Pow(upper_particle_size[size], constant_b1)) / sum_diameter_power;    // unit [-]
-                                                                if (texture_kg[row, col, 0, size] >= selectivity_fraction * mass_to_be_eroded)
+                                                                if (GlobalMethods.texture_kg[row, col, 0, size] >= selectivity_fraction * mass_to_be_eroded)
                                                                 {    // typical situation
                                                                     if (size > 2)
                                                                     {
                                                                         clayeroded_0_kg += selectivity_fraction * mass_to_be_eroded;
-                                                                        claypresent_0_kg += texture_kg[row, col, 0, size];
+                                                                        claypresent_0_kg += GlobalMethods.texture_kg[row, col, 0, size];
                                                                     }
                                                                     total_mass_eroded[size] += selectivity_fraction * mass_to_be_eroded;
-                                                                    texture_kg[row, col, 0, size] -= selectivity_fraction * mass_to_be_eroded;   // unit [kg]
+                                                                    GlobalMethods.texture_kg[row, col, 0, size] -= selectivity_fraction * mass_to_be_eroded;   // unit [kg]
                                                                     GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += selectivity_fraction * mass_to_be_eroded;  // unit [kg]
                                                                 }
                                                                 else
                                                                 {    // exceptional. If we want to erode more than present in the layer, we will take it from one layer down.
                                                                      //this is to avoid exceptionally thin rocky layers blocking all erosion
                                                                      //we will then first erode everything from the top layer (layer "0") and then erode from the second layer  (i.e. layer "1").
-                                                                    total_mass_eroded[size] += texture_kg[row, col, 0, size];
-                                                                    double left = (selectivity_fraction * mass_to_be_eroded) - texture_kg[row, col, 0, size]; // unit [kg]
-                                                                    GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += texture_kg[row, col, 0, size];
+                                                                    total_mass_eroded[size] += GlobalMethods.texture_kg[row, col, 0, size];
+                                                                    double left = (selectivity_fraction * mass_to_be_eroded) - GlobalMethods.texture_kg[row, col, 0, size]; // unit [kg]
+                                                                    GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += GlobalMethods.texture_kg[row, col, 0, size];
                                                                     if (size > 2)
                                                                     {
-                                                                        clayeroded_0_kg += texture_kg[row, col, 0, size];
+                                                                        clayeroded_0_kg += GlobalMethods.texture_kg[row, col, 0, size];
                                                                         claypresent_0_kg += 0;
                                                                     }
-                                                                    texture_kg[row, col, 0, size] = 0;
-                                                                    if (texture_kg[row, col, 1, size] >= left)
+                                                                    GlobalMethods.texture_kg[row, col, 0, size] = 0;
+                                                                    if (GlobalMethods.texture_kg[row, col, 1, size] >= left)
                                                                     {   // typical
                                                                         total_mass_eroded[size] += left;
                                                                         if (size > 2)
                                                                         {
                                                                             clayeroded_1_kg += left;
-                                                                            claypresent_1_kg += texture_kg[row, col, 1, size] - left;
+                                                                            claypresent_1_kg += GlobalMethods.texture_kg[row, col, 1, size] - left;
                                                                         }
-                                                                        texture_kg[row, col, 1, size] -= left;  // unit [kg]
+                                                                        GlobalMethods.texture_kg[row, col, 1, size] -= left;  // unit [kg]
                                                                         GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += left;  // unit [kg]
                                                                     }
                                                                     else
                                                                     {
-                                                                        total_mass_eroded[size] += texture_kg[row, col, 1, size];
-                                                                        GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += texture_kg[row, col, 1, size];// unit [kg]
+                                                                        total_mass_eroded[size] += GlobalMethods.texture_kg[row, col, 1, size];
+                                                                        GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += GlobalMethods.texture_kg[row, col, 1, size];// unit [kg]
                                                                         if (size > 2)
                                                                         {
-                                                                            clayeroded_1_kg += texture_kg[row, col, 1, size];
+                                                                            clayeroded_1_kg += GlobalMethods.texture_kg[row, col, 1, size];
                                                                             claypresent_1_kg += 0;
                                                                         }
-                                                                        texture_kg[row, col, 1, size] = 0;
+                                                                        GlobalMethods.texture_kg[row, col, 1, size] = 0;
                                                                     }
                                                                 }
                                                             }
@@ -6719,7 +6693,7 @@ namespace LORICA4
                                                             if (potential_transported_amount_kg < GlobalMethods.sediment_in_transport_kg[row, col, size])
                                                             {
                                                                 total_mass_deposited_kg[size] += GlobalMethods.sediment_in_transport_kg[row, col, size] - potential_transported_amount_kg;
-                                                                texture_kg[row, col, 0, size] += GlobalMethods.sediment_in_transport_kg[row, col, size] - potential_transported_amount_kg;        // unit [kg]
+                                                                GlobalMethods.texture_kg[row, col, 0, size] += GlobalMethods.sediment_in_transport_kg[row, col, size] - potential_transported_amount_kg;        // unit [kg]
                                                                 GlobalMethods.sediment_in_transport_kg[row + i, col + j, 0] = potential_transported_amount_kg;                                    // unit [kg]  
 
                                                                 if (size > 2)
@@ -6781,9 +6755,9 @@ namespace LORICA4
             total_average_altitude = 0; total_altitude = 0;
             total_rain = 0; total_evap = 0; total_infil = 0; total_outflow = 0;
             wet_cells = 0; eroded_cells = 0; deposited_cells = 0;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     if (GlobalMethods.dtm[row, col] != -9999)
                     {
@@ -6872,7 +6846,7 @@ namespace LORICA4
                     Debug.WriteLine(" on m-basis: sedimented into " + depressions_delta + " of " + totaldepressions + " depressions, " + sediment_delta + "  sediment used");
                 } */
             }
-            guiVariables.InfoStatusPanel = "calc movement has been finished";
+            this.InfoStatusPanel.Text = "calc movement has been finished";
             this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
 
 
@@ -6941,9 +6915,9 @@ namespace LORICA4
             // the soil physical / hydrological / slope stability parameters:
             //	 Transmissivity, Bulk Density,              
             //   Combined Cohesion and Internal riction.
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     //currently spatially uniform
                     GlobalMethods.T_fac[row, col] = System.Convert.ToDouble(textBox_ls_trans.Text);
@@ -6986,14 +6960,14 @@ namespace LORICA4
         {
             // from steepest local slope, contributing area and stability parameters
             // start calculation number of contributing draining cells by multiple flow algorithm
-            guiVariables.InfoStatusPanel = "critical rainfall calculation";
+            this.InfoStatusPanel.Text = "critical rainfall calculation";
             double beta;
             //set all start q values effective precipitation at time GlobalMethods.t
             nb_ok = 0; nb_check = 0; all_grids = 0;
             maximum_allowed_deposition = -9999; dh_tol = 0.00025;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     GlobalMethods.camf[row, col] = 1;    // contributing area multiple flow matrix = 1
                     GlobalMethods.stslope[row, col] = 0;
@@ -7004,7 +6978,8 @@ namespace LORICA4
             int runner;
             for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
             {           // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
-                row = row_index[runner]; col = col_index[runner];
+                int row, col;
+                row = GlobalMethods.row_index[runner]; col = GlobalMethods.col_index[runner];
                 // into loop for surounding grids of certain grid
                 // Start first the slope_sum loop for all lower neighbour grids
                 powered_slope_sum = 0; max_allowed_erosion = 0; dz_min = -9999.99;
@@ -7075,9 +7050,9 @@ namespace LORICA4
             }   // end for
 
             // Calculation of steepest descent local slope, 8 cell window
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     direct = 20; dz_max = -1;
                     for (i = (-1); i <= 1; i++)
@@ -7193,14 +7168,14 @@ namespace LORICA4
         {
             try
             {
-                guiVariables.InfoStatusPanel = "landslide calculation";
+                this.InfoStatusPanel.Text = "landslide calculation";
                 int tell;
                 //set all start q values effective precipitation at time GlobalMethods.t
                 nb_ok = 0; nb_check = 0; all_grids = 0.0;
                 maximum_allowed_deposition = -9999.0; dh_tol = 0.00025; erotot = 0.0;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         GlobalMethods.slidemap[row, col] -= 1;  // terug opbouwen van 'landslide potential' bij meerdere tijdstappen
                         if (GlobalMethods.slidemap[row, col] < 0) { GlobalMethods.slidemap[row, col] = 0; }
@@ -7216,7 +7191,8 @@ namespace LORICA4
                 int runner;
                 for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
-                    row = row_index[runner]; col = col_index[runner];
+                    int row, col;
+                    row = GlobalMethods.row_index[runner]; col = col_index[runner];
 
                     // into loop for surrounding grids of certain grid
                     // Start first the slope_sum loop for all lower neighbour grids
@@ -7285,9 +7261,9 @@ namespace LORICA4
                         //2 Second while loop to process slide deposition with a 'cell distance' and 'double' multiple flow
                 nb_ok = 0; nb_check = 0; all_grids = 0.0; tell = 0;
                 maximum_allowed_deposition = -9999.0; dh_tol = 0.00025; sedtot = 0.0; strsed = 0.0; startsed = 0.0;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         GlobalMethods.cel_dist[row, col] = ((0.4 * GlobalMethods.dh_slid[row, col]) / GlobalMethods.dx); // FACTOR 2 calculate 'celdistance', empirical fraction of runout set at 0.4 (Lit.)
                         startsed += GlobalMethods.sed_bud[row, col]; // 'startsed'-counter = only to display initial sediment budget in ero-sed balance in model run
@@ -7296,7 +7272,8 @@ namespace LORICA4
                 //2 into while loop for all grids if not all neighbours are processed
                 for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
-                    row = row_index[runner]; col = col_index[runner];
+                    int row, col;
+                    row = GlobalMethods.row_index[runner]; col = GlobalMethods.col_index[runner];
                     //2 into loop for surounding grids of certain grid
                     //2 Start first the slope_sum loop for all lower neighbour grids
                     powered_slope_sum = 0.0; max_allowed_erosion = 0.0; dz_min = -9999.99; GlobalMethods.d_x = GlobalMethods.dx;
@@ -7404,9 +7381,9 @@ namespace LORICA4
                     }//2 end if GlobalMethods.sed_bud
                 } //2 end for all cells 2
 
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.ero_slid[row, col] < 0.0)
                         {
@@ -7428,15 +7405,15 @@ namespace LORICA4
             try
             {
                 double mass_before = total_catchment_mass();
-                guiVariables.InfoStatusPanel = "tillage calculation";
+                this.InfoStatusPanel.Text = "tillage calculation";
                 int row, col, i, j;
                 double slope_sum, dz_min, d_x, dz_max, dh, fraction, temptill, tempdep, temptill_kg,
                             slope;
 
                 nb_ok = 0; nb_check = 0;
-                for (row = 0; row < nr; row++)
+                for (row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < nc; col++)
+                    for (col = 0; col < GlobalMethods.nc; col++)
                     {
                         GlobalMethods.till_result[row, col] = 0;
                         // if (GlobalMethods.dtm[row, col] < -9900 && GlobalMethods.dtm[row, col] != -9999) { Debug.WriteLine(" Cell " + row + " " + col + " has altitude " + GlobalMethods.dtm[row, col] + " till " + GlobalMethods.till_result[row, col]); }
@@ -7446,7 +7423,7 @@ namespace LORICA4
                 int runner = 0;
                 for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
-                    row = row_index[runner]; col = col_index[runner];
+                    row = GlobalMethods.row_index[runner]; col = GlobalMethods.col_index[runner];
                     // Debug.WriteLine("till1");
 
                     if (GlobalMethods.tillfields[row, col] == 1)
@@ -7481,7 +7458,7 @@ namespace LORICA4
 
                             for (int tex = 0; tex < 5; tex++)
                             {
-                                tilled_text[tex] += texture_kg[row, col, lay, tex];
+                                tilled_text[tex] += GlobalMethods.texture_kg[row, col, lay, tex];
                             }
                             tilled_om[0] += GlobalMethods.old_SOM_kg[row, col, lay];
                             tilled_om[1] += GlobalMethods.young_SOM_kg[row, col, lay];
@@ -7497,9 +7474,9 @@ namespace LORICA4
                         }
                         for (int tex = 0; tex < 5; tex++) // add partial mass of partial layer
                         {
-                            tilled_text[tex] += texture_kg[row, col, completelayers, tex] * frac_ap; // add fraction from partial layer
-                            texture_kg[row, col, completelayers, tex] *= (1 - frac_ap); // subtract mixed part
-                            texture_kg[row, col, completelayers, tex] += tilled_text[tex] * (GlobalMethods.layerthickness_m[row, col, completelayers] * frac_ap) / plough_depth; // add part from mixed 
+                            tilled_text[tex] += GlobalMethods.texture_kg[row, col, completelayers, tex] * frac_ap; // add fraction from partial layer
+                            GlobalMethods.texture_kg[row, col, completelayers, tex] *= (1 - frac_ap); // subtract mixed part
+                            GlobalMethods.texture_kg[row, col, completelayers, tex] += tilled_text[tex] * (GlobalMethods.layerthickness_m[row, col, completelayers] * frac_ap) / plough_depth; // add part from mixed 
                         }
 
                         tilled_om[0] += GlobalMethods.old_SOM_kg[row, col, completelayers] * frac_ap;
@@ -7515,7 +7492,7 @@ namespace LORICA4
                         {
                             for (int tex = 0; tex < 5; tex++)
                             {
-                                texture_kg[row, col, lay, tex] = tilled_text[tex] * (alldepths[lay] / plough_depth);
+                                GlobalMethods.texture_kg[row, col, lay, tex] = tilled_text[tex] * (alldepths[lay] / plough_depth);
 
                             }
                             GlobalMethods.old_SOM_kg[row, col, lay] = tilled_om[0] * (alldepths[lay] / plough_depth);
@@ -7651,8 +7628,8 @@ namespace LORICA4
                                             {
                                                 for (int tex = 0; tex < 5; tex++)
                                                 {
-                                                    texture_kg[row + i, col + j, 0, tex] += texture_kg[row, col, layero, tex];
-                                                    texture_kg[row, col, layero, tex] = 0;
+                                                    GlobalMethods.texture_kg[row + i, col + j, 0, tex] += GlobalMethods.texture_kg[row, col, layero, tex];
+                                                    GlobalMethods.texture_kg[row, col, layero, tex] = 0;
                                                 }
                                                 GlobalMethods.young_SOM_kg[row + i, col + j, 0] += GlobalMethods.young_SOM_kg[row, col, layero];
                                                 GlobalMethods.young_SOM_kg[row, col, layero] = 0;
@@ -7669,8 +7646,8 @@ namespace LORICA4
                                             // mass fraction eroded
                                             for (int tex = 0; tex < 5; tex++)
                                             {
-                                                texture_kg[row + i, col + j, 0, tex] += texture_kg[row, col, layero, tex] * frac_eroded;
-                                                texture_kg[row, col, layero, tex] -= texture_kg[row, col, layero, tex] * frac_eroded;
+                                                GlobalMethods.texture_kg[row + i, col + j, 0, tex] += GlobalMethods.texture_kg[row, col, layero, tex] * frac_eroded;
+                                                GlobalMethods.texture_kg[row, col, layero, tex] -= GlobalMethods.texture_kg[row, col, layero, tex] * frac_eroded;
                                             }
                                             GlobalMethods.young_SOM_kg[row + i, col + j, 0] += GlobalMethods.young_SOM_kg[row, col, layero] * frac_eroded;
                                             GlobalMethods.young_SOM_kg[row, col, layero] -= GlobalMethods.young_SOM_kg[row, col, layero] * frac_eroded;
@@ -7734,7 +7711,7 @@ namespace LORICA4
         /*
         private void calculate_creep()
         {
-            guiVariables.InfoStatusPanel = "GlobalMethods.creep calculation";
+            this.InfoStatusPanel.Text = "GlobalMethods.creep calculation";
             int row, col,
                         i, j,
                         nb_ok;
@@ -7853,7 +7830,7 @@ namespace LORICA4
         {
             try
             {
-                guiVariables.InfoStatusPanel = "GlobalMethods.creep calculation";
+                this.InfoStatusPanel.Text = "GlobalMethods.creep calculation";
                 int row, col,
                             i, j,
                             nb_ok,
@@ -8058,7 +8035,7 @@ namespace LORICA4
 
                 for (runner = GlobalMethods.number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the GlobalMethods.index is sorted from low to high values, but flow goes from high to low
-                    row = row_index[runner]; col = col_index[runner];
+                    row = GlobalMethods.row_index[runner]; col = GlobalMethods.col_index[runner];
                     if (GlobalMethods.dtm[row, col] != -9999)
                     {
                         //Debug.WriteLine("cr1");
@@ -8116,7 +8093,7 @@ namespace LORICA4
                         // potential_creep_kg = 4.5;
                         potential_creep_kg = Convert.ToDouble(potential_bioturbation_textbox.Text);
 
-                        if (guiVariables.Daily_Water)
+                        if (daily_water.Checked)
                         {
                             if (aridity_vegetation[row, col] < 1) { potential_creep_kg = 4 + 0.3; } // grassland
                             else { potential_creep_kg = 4 + 1.3; } // forest
@@ -8479,8 +8456,8 @@ namespace LORICA4
                 if (fraction_overlap > 1) { fraction_overlap = 1; }
                 for (int tex = 0; tex < 5; tex++)
                 {
-                    texture_kg[torow, tocol, tolay, tex] += texture_kg[fromrow, fromcol, fromlay, tex] * fraction_transport;
-                    texture_kg[fromrow, fromcol, fromlay, tex] -= texture_kg[fromrow, fromcol, fromlay, tex] * fraction_transport;
+                    GlobalMethods.texture_kg[torow, tocol, tolay, tex] += GlobalMethods.texture_kg[fromrow, fromcol, fromlay, tex] * fraction_transport;
+                    GlobalMethods.texture_kg[fromrow, fromcol, fromlay, tex] -= GlobalMethods.texture_kg[fromrow, fromcol, fromlay, tex] * fraction_transport;
                 }
                 GlobalMethods.young_SOM_kg[torow, tocol, tolay] += GlobalMethods.young_SOM_kg[fromrow, fromcol, fromlay] * fraction_transport;
                 GlobalMethods.young_SOM_kg[fromrow, fromcol, fromlay] -= GlobalMethods.young_SOM_kg[fromrow, fromcol, fromlay] * fraction_transport;
@@ -8507,7 +8484,7 @@ namespace LORICA4
 
             try
             {
-                guiVariables.InfoStatusPanel = "tree fall calculation";
+                this.InfoStatusPanel.Text = "tree fall calculation";
 
                 bool fallen = false;
                 int i_tf = 0, j_tf = 0;
@@ -8523,9 +8500,9 @@ namespace LORICA4
                 // int P_fall = Convert.ToInt32(Math.Round(1730 / GlobalMethods.dx / GlobalMethods.dx)); // 1/P_fall is the chance of tree fall, per m2, that's why we correct for cell size 
                 // Debug.WriteLine("elevation of row 57 and col 40 at GlobalMethods.t {0} is {1}", GlobalMethods.t, GlobalMethods.dtm[57, 40]);
                 int rowsource = 0, colsource = 0, rowsink = 0, colsink = 0;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.dtm[row, col] != -9999 & aridity_vegetation[row, col] > 1) // if cell exists, and if there is no grass growing
                         {
@@ -8670,8 +8647,8 @@ namespace LORICA4
                                                 // uptake of sediments
                                                 for (int tex = 0; tex < 5; tex++)
                                                 {
-                                                    tree_fall_mass[tex] += texture_kg[row + ii, col + jj, lay, tex] * tf_frac_dz * tf_frac_dx;
-                                                    texture_kg[row + ii, col + jj, lay, tex] -= texture_kg[row + ii, col + jj, lay, tex] * tf_frac_dz * tf_frac_dx;
+                                                    tree_fall_mass[tex] += GlobalMethods.texture_kg[row + ii, col + jj, lay, tex] * tf_frac_dz * tf_frac_dx;
+                                                    GlobalMethods.texture_kg[row + ii, col + jj, lay, tex] -= GlobalMethods.texture_kg[row + ii, col + jj, lay, tex] * tf_frac_dz * tf_frac_dx;
                                                 }
                                                 tree_fall_om[0] += GlobalMethods.old_SOM_kg[row + ii, col + jj, lay] * tf_frac_dz * tf_frac_dx;
                                                 GlobalMethods.old_SOM_kg[row + ii, col + jj, lay] -= GlobalMethods.old_SOM_kg[row + ii, col + jj, lay] * tf_frac_dz * tf_frac_dx;
@@ -8768,7 +8745,7 @@ namespace LORICA4
 
                                             for (int tex = 0; tex < 5; tex++)
                                             {
-                                                texture_kg[rowsink + ii, colsink + jj, 0, tex] += tree_fall_mass[tex] * tf_frac_dx;
+                                                GlobalMethods.texture_kg[rowsink + ii, colsink + jj, 0, tex] += tree_fall_mass[tex] * tf_frac_dx;
                                             }
                                             GlobalMethods.old_SOM_kg[rowsink + ii, colsink + jj, 0] += tree_fall_om[0] * tf_frac_dx;
                                             GlobalMethods.old_SOM_kg[rowsink + ii, colsink + jj, 0] += tree_fall_om[1] * tf_frac_dx;
@@ -8873,12 +8850,12 @@ namespace LORICA4
         {
             // as function of infiltration?
             double Iavg = 0, Imin = 10000000, Imax = 0;
-            if (guiVariables.Daily_Water)
+            if (daily_water.Checked)
             {
                 int Icount = 0;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.dtm[row, col] != -9999)
                         {
@@ -8892,9 +8869,9 @@ namespace LORICA4
                 Iavg /= Icount;
             }
             int soil_layer, lowest_soil_layer;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     if (GlobalMethods.dtm[row, col] != -9999)
                     {
@@ -8914,7 +8891,7 @@ namespace LORICA4
 
                         if (rockweath_method.SelectedIndex == 2)
                         {
-                            if (guiVariables.Daily_Water)
+                            if (daily_water.Checked)
                             {
                                 GlobalMethods.bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
                             }
@@ -8929,7 +8906,7 @@ namespace LORICA4
                             lowest_soil_layer = soil_layer;
                             soil_layer++;
                         }
-                        texture_kg[row, col, lowest_soil_layer, 0] += GlobalMethods.bedrock_weathering_m[row, col] * 2700 * GlobalMethods.dx * GlobalMethods.dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
+                        GlobalMethods.texture_kg[row, col, lowest_soil_layer, 0] += GlobalMethods.bedrock_weathering_m[row, col] * 2700 * GlobalMethods.dx * GlobalMethods.dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
                     }
                 }
             }
@@ -8977,9 +8954,9 @@ namespace LORICA4
             //while ( dh > 150;dh / (GlobalMethods.d_x * Math.Sqrt(2)) > 7.5)
             {
                 last_time_activity = false;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {        //visit all cells in the DEM and  ...
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         for (i = (-1); i <= 1; i++)
                         {   // maakt een rondje om de cel
@@ -9320,7 +9297,7 @@ namespace LORICA4
             {
                 for (discol = lowercol; discol < (uppercol + 1); discol++)
                 {
-                    mess = String.Format("  {0:D10}", depression[disrow, discol]); Debug.Write(mess);
+                    mess = String.Format("  {0:D10}", GlobalMethods.depression[disrow, discol]); Debug.Write(mess);
                 }
                 Debug.Write(" \n"); if ((disrow + 1) <= upperrow) { mess = String.Format(" {0:D10}", (disrow + 1)); Debug.Write(mess); }
             }
@@ -9363,8 +9340,8 @@ namespace LORICA4
                 //{
                 cumthick += GlobalMethods.layerthickness_m[row, col, layer];
                 depth -= GlobalMethods.layerthickness_m[row, col, layer] / 2;
-                double totalweight = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
-                try { Debug.WriteLine(row + " " + col + " " + GlobalMethods.t + " " + layer + " " + cumthick + " " + GlobalMethods.layerthickness_m[row, col, layer] + " " + depth + " " + z_layer + " " + texture_kg[row, col, layer, 0] + " " + texture_kg[row, col, layer, 1] + " " + texture_kg[row, col, layer, 2] + " " + texture_kg[row, col, layer, 3] + " " + texture_kg[row, col, layer, 4] + " " + GlobalMethods.young_SOM_kg[row, col, layer] + " " + GlobalMethods.old_SOM_kg[row, col, layer] + " " + GlobalMethods.young_SOM_kg[row, col, layer] / GlobalMethods.old_SOM_kg[row, col, layer] + " " + texture_kg[row, col, layer, 0] / totalweight + " " + texture_kg[row, col, layer, 1] / totalweight + " " + texture_kg[row, col, layer, 2] / totalweight + " " + texture_kg[row, col, layer, 3] / totalweight + " " + texture_kg[row, col, layer, 4] / totalweight + " " + GlobalMethods.bulkdensity[row, col, layer]); }
+                double totalweight = GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
+                try { Debug.WriteLine(row + " " + col + " " + GlobalMethods.t + " " + layer + " " + cumthick + " " + GlobalMethods.layerthickness_m[row, col, layer] + " " + depth + " " + z_layer + " " + GlobalMethods.texture_kg[row, col, layer, 0] + " " + GlobalMethods.texture_kg[row, col, layer, 1] + " " + GlobalMethods.texture_kg[row, col, layer, 2] + " " + GlobalMethods.texture_kg[row, col, layer, 3] + " " + GlobalMethods.texture_kg[row, col, layer, 4] + " " + GlobalMethods.young_SOM_kg[row, col, layer] + " " + GlobalMethods.old_SOM_kg[row, col, layer] + " " + GlobalMethods.young_SOM_kg[row, col, layer] / GlobalMethods.old_SOM_kg[row, col, layer] + " " + texture_kg[row, col, layer, 0] / totalweight + " " + texture_kg[row, col, layer, 1] / totalweight + " " + texture_kg[row, col, layer, 2] / totalweight + " " + texture_kg[row, col, layer, 3] / totalweight + " " + texture_kg[row, col, layer, 4] / totalweight + " " + GlobalMethods.bulkdensity[row, col, layer]); }
                 catch { Debug.WriteLine("Cannot write soilprofile"); }
                 depth -= GlobalMethods.layerthickness_m[row, col, layer] / 2;
                 z_layer -= GlobalMethods.layerthickness_m[row, col, layer];
@@ -9396,7 +9373,7 @@ namespace LORICA4
             {
                 for (int tex = 0; tex < 5; tex++)
                 {
-                    if (texture_kg[row, col, layer1, tex] < 0)
+                    if (GlobalMethods.texture_kg[row, col, layer1, tex] < 0)
                     {
                         check = true;
                     }
@@ -9431,7 +9408,7 @@ namespace LORICA4
 
         void findsinks()
         {
-            guiVariables.InfoStatusPanel = "findtrouble has been entered";
+            this.InfoStatusPanel.Text = "findtrouble has been entered";
             int number, twoequals = 0, threeequals = 0, moreequals = 0;
             int[] intoutlet = new int[9];
             int x;
@@ -9491,7 +9468,7 @@ namespace LORICA4
 
             //reports
 
-            guiVariables.InfoStatusPanel = "found " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells";
+            this.InfoStatusPanel.Text = "found " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells";
             Debug.WriteLine("\n\n--sinks overview at GlobalMethods.t = " + GlobalMethods.t + "--");
 
             if (numsinks / (GlobalMethods.nr * GlobalMethods.nc) > 0.0075) { Debug.WriteLine("this DEM contains " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells\n That's a lot!"); }
@@ -9507,7 +9484,7 @@ namespace LORICA4
         void searchdepressions()
         {
             int z;
-            guiVariables.InfoStatusPanel = "searchdepressions has been entered";
+            this.InfoStatusPanel.Text = "searchdepressions has been entered";
             for (row = 0; row < GlobalMethods.nr; row++)
             {        //visit all cells in the DEM and  ...
                 for (col = 0; col < GlobalMethods.nc; col++)
@@ -9909,7 +9886,7 @@ namespace LORICA4
             // to membercells so they drain towards the outlet.
             // we cannot simply use distance_to_outlet for each member cell, since depressions can round corners....
 
-            guiVariables.InfoStatusPanel = "def fillheight has been entered";
+            this.InfoStatusPanel.Text = "def fillheight has been entered";
             //Debug.WriteLine("defining fillheight\n");
             int notyetdone, done, depressiontt;
 
@@ -10655,7 +10632,7 @@ namespace LORICA4
         void initialise_once()        //fills the inputgrids with values
         {
 
-            if (guiVariables.Daily_Water && GlobalMethods.input_data_error == false)
+            if (daily_water.Checked && GlobalMethods.input_data_error == false)
             {
                 try
                 {
@@ -10722,9 +10699,9 @@ namespace LORICA4
                     GlobalMethods.waterflow_m3 = new double[GlobalMethods.nr, GlobalMethods.nc];
                     vegetation_type = new int[GlobalMethods.nr, GlobalMethods.nc];
 
-                    for (row = 0; row < GlobalMethods.nr; row++)
+                    for (int row = 0; row < GlobalMethods.nr; row++)
                     {
-                        for (col = 0; col < GlobalMethods.nc; col++)
+                        for (int col = 0; col < GlobalMethods.nc; col++)
                         {
                             veg_correction_factor[row, col] = 1;
                             vegetation_type[row, col] = 0;
@@ -10821,24 +10798,24 @@ namespace LORICA4
             try
             {
                 // Debug.WriteLine(" assigning starting values for geomorph  ");
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         GlobalMethods.dz_soil[row, col] = 0;
                         if (Creep_Checkbox.Checked) { GlobalMethods.sum_creep_grid[row, col] = 0; GlobalMethods.creep[row, col] = 0; }
                         if (Solifluction_checkbox.Checked) { GlobalMethods.sum_solifluction[row, col] = 0; }
-                        if (guiVariables.Water_ero_checkbox && only_waterflow_checkbox.Checked == false) { GlobalMethods.sum_water_erosion[row, col] = 0; total_sed_export = 0; }
-                        if (guiVariables.Treefall_checkbox) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
+                        if (Water_ero_checkbox.Checked && only_waterflow_checkbox.Checked == false) { GlobalMethods.sum_water_erosion[row, col] = 0; total_sed_export = 0; }
+                        if (treefall_checkbox.Checked) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
                         if (Biological_weathering_checkbox.Checked) { GlobalMethods.sum_biological_weathering[row, col] = 0; }
                         if (Frost_weathering_checkbox.Checked) { GlobalMethods.sum_frost_weathering[row, col] = 0; }
-                        if (guiVariables.Tillage_checkbox) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; GlobalMethods.dz_till_bd[row, col] = 0; }
+                        if (Tillage_checkbox.Checked) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; GlobalMethods.dz_till_bd[row, col] = 0; }
                         if (guiVariables.Landslide_checkbox) { GlobalMethods.sum_landsliding[row, col] = 0; total_sum_tillage = 0; }
                         if (GlobalMethods.soildepth_m[row, col] < 0.0 && GlobalMethods.soildepth_m[row, col] != -9999) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
                         if (uplift_active_checkbox.Checked) { GlobalMethods.sum_uplift[row, col] = 0; total_sum_uplift = 0; }
                         if (tilting_active_checkbox.Checked) { GlobalMethods.sum_tilting[row, col] = 0; total_sum_tilting = 0; }
                         if (check_space_soildepth.Checked != true) { GlobalMethods.soildepth_m[row, col] = soildepth_value; }
-                        if (check_space_till_fields.Checked != true && guiVariables.Tillage_checkbox)
+                        if (check_space_till_fields.Checked != true && Tillage_checkbox.Checked)
                         {
                             GlobalMethods.tillfields[row, col] = 1;
 
@@ -10846,12 +10823,12 @@ namespace LORICA4
 
 
 
-                        if (guiVariables.Water_ero_checkbox && only_waterflow_checkbox.Checked == false)
+                        if (Water_ero_checkbox.Checked && only_waterflow_checkbox.Checked == false)
                         {
                             GlobalMethods.K_fac[row, col] = advection_erodibility; GlobalMethods.P_fac[row, col] = P_act;
                         } //WVG GlobalMethods.K_fac matrix initialisation is needed when GlobalMethods.landuse is disabled
 
-                        if (guiVariables.Water_ero_checkbox && check_space_landuse.Checked == true)
+                        if (Water_ero_checkbox.Checked && check_space_landuse.Checked == true)
                         {
                             //currently, this will throw an exception if GlobalMethods.landuse is actually spatial //development required //ArT
                             if (GlobalMethods.landuse[row, col] == 1)
@@ -10956,9 +10933,9 @@ namespace LORICA4
                     {
                         searchdepressions();
                         //define_fillheight_new();
-                        for (row = 0; row < GlobalMethods.nr; row++)
+                        for (int row = 0; row < GlobalMethods.nr; row++)
                         {
-                            for (col = 0; col < GlobalMethods.nc; col++)
+                            for (int col = 0; col < GlobalMethods.nc; col++)
                             {
                                 if (GlobalMethods.dtm[row, col] < GlobalMethods.dtmfill_A[row, col] && GlobalMethods.dtm[row, col] != -9999) { GlobalMethods.dtm[row, col] = GlobalMethods.dtmfill_A[row, col]; }
                             }
@@ -11062,9 +11039,9 @@ namespace LORICA4
             double clayfrac = Convert.ToDouble(soildata.claybox.Text) / 100;
             double fclayfrac = Convert.ToDouble(soildata.fineclaybox.Text) / 100;
             double location_bd;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     depth_m = 0;
                     if (creep_testing.Checked)
@@ -11084,7 +11061,7 @@ namespace LORICA4
                         {
                             for (texture_class = 0; texture_class < GlobalMethods.n_texture_classes; texture_class++)
                             {
-                                texture_kg[row, col, soil_layer, texture_class] = 0;
+                                GlobalMethods.texture_kg[row, col, soil_layer, texture_class] = 0;
                             }
                             GlobalMethods.young_SOM_kg[row, col, soil_layer] = 0;
                             GlobalMethods.old_SOM_kg[row, col, soil_layer] = 0;
@@ -11171,11 +11148,11 @@ namespace LORICA4
                                 depth_m += GlobalMethods.layerthickness_m[row, col, soil_layer] / 2;
                                 location_bd = bulk_density_calc(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, 0, 0, depth_m);
                                 depth_m += GlobalMethods.layerthickness_m[row, col, soil_layer] / 2;
-                                texture_kg[row, col, soil_layer, 0] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * coarsefrac * GlobalMethods.dx * GlobalMethods.dx;   //  kg = kg/m3 * m * kg/kg * m * m
-                                texture_kg[row, col, soil_layer, 1] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * sandfrac * GlobalMethods.dx * GlobalMethods.dx;
-                                texture_kg[row, col, soil_layer, 2] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * siltfrac * GlobalMethods.dx * GlobalMethods.dx;
-                                texture_kg[row, col, soil_layer, 3] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * clayfrac * GlobalMethods.dx * GlobalMethods.dx;
-                                texture_kg[row, col, soil_layer, 4] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * fclayfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 0] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * coarsefrac * GlobalMethods.dx * GlobalMethods.dx;   //  kg = kg/m3 * m * kg/kg * m * m
+                                GlobalMethods.texture_kg[row, col, soil_layer, 1] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * sandfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 2] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * siltfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 3] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * clayfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 4] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * fclayfrac * GlobalMethods.dx * GlobalMethods.dx;
                                 GlobalMethods.bulkdensity[row, col, soil_layer] = location_bd;
 
                                 if (guiVariables.Decalcification_checkbox)
@@ -11225,9 +11202,9 @@ namespace LORICA4
             double fclayfrac = Convert.ToDouble(soildata.fineclaybox.Text) / 100;
             double location_bd;
             double dz_standard = 0.1;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     depth_m = 0;
                     if (creep_testing.Checked)
@@ -11247,7 +11224,7 @@ namespace LORICA4
                         {
                             for (texture_class = 0; texture_class < GlobalMethods.n_texture_classes; texture_class++)
                             {
-                                texture_kg[row, col, soil_layer, texture_class] = 0;
+                                GlobalMethods.texture_kg[row, col, soil_layer, texture_class] = 0;
                             }
                             GlobalMethods.young_SOM_kg[row, col, soil_layer] = 0;
                             GlobalMethods.old_SOM_kg[row, col, soil_layer] = 0;
@@ -11285,11 +11262,11 @@ namespace LORICA4
                                 depth_m += GlobalMethods.layerthickness_m[row, col, soil_layer] / 2;
                                 location_bd = bulk_density_calc(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, 0, 0, depth_m);
                                 depth_m += GlobalMethods.layerthickness_m[row, col, soil_layer] / 2;
-                                texture_kg[row, col, soil_layer, 0] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * coarsefrac * GlobalMethods.dx * GlobalMethods.dx;   //  kg = kg/m3 * m * kg/kg * m * m
-                                texture_kg[row, col, soil_layer, 1] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * sandfrac * GlobalMethods.dx * GlobalMethods.dx;
-                                texture_kg[row, col, soil_layer, 2] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * siltfrac * GlobalMethods.dx * GlobalMethods.dx;
-                                texture_kg[row, col, soil_layer, 3] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * clayfrac * GlobalMethods.dx * GlobalMethods.dx;
-                                texture_kg[row, col, soil_layer, 4] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * fclayfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 0] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * coarsefrac * GlobalMethods.dx * GlobalMethods.dx;   //  kg = kg/m3 * m * kg/kg * m * m
+                                GlobalMethods.texture_kg[row, col, soil_layer, 1] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * sandfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 2] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * siltfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 3] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * clayfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 4] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * fclayfrac * GlobalMethods.dx * GlobalMethods.dx;
                                 GlobalMethods.bulkdensity[row, col, soil_layer] = location_bd;
 
                                 if (guiVariables.Decalcification_checkbox)
@@ -11324,9 +11301,9 @@ namespace LORICA4
         {
             if (check_time_till_fields.Checked && check_space_till_fields.Checked == false)
             {
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         GlobalMethods.tillfields[row, col] = 1 * till_record[GlobalMethods.t];
                     }
@@ -11338,9 +11315,9 @@ namespace LORICA4
         void initialise_every()                         //fills the inputgrids with values
         {
             int corrected_t;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     // time runs from 1 to guiVariables.End_time - compensate for that when taking values from records
                     // also compensate for records shorter than guiVariables.End_time
@@ -11384,16 +11361,16 @@ namespace LORICA4
                     {
                         GlobalMethods.dz_soil[row, col] = 0;
                         if (Creep_Checkbox.Checked) { GlobalMethods.sum_creep_grid[row, col] = 0; GlobalMethods.creep[row, col] = 0; }
-                        if (guiVariables.Treefall_checkbox) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
+                        if (treefall_checkbox.Checked) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
                         if (Solifluction_checkbox.Checked) { GlobalMethods.sum_solifluction[row, col] = 0; }
-                        if (guiVariables.Water_ero_checkbox) { GlobalMethods.sum_water_erosion[row, col] = 0; }
+                        if (Water_ero_checkbox.Checked) { GlobalMethods.sum_water_erosion[row, col] = 0; }
                         if (Biological_weathering_checkbox.Checked) { GlobalMethods.sum_biological_weathering[row, col] = 0; }
                         if (Frost_weathering_checkbox.Checked) { GlobalMethods.sum_frost_weathering[row, col] = 0; }
-                        if (guiVariables.Tillage_checkbox) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; }
+                        if (Tillage_checkbox.Checked) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; }
                         if (GlobalMethods.soildepth_m[row, col] < 0.0) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
                     }
                     if (GlobalMethods.soildepth_m[row, col] < 0.0) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
-                    if (guiVariables.Water_ero_checkbox) { GlobalMethods.waterflow_m3[row, col] = 0.0; }
+                    if (Water_ero_checkbox.Checked) { GlobalMethods.waterflow_m3[row, col] = 0.0; }
 
                 } //for
             } //for
@@ -11405,9 +11382,9 @@ namespace LORICA4
                 {
                     searchdepressions();
                     //define_fillheight_new();
-                    for (row = 0; row < GlobalMethods.nr; row++)
+                    for (int row = 0; row < GlobalMethods.nr; row++)
                     {
-                        for (col = 0; col < GlobalMethods.nc; col++)
+                        for (int col = 0; col < GlobalMethods.nc; col++)
                         {
                             if (GlobalMethods.dtm[row, col] < GlobalMethods.dtmfill_A[row, col] && GlobalMethods.dtm[row, col] != -9999) { GlobalMethods.dtm[row, col] = GlobalMethods.dtmfill_A[row, col]; }
                         }
@@ -11618,9 +11595,9 @@ namespace LORICA4
             double total_bulk_density = 0;
             double average_bulk_density = 0;
             int objective_function_cells = 0;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     if (GlobalMethods.dtm[row, col] != -9999)
                     {
