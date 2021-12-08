@@ -82,6 +82,7 @@ namespace LORICA4
                 wet_cells, eroded_cells,
                 i,
                 j,
+                nb_check,
                 low,
                 high,
                 equal,
@@ -124,8 +125,15 @@ namespace LORICA4
         double available_for_delta_kg = 0;
         double available_for_delta_m = 0;
 
+        // tectonics
+        int[] timeseries_order = new int[26];
+
         //calibration globals
-        int best_run, calib_levels, user_specified_number_of_calibration_parameters, user_specified_number_of_ratios;
+        int best_run, calib_levels, user_specified_number_of_calibration_parameters, user_specified_number_of_ratios,
+                tel1,
+                tel2,
+                tel3,
+                tel4;
         double reduction_factor, best_error;
         //USER INPUT NEEDED: establish best versions of parameters varied in calibration:
         double[] best_parameters;
@@ -234,7 +242,8 @@ namespace LORICA4
         sum_normalweathered, sum_frostweathered, sum_soildepth, sum_creep, sum_solif, avg_solif, avg_creep, avg_soildepth,
         sum_ls, total_sum_tillage, total_sum_uplift, total_sum_tilting, total_sed_export;  // counters for logging and reporting through time
 
-        int temp_value_C;
+        int temp_value_C,
+                nb_ok;
 
         double depressionsum_sediment_m, depressionsum_water_m, depressionsum_YOM_kg, depressionsum_OOM_kg;
         double[] depressionsum_texture_kg;
@@ -298,6 +307,7 @@ namespace LORICA4
         int lift_type, lift_location, tilt_location;
         long scan_lon, scan_cnt, NRO, NCO;
 
+        public static int updateClick = 0;
 
 
         double[,] correct_dtm,        // for calibration purposes
@@ -313,6 +323,44 @@ namespace LORICA4
                     profile_wat2,
                     profile_wat3,
                     lessivage_errors; // for calibration of lessivage
+
+        int[,]  // integer matrices
+                    zones,
+                    mask,
+                    error_m,            // To store error locations as integer
+                    sinkmap,
+                    soilmap,            // integer numbers for soil map
+                    vegetation_type;
+
+        public string KML_FILE_NAME;
+
+        public string kml = "";
+
+        public string startDate, kmlTime;
+
+        public string[] DateArray;
+        public string[] DateArray2;
+
+        public int imageCount = 1;
+        public int imageCount2 = 1;
+        public DateTime googleTime;
+
+        string timeseries_string = null;
+
+        double[] depressionvolume_m = new double[GlobalMethods.numberofsinks];
+        //double SuperMEF = 0, SuperMEF2 = 0;
+        double s_tempfactor, s_D, V_factor;
+        double c_D;
+        double w_P0, w_k1, w_k2, w_Pa;
+        double f_soilrate, f_Tmax, f_Tmin, f_max;
+
+        double mem_m;  //the height by which all cells of a current delta need to be raised in order to get rid of the remaining amount of sediment for that delta
+
+        string str, logname, recordname, outfile, f_name, ch, chs;
+
+        double[,] climate_data;
+
+        int diagnostic_mode = 0;
 
 
         #endregion
@@ -929,7 +977,7 @@ namespace LORICA4
 
             //if (GlobalMethods.t == 0 | GlobalMethods.t == 1) { displaysoil(50, 0); }
             int i = 0;
-            this.TimeStatusPanel.Text = "timestep " + (GlobalMethods.t + 1) + "/" + +guiVariables.End_time;
+            guiVariables.TimeStatusPanel = "timestep " + (GlobalMethods.t + 1) + "/" + +guiVariables.End_time;
             updateClick = 1;
             // Debug.WriteLine("starting calculations - TIME " + GlobalMethods.t);
 
@@ -1240,7 +1288,7 @@ namespace LORICA4
                         {
                             for (int col = 0; col < GlobalMethods.nc; col++)
                             {
-                                GlobalMethods.vegetation_type[row, col] = 0; // reset vegetation_type, to give the output per output period
+                                vegetation_type[row, col] = 0; // reset vegetation_type, to give the output per output period
                             }
                         }
                     }
@@ -1925,7 +1973,7 @@ namespace LORICA4
         private void timeseries_output()
         {
             int step;
-            string FILENAME = workdir + "\\timeseries.log";
+            string FILENAME = GlobalMethods.Workdir + "\\timeseries.log";
             using (StreamWriter sw = new StreamWriter(FILENAME))
             {
                 //geomprph centred
@@ -6360,23 +6408,23 @@ namespace LORICA4
                 if (GlobalMethods.index[runner] != -9999)
                 {
 
-                    row = GlobalMethods.row_index[runner]; col = GlobalMethods.col_index[runner];
-                    //Debug.WriteLine(runner + " " + row + "  " + col + " GlobalMethods.nr " + GlobalMethods.nr + " GlobalMethods.nc " + GlobalMethods.nc + " GlobalMethods.nr*GlobalMethods.nc " + GlobalMethods.nr * GlobalMethods.nc + " data cells " + GlobalMethods.number_of_data_cells); 
-                    if (GlobalMethods.t == 4 && row == 186 && col == 72) { diagnostic_mode = 1; }
+                    GlobalMethods.row = GlobalMethods.row_index[runner]; GlobalMethods.col = GlobalMethods.col_index[runner];
+                    //Debug.WriteLine(runner + " " + GlobalMethods.row + "  " + GlobalMethods.col + " GlobalMethods.nr " + GlobalMethods.nr + " GlobalMethods.nc " + GlobalMethods.nc + " GlobalMethods.nr*GlobalMethods.nc " + GlobalMethods.nr * GlobalMethods.nc + " data cells " + GlobalMethods.number_of_data_cells); 
+                    if (GlobalMethods.t == 4 && GlobalMethods.row == 186 && GlobalMethods.col == 72) { diagnostic_mode = 1; }
                     else { diagnostic_mode = 0; }
                     powered_slope_sum = 0; max_allowed_erosion = 0; dz_min = -9999.99;
                     direct = 20; dz_max = -10; dhtemp = -99999.99; maximum_allowed_deposition = -9999.99;
-                    if (GlobalMethods.depression[row, col] < 0) { GlobalMethods.depression[row, col] = 0; }
-                    if ((GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 0] == col) ||
-                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 1] == col) ||
-                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 2] == col) ||
-                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 3] == col) ||
-                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[row, col], 4] == col))
+                    if (GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col] < 0) { GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col] = 0; }
+                    if ((GlobalMethods.drainingoutlet_col[GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col], 0] == GlobalMethods.row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col], 0] == GlobalMethods.col) ||
+                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col], 1] == GlobalMethods.row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col], 1] == GlobalMethods.col) ||
+                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col], 2] == GlobalMethods.row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col], 2] == GlobalMethods.col) ||
+                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col], 3] == GlobalMethods.row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col], 3] == GlobalMethods.col) ||
+                        (GlobalMethods.drainingoutlet_col[GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col], 4] == GlobalMethods.row && GlobalMethods.drainingoutlet_col[GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col], 4] == GlobalMethods.col))
                     {
-                        if (depressionconsidered[GlobalMethods.depression[row, col]] == 0)
+                        if (depressionconsidered[GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col]] == 0)
                         {
                             //diagnostic_mode = 1;
-                            depressionnumber = GlobalMethods.depression[row, col];
+                            depressionnumber = GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col];
                             depressionconsidered[depressionnumber] = 1;
                             if (diagnostic_mode == 1) { Debug.WriteLine(" now considering dep " + depressionnumber + " GlobalMethods.index " + runner); }
                             update_depression(depressionnumber);
@@ -10323,7 +10371,7 @@ namespace LORICA4
                                             {
                                                 if (diagnostic_mode == 1) { Debug.WriteLine(" raising delta as far as possible given sediment "); }
                                                 raise_delta_partly(active_depression);
-                                                if (diagnostic_mode == 1) { minimaps(row, col); }
+                                                if (diagnostic_mode == 1) { minimaps(GlobalMethods.row, GlobalMethods.col); }
                                                 if (obnbchanged == 0) { cleardelta(iloradius3, iupradius3, jloradius3, jupradius3, rowlowestobnb, collowestobnb); }
                                                 // if the starting cell was raised above lakelevel, it is no longer member of the lake, and we have taken care of that in raise_delta_partly by changing obnb. 
                                                 // this must not be removed, so if obnbchanged != 0, we do not clear the delta.
@@ -10490,7 +10538,7 @@ namespace LORICA4
             {
                 for (j = -1 * jloradius3; j <= jupradius3; j++)
                 {
-                    if (((rowlowestobnb + i) >= 0) && ((rowlowestobnb + i) < GlobalMethods.nr) && ((collowestobnb + j) >= 0) && ((collowestobnb + j) < GlobalMethods.nc) && !(rowlowestobnb + i == row && collowestobnb + j == col) && GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] != -9999)
+                    if (((rowlowestobnb + i) >= 0) && ((rowlowestobnb + i) < GlobalMethods.nr) && ((collowestobnb + j) >= 0) && ((collowestobnb + j) < GlobalMethods.nc) && !(rowlowestobnb + i == GlobalMethods.row && collowestobnb + j == GlobalMethods.col) && GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] != -9999)
                     { // boundaries, note that i==0 && j==0 is allowed  ;we can raise rowlowestobnb,colloewsobnb when it is part of the delta.
                         if (GlobalMethods.depression[rowlowestobnb + i, collowestobnb + j] == -this_depression) // i.e. if cell is part of present delta
                         {
@@ -10503,7 +10551,7 @@ namespace LORICA4
                             //if (diagnostic_mode == 1) { MessageBox.Show("warning - extremely high coarse sed_in_trans:" + GlobalMethods.sediment_in_transport_kg[startrow, startcol,0]); }
                             if ((GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] + GlobalMethods.dz_ero_m[rowlowestobnb + i, collowestobnb + j] + GlobalMethods.dz_sed_m[rowlowestobnb + i, collowestobnb + j]) > GlobalMethods.dtmfill_A[rowlowestobnb + i, collowestobnb + j])
                             {   // then we have raised this cell too high
-                                if (diagnostic_mode == 1) { Debug.WriteLine("1 we change the altitude of " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " (depressionlevel " + depressionlevel[this_depression] + ") from " + GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] + " to " + GlobalMethods.dtmfill_A[rowlowestobnb + i, collowestobnb + j]); }
+                                if (diagnostic_mode == 1) { Debug.WriteLine("1 we change the altitude of " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " (depressionlevel " + GlobalMethods.depressionlevel[this_depression] + ") from " + GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] + " to " + GlobalMethods.dtmfill_A[rowlowestobnb + i, collowestobnb + j]); }
                                 available_for_delta_m += ((GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] + GlobalMethods.dz_ero_m[rowlowestobnb + i, collowestobnb + j] + GlobalMethods.dz_sed_m[rowlowestobnb + i, collowestobnb + j]) - GlobalMethods.dtmfill_A[rowlowestobnb + i, collowestobnb + j]);
                                 double[] local_s_i_t_kg = new double[5] { 0, 0, 0, 0, 0 };
                                 for (size = 0; size < GlobalMethods.n_texture_classes; size++)
@@ -10521,7 +10569,7 @@ namespace LORICA4
                                 if (GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] == -1) { Debug.WriteLine("A2 cell " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " has an altitude of -1 now"); minimaps((rowlowestobnb + i), (collowestobnb + j)); }
                                 GlobalMethods.depression[rowlowestobnb + i, collowestobnb + j] = 0;
                                 deltasize--;
-                                if (diagnostic_mode == 1) { Debug.WriteLine("1: " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " (depressionlevel " + GlobalMethods.depressionlevel[GlobalMethods.depression[row, col]] + ") now at " + GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] + " = fill_A " + GlobalMethods.dtmfill_A[rowlowestobnb + i, collowestobnb + j] + " sed for delta " + available_for_delta_m); }
+                                if (diagnostic_mode == 1) { Debug.WriteLine("1: " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " (depressionlevel " + GlobalMethods.depressionlevel[GlobalMethods.depression[GlobalMethods.row, GlobalMethods.col]] + ") now at " + GlobalMethods.dtm[rowlowestobnb + i, collowestobnb + j] + " = fill_A " + GlobalMethods.dtmfill_A[rowlowestobnb + i, collowestobnb + j] + " sed for delta " + available_for_delta_m); }
                                 if (diagnostic_mode == 1) { Debug.WriteLine("decreased deltasize with 1 to " + deltasize); }
                             } // end if GlobalMethods.dtm > depressionlevel
                         }   // end if member of delta
@@ -10557,7 +10605,7 @@ namespace LORICA4
             {
                 for (j = -1 * jloradius3; j <= jupradius3; j++)
                 {
-                    if (((tempx + i) >= 0) && ((tempx + i) < GlobalMethods.nr) && ((tempy + j) >= 0) && ((tempy + j) < GlobalMethods.nc) && !(tempx + i == row && tempy + j == col) && GlobalMethods.dtm[tempx + i, tempy + j] != -9999)
+                    if (((tempx + i) >= 0) && ((tempx + i) < GlobalMethods.nr) && ((tempy + j) >= 0) && ((tempy + j) < GlobalMethods.nc) && !(tempx + i == GlobalMethods.row && tempy + j == GlobalMethods.col) && GlobalMethods.dtm[tempx + i, tempy + j] != -9999)
                     { // boundaries
                         if (GlobalMethods.depression[tempx + i, tempy + j] == -this_depression)
                         {
@@ -10578,7 +10626,7 @@ namespace LORICA4
                                 available_for_delta_m += calc_thickness_from_mass(local_s_i_t_kg, 0, 0);
                                 if (available_for_delta_m < 0) { Debug.WriteLine("9 negative sediment in transport (m) remaining for delta " + available_for_delta_m + "m"); }
                                 if (diagnostic_mode == 1) { Debug.WriteLine(" A we change the altitude of " + (tempx + i) + " " + (tempy + j) + " (depressionlevel " + GlobalMethods.depressionlevel[this_depression] + ") from " + (GlobalMethods.dtm[tempx + i, tempy + j] + GlobalMethods.dz_ero_m[tempx + i, tempy + j] + GlobalMethods.dz_sed_m[tempx + i, tempy + j]) + " to " + GlobalMethods.dtmfill_A[tempx + i, tempy + j]); }
-                                if (tempx + i == row && tempy + j == col) { Debug.WriteLine("we are changing outlet " + tempx + " " + tempy + " into 0"); }
+                                if (tempx + i == GlobalMethods.row && tempy + j == GlobalMethods.col) { Debug.WriteLine("we are changing outlet " + tempx + " " + tempy + " into 0"); }
                                 GlobalMethods.lake_sed_m[tempx + i, tempy + j] -= ((GlobalMethods.dtm[tempx + i, tempy + j] + GlobalMethods.dz_ero_m[tempx + i, tempy + j] + GlobalMethods.dz_sed_m[tempx + i, tempy + j]) - GlobalMethods.dtmfill_A[tempx + i, tempy + j]);
                                 if (GlobalMethods.lake_sed_m[tempx + i, tempy + j] < -0.0000001) { Debug.WriteLine("3 Warning: negative lake deposition in " + (tempx + i) + " " + (tempy + j) + " of " + GlobalMethods.lake_sed_m[tempx + i, tempy + j] + " alt " + (GlobalMethods.dtm[tempx + i, tempy + j] + GlobalMethods.dz_ero_m[tempx + i, tempy + j] + GlobalMethods.dz_sed_m[tempx + i, tempy + j]) + " fill " + GlobalMethods.dtmfill_A[tempx + i, tempy + j]); minimaps(tempx + i, tempy + j); }
                                 GlobalMethods.dtm[tempx + i, tempy + j] = (GlobalMethods.dtmfill_A[tempx + i, tempy + j] - GlobalMethods.dz_ero_m[tempx + i, tempy + j] - GlobalMethods.dz_sed_m[tempx + i, tempy + j]); //so that with ero and sed, it equals dtmfill
@@ -10586,7 +10634,7 @@ namespace LORICA4
                                 if (diagnostic_mode == 1) { Debug.WriteLine(" will change depressionmembership of " + (tempx + i) + " " + (tempy + j) + " from " + GlobalMethods.depression[tempx + i, tempy + j] + " to 0"); }
                                 if (diagnostic_mode == 1) { Debug.WriteLine(" II = " + II + ", JJ = " + JJ); }
                                 GlobalMethods.depression[tempx + i, tempy + j] = 0;
-                                if (diagnostic_mode == 1) { Debug.WriteLine(" obnbchanged? - row " + row + " col " + col + " startrow " + startrow + " startcol " + startcol + " rowobnb " + rowlowestobnb + " colobnb " + collowestobnb + " tempx+i " + (tempx + i) + " tempy+j " + (tempy + j)); }
+                                if (diagnostic_mode == 1) { Debug.WriteLine(" obnbchanged? - row " + GlobalMethods.row + " col " + GlobalMethods.col + " startrow " + startrow + " startcol " + startcol + " rowobnb " + rowlowestobnb + " colobnb " + collowestobnb + " tempx+i " + (tempx + i) + " tempy+j " + (tempy + j)); }
                                 obnbchanged = 1;  // if there is at least one cell that has been raised above dtmfill, then that is the lowest oblique neighbour: the cell with rowlowestobnb, collowestobnb. 
                                 // In that case, we must move to a new rowlowestobnb collowestobnb to build the remainder of the delta from there. There is a remainder because some of the sediment used to raise the original
                                 // lowest oblique neighbour above dtmfill has been added to available_for_delta again.
@@ -10841,73 +10889,73 @@ namespace LORICA4
                             //currently, this will throw an exception if GlobalMethods.landuse is actually spatial //development required //ArT
                             if (GlobalMethods.landuse[row, col] == 1)
                             {
-                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Inf_textbox.Text);
-                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Evap_textbox.Text);
-                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Ero_textbox.Text);
-                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Dep_textbox.Text);
+                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU1_Inf_textbox);
+                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU1_Evap_textbox);
+                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU1_Ero_textbox);
+                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU1_Dep_textbox);
                             }
                             if (GlobalMethods.landuse[row, col] == 2)
                             {
-                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Inf_textbox.Text);
-                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Evap_textbox.Text);
-                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Ero_textbox.Text);
-                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Dep_textbox.Text);
+                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU2_Inf_textbox);
+                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU2_Evap_textbox);
+                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU2_Ero_textbox);
+                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU2_Dep_textbox);
                             }
                             if (GlobalMethods.landuse[row, col] == 3)
                             {
-                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Inf_textbox.Text);
-                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Evap_textbox.Text);
-                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Ero_textbox.Text);
-                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Dep_textbox.Text);
+                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU3_Inf_textbox);
+                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU3_Evap_textbox);
+                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU3_Ero_textbox);
+                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU3_Dep_textbox);
                             }
                             if (GlobalMethods.landuse[row, col] == 4)
                             {
-                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Inf_textbox.Text);
-                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Evap_textbox.Text);
-                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Ero_textbox.Text);
-                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Dep_textbox.Text);
+                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU4_Inf_textbox);
+                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU4_Evap_textbox);
+                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU4_Ero_textbox);
+                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU4_Dep_textbox);
                             }
                             if (GlobalMethods.landuse[row, col] == 5)
                             {
-                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Inf_textbox.Text);
-                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Evap_textbox.Text);
-                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Ero_textbox.Text);
-                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Dep_textbox.Text);
+                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU5_Inf_textbox);
+                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU5_Evap_textbox);
+                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU5_Ero_textbox);
+                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU5_Dep_textbox);
                             }
                             if (GlobalMethods.landuse[row, col] == 6)
                             {
-                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Inf_textbox.Text);
-                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Evap_textbox.Text);
-                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Ero_textbox.Text);
-                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Dep_textbox.Text);
+                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU6_Inf_textbox);
+                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU6_Evap_textbox);
+                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU6_Ero_textbox);
+                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU6_Dep_textbox);
                             }
                             if (GlobalMethods.landuse[row, col] == 7)
                             {
-                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Inf_textbox.Text);
-                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Evap_textbox.Text);
-                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Ero_textbox.Text);
-                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Dep_textbox.Text);
+                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU7_Inf_textbox);
+                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU7_Evap_textbox);
+                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU7_Ero_textbox);
+                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU7_Dep_textbox);
                             }
                             if (GlobalMethods.landuse[row, col] == 8)
                             {
-                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Inf_textbox.Text);
-                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Evap_textbox.Text);
-                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Ero_textbox.Text);
-                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Dep_textbox.Text);
+                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU8_Inf_textbox);
+                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU8_Evap_textbox);
+                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU8_Ero_textbox);
+                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU8_Dep_textbox);
                             }
                             if (GlobalMethods.landuse[row, col] == 9)
                             {
-                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Inf_textbox.Text);
-                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Evap_textbox.Text);
-                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Ero_textbox.Text);
-                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Dep_textbox.Text);
+                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU9_Inf_textbox);
+                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU9_Evap_textbox);
+                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU9_Ero_textbox);
+                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU9_Dep_textbox);
                             }
                             if (GlobalMethods.landuse[row, col] == 10)
                             {
-                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Inf_textbox.Text);
-                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Evap_textbox.Text);
-                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Ero_textbox.Text);
-                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Dep_textbox.Text);
+                                GlobalMethods.infil[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU10_Inf_textbox);
+                                GlobalMethods.evapotranspiration[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU10_Evap_textbox);
+                                GlobalMethods.K_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU10_Ero_textbox);
+                                GlobalMethods.P_fac[row, col] *= System.Convert.ToDouble(guiVariables.Landuse_determinator.LU10_Dep_textbox);
                             }
                         }
                     } //for
@@ -11041,11 +11089,11 @@ namespace LORICA4
             upper_particle_size[3] = Convert.ToDouble(guiVariables.Upper_particle_clay_textbox);
             upper_particle_size[4] = Convert.ToDouble(guiVariables.Upper_particle_fine_clay_textbox);
             //calculate bulk density so that we know how much kg of material goes into a layer.  //ART this will go wrong when there are different textures in different locations, but is faster up until that time.
-            double coarsefrac = Convert.ToDouble(soildata.coarsebox.Text) / 100;
-            double sandfrac = Convert.ToDouble(soildata.sandbox.Text) / 100;
-            double siltfrac = Convert.ToDouble(soildata.siltbox.Text) / 100;
-            double clayfrac = Convert.ToDouble(soildata.claybox.Text) / 100;
-            double fclayfrac = Convert.ToDouble(soildata.fineclaybox.Text) / 100;
+            double coarsefrac = Convert.ToDouble(guiVariables.Soildata.Coarsebox) / 100;
+            double sandfrac = Convert.ToDouble(guiVariables.Soildata.Sandbox) / 100;
+            double siltfrac = Convert.ToDouble(guiVariables.Soildata.Siltbox) / 100;
+            double clayfrac = Convert.ToDouble(guiVariables.Soildata.Claybox) / 100;
+            double fclayfrac = Convert.ToDouble(guiVariables.Soildata.Fineclaybox) / 100;
             double location_bd;
             for (int row = 0; row < GlobalMethods.nr; row++)
             {
@@ -11203,11 +11251,11 @@ namespace LORICA4
             upper_particle_size[3] = Convert.ToDouble(guiVariables.Upper_particle_clay_textbox);
             upper_particle_size[4] = Convert.ToDouble(guiVariables.Upper_particle_fine_clay_textbox);
             //calculate bulk density so that we know how much kg of material goes into a layer.  //ART this will go wrong when there are different textures in different locations, but is faster up until that time.
-            double coarsefrac = Convert.ToDouble(soildata.coarsebox.Text) / 100;
-            double sandfrac = Convert.ToDouble(soildata.sandbox.Text) / 100;
-            double siltfrac = Convert.ToDouble(soildata.siltbox.Text) / 100;
-            double clayfrac = Convert.ToDouble(soildata.claybox.Text) / 100;
-            double fclayfrac = Convert.ToDouble(soildata.fineclaybox.Text) / 100;
+            double coarsefrac = Convert.ToDouble(guiVariables.Soildata.Coarsebox) / 100;
+            double sandfrac = Convert.ToDouble(guiVariables.Soildata.Sandbox) / 100;
+            double siltfrac = Convert.ToDouble(guiVariables.Soildata.Siltbox) / 100;
+            double clayfrac = Convert.ToDouble(guiVariables.Soildata.Claybox) / 100;
+            double fclayfrac = Convert.ToDouble(guiVariables.Soildata.Fineclaybox) / 100;
             double location_bd;
             double dz_standard = 0.1;
             for (int row = 0; row < GlobalMethods.nr; row++)

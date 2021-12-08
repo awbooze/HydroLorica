@@ -421,14 +421,6 @@ namespace LORICA4
         private double[] zoomFactor = { .25, .33, .50, .66, .80, 1, 1.25, 1.5, 2.0, 2.5, 3.0 };
         private double[] contrastFactor = { 1, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3 };
         private double contrastMultiplier = 1;
-        public int imageCount = 1;
-        public int imageCount2 = 1;
-        public string kml = "";
-        public string KML_FILE_NAME;
-        public string startDate, kmlTime;
-        public DateTime googleTime;
-        public string[] DateArray;
-        public string[] DateArray2;
 
 
         private System.ComponentModel.IContainer components;
@@ -441,14 +433,6 @@ namespace LORICA4
 
 
         
-
-        int[,]  // integer matrices
-                    zones,
-                    mask,
-                    error_m,            // To store error locations as integer
-                    sinkmap,
-                    soilmap,            // integer numbers for soil map
-                    vegetation_type;
 
 
 
@@ -467,21 +451,15 @@ namespace LORICA4
                 z,
                 graphics_scale = 2; /*
                 
-                tel1,
-                tel2,
-                tel3,
-                tel4,
                 twoequals,      // the -equals are counters for different types of sinks
                 threeequals,
                 moreequals,
-                nb_check,
                 round,
                 s_ch,
                 numtel,
                 S1_error,
                 S2_error,
                 cell_lock,
-                nb_ok,
                 temp,
                 num_str,
                 matrixresult,
@@ -523,8 +501,6 @@ namespace LORICA4
 
         }
 
-        // tectonics
-        int[] timeseries_order = new int[26];
 
         private void soil_chem_weath_checkbox_CheckedChanged(object sender, EventArgs e)
         {
@@ -679,22 +655,6 @@ namespace LORICA4
         string basetext = "LORICA Landscape Evolution Model";
         string cfgname = null;  //Config file name
         // string GlobalMethods.Workdir = "D:\\PhD\\projects\\1g_basic LORICA development\\";
-        string timeseries_string = null;
-
-        double[] depressionvolume_m = new double[numberofsinks];
-        //double SuperMEF = 0, SuperMEF2 = 0;
-        double s_tempfactor, s_D, V_factor;
-        double c_D;
-        double w_P0, w_k1, w_k2, w_Pa;
-        double f_soilrate, f_Tmax, f_Tmin, f_max;
-
-        double mem_m;  //the height by which all cells of a current delta need to be raised in order to get rid of the remaining amount of sediment for that delta
-
-        string str, logname, recordname, outfile, f_name, ch, chs;
-
-        double[,] climate_data;
-
-        int diagnostic_mode = 0;
         #endregion
 
         public Mother_form()
@@ -7468,13 +7428,14 @@ Example: rainfall.asc can look like:
         {
             this.Invoke(new MethodInvoker(() => {
                 InfoStatusPanel.Text = guiVariables.InfoStatusPanel;
+                out_sed_statuspanel.Text = guiVariables.Out_sed_statuspanel;
             }
             ));
         }
         private void UpdateTimePannel()
         {
             this.Invoke(new MethodInvoker(() => {
-                //InfoStatusPanel.Text = guiVariables.InfoStatusPanel;
+                InfoStatusPanel.Text = guiVariables.InfoStatusPanel;
             }
             ));
         }

@@ -1093,6 +1093,889 @@ namespace LORICAVariables
             {
                 updateLanduse_determinator = uld;
             }
+
+            #region LU1
+            ReaderWriterLock LU1_Inf_textboxRWL = new ReaderWriterLock();
+            protected string lU1_Inf_textbox;
+            public string LU1_Inf_textbox
+            {
+                get
+                {
+                    LU1_Inf_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU1_Inf_textbox;
+                    LU1_Inf_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU1_Inf_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU1_Inf_textbox = value;
+                    LU1_Inf_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU1_Evap_textboxRWL = new ReaderWriterLock();
+            protected string lU1_Evap_textbox;
+            public string LU1_Evap_textbox
+            {
+                get
+                {
+                    LU1_Evap_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU1_Evap_textbox;
+                    LU1_Evap_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU1_Evap_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU1_Evap_textbox = value;
+                    LU1_Evap_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU1_Ero_textboxRWL = new ReaderWriterLock();
+            protected string lU1_Ero_textbox;
+            public string LU1_Ero_textbox
+            {
+                get
+                {
+                    LU1_Ero_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU1_Ero_textbox;
+                    LU1_Ero_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU1_Ero_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU1_Ero_textbox = value;
+                    LU1_Ero_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU1_Dep_textboxRWL = new ReaderWriterLock();
+            protected string lU1_Dep_textbox;
+            public string LU1_Dep_textbox
+            {
+                get
+                {
+                    LU1_Dep_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU1_Dep_textbox;
+                    LU1_Dep_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU1_Dep_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU1_Dep_textbox = value;
+                    LU1_Dep_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+
+            #endregion
+
+            #region LU2
+            ReaderWriterLock LU2_Inf_textboxRWL = new ReaderWriterLock();
+            protected string lU2_Inf_textbox;
+            public string LU2_Inf_textbox
+            {
+                get
+                {
+                    LU2_Inf_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU2_Inf_textbox;
+                    LU2_Inf_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU2_Inf_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU2_Inf_textbox = value;
+                    LU2_Inf_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU2_Evap_textboxRWL = new ReaderWriterLock();
+            protected string lU2_Evap_textbox;
+            public string LU2_Evap_textbox
+            {
+                get
+                {
+                    LU2_Evap_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU2_Evap_textbox;
+                    LU2_Evap_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU2_Evap_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU2_Evap_textbox = value;
+                    LU2_Evap_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU2_Ero_textboxRWL = new ReaderWriterLock();
+            protected string lU2_Ero_textbox;
+            public string LU2_Ero_textbox
+            {
+                get
+                {
+                    LU2_Ero_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU2_Ero_textbox;
+                    LU2_Ero_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU2_Ero_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU2_Ero_textbox = value;
+                    LU2_Ero_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU2_Dep_textboxRWL = new ReaderWriterLock();
+            protected string lU2_Dep_textbox;
+            public string LU2_Dep_textbox
+            {
+                get
+                {
+                    LU2_Dep_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU2_Dep_textbox;
+                    LU2_Dep_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU2_Dep_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU2_Dep_textbox = value;
+                    LU2_Dep_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+
+            #endregion
+
+            #region LU3
+            ReaderWriterLock LU3_Inf_textboxRWL = new ReaderWriterLock();
+            protected string lU3_Inf_textbox;
+            public string LU3_Inf_textbox
+            {
+                get
+                {
+                    LU3_Inf_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU3_Inf_textbox;
+                    LU3_Inf_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU3_Inf_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU3_Inf_textbox = value;
+                    LU3_Inf_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU3_Evap_textboxRWL = new ReaderWriterLock();
+            protected string lU3_Evap_textbox;
+            public string LU3_Evap_textbox
+            {
+                get
+                {
+                    LU3_Evap_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU3_Evap_textbox;
+                    LU3_Evap_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU3_Evap_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU3_Evap_textbox = value;
+                    LU3_Evap_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU3_Ero_textboxRWL = new ReaderWriterLock();
+            protected string lU3_Ero_textbox;
+            public string LU3_Ero_textbox
+            {
+                get
+                {
+                    LU3_Ero_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU3_Ero_textbox;
+                    LU3_Ero_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU3_Ero_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU3_Ero_textbox = value;
+                    LU3_Ero_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU3_Dep_textboxRWL = new ReaderWriterLock();
+            protected string lU3_Dep_textbox;
+            public string LU3_Dep_textbox
+            {
+                get
+                {
+                    LU3_Dep_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU3_Dep_textbox;
+                    LU3_Dep_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU3_Dep_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU3_Dep_textbox = value;
+                    LU3_Dep_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+
+            #endregion
+
+            #region LU4
+            ReaderWriterLock LU4_Inf_textboxRWL = new ReaderWriterLock();
+            protected string lU4_Inf_textbox;
+            public string LU4_Inf_textbox
+            {
+                get
+                {
+                    LU4_Inf_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU4_Inf_textbox;
+                    LU4_Inf_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU4_Inf_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU4_Inf_textbox = value;
+                    LU4_Inf_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU4_Evap_textboxRWL = new ReaderWriterLock();
+            protected string lU4_Evap_textbox;
+            public string LU4_Evap_textbox
+            {
+                get
+                {
+                    LU4_Evap_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU4_Evap_textbox;
+                    LU4_Evap_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU4_Evap_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU4_Evap_textbox = value;
+                    LU4_Evap_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU4_Ero_textboxRWL = new ReaderWriterLock();
+            protected string lU4_Ero_textbox;
+            public string LU4_Ero_textbox
+            {
+                get
+                {
+                    LU4_Ero_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU4_Ero_textbox;
+                    LU4_Ero_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU4_Ero_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU4_Ero_textbox = value;
+                    LU4_Ero_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU4_Dep_textboxRWL = new ReaderWriterLock();
+            protected string lU4_Dep_textbox;
+            public string LU4_Dep_textbox
+            {
+                get
+                {
+                    LU4_Dep_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU4_Dep_textbox;
+                    LU4_Dep_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU4_Dep_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU4_Dep_textbox = value;
+                    LU4_Dep_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+
+            #endregion
+
+            #region LU5
+            ReaderWriterLock LU5_Inf_textboxRWL = new ReaderWriterLock();
+            protected string lU5_Inf_textbox;
+            public string LU5_Inf_textbox
+            {
+                get
+                {
+                    LU5_Inf_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU5_Inf_textbox;
+                    LU5_Inf_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU5_Inf_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU5_Inf_textbox = value;
+                    LU5_Inf_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU5_Evap_textboxRWL = new ReaderWriterLock();
+            protected string lU5_Evap_textbox;
+            public string LU5_Evap_textbox
+            {
+                get
+                {
+                    LU5_Evap_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU5_Evap_textbox;
+                    LU5_Evap_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU5_Evap_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU5_Evap_textbox = value;
+                    LU5_Evap_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU5_Ero_textboxRWL = new ReaderWriterLock();
+            protected string lU5_Ero_textbox;
+            public string LU5_Ero_textbox
+            {
+                get
+                {
+                    LU5_Ero_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU5_Ero_textbox;
+                    LU5_Ero_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU5_Ero_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU5_Ero_textbox = value;
+                    LU5_Ero_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU5_Dep_textboxRWL = new ReaderWriterLock();
+            protected string lU5_Dep_textbox;
+            public string LU5_Dep_textbox
+            {
+                get
+                {
+                    LU5_Dep_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU5_Dep_textbox;
+                    LU5_Dep_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU5_Dep_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU5_Dep_textbox = value;
+                    LU5_Dep_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+
+            #endregion
+
+            #region LU6
+            ReaderWriterLock LU6_Inf_textboxRWL = new ReaderWriterLock();
+            protected string lU6_Inf_textbox;
+            public string LU6_Inf_textbox
+            {
+                get
+                {
+                    LU6_Inf_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU6_Inf_textbox;
+                    LU6_Inf_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU6_Inf_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU6_Inf_textbox = value;
+                    LU6_Inf_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU6_Evap_textboxRWL = new ReaderWriterLock();
+            protected string lU6_Evap_textbox;
+            public string LU6_Evap_textbox
+            {
+                get
+                {
+                    LU6_Evap_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU6_Evap_textbox;
+                    LU6_Evap_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU6_Evap_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU6_Evap_textbox = value;
+                    LU6_Evap_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU6_Ero_textboxRWL = new ReaderWriterLock();
+            protected string lU6_Ero_textbox;
+            public string LU6_Ero_textbox
+            {
+                get
+                {
+                    LU6_Ero_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU6_Ero_textbox;
+                    LU6_Ero_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU6_Ero_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU6_Ero_textbox = value;
+                    LU6_Ero_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU6_Dep_textboxRWL = new ReaderWriterLock();
+            protected string lU6_Dep_textbox;
+            public string LU6_Dep_textbox
+            {
+                get
+                {
+                    LU6_Dep_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU6_Dep_textbox;
+                    LU6_Dep_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU6_Dep_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU6_Dep_textbox = value;
+                    LU6_Dep_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+
+            #endregion
+
+            #region LU7
+            ReaderWriterLock LU7_Inf_textboxRWL = new ReaderWriterLock();
+            protected string lU7_Inf_textbox;
+            public string LU7_Inf_textbox
+            {
+                get
+                {
+                    LU7_Inf_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU7_Inf_textbox;
+                    LU7_Inf_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU7_Inf_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU7_Inf_textbox = value;
+                    LU7_Inf_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU7_Evap_textboxRWL = new ReaderWriterLock();
+            protected string lU7_Evap_textbox;
+            public string LU7_Evap_textbox
+            {
+                get
+                {
+                    LU7_Evap_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU7_Evap_textbox;
+                    LU7_Evap_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU7_Evap_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU7_Evap_textbox = value;
+                    LU7_Evap_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU7_Ero_textboxRWL = new ReaderWriterLock();
+            protected string lU7_Ero_textbox;
+            public string LU7_Ero_textbox
+            {
+                get
+                {
+                    LU7_Ero_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU7_Ero_textbox;
+                    LU7_Ero_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU7_Ero_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU7_Ero_textbox = value;
+                    LU7_Ero_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU7_Dep_textboxRWL = new ReaderWriterLock();
+            protected string lU7_Dep_textbox;
+            public string LU7_Dep_textbox
+            {
+                get
+                {
+                    LU7_Dep_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU7_Dep_textbox;
+                    LU7_Dep_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU7_Dep_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU7_Dep_textbox = value;
+                    LU7_Dep_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+
+            #endregion
+
+            #region LU8
+            ReaderWriterLock LU8_Inf_textboxRWL = new ReaderWriterLock();
+            protected string lU8_Inf_textbox;
+            public string LU8_Inf_textbox
+            {
+                get
+                {
+                    LU8_Inf_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU8_Inf_textbox;
+                    LU8_Inf_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU8_Inf_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU8_Inf_textbox = value;
+                    LU8_Inf_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU8_Evap_textboxRWL = new ReaderWriterLock();
+            protected string lU8_Evap_textbox;
+            public string LU8_Evap_textbox
+            {
+                get
+                {
+                    LU8_Evap_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU8_Evap_textbox;
+                    LU8_Evap_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU8_Evap_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU8_Evap_textbox = value;
+                    LU8_Evap_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU8_Ero_textboxRWL = new ReaderWriterLock();
+            protected string lU8_Ero_textbox;
+            public string LU8_Ero_textbox
+            {
+                get
+                {
+                    LU8_Ero_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU8_Ero_textbox;
+                    LU8_Ero_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU8_Ero_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU8_Ero_textbox = value;
+                    LU8_Ero_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU8_Dep_textboxRWL = new ReaderWriterLock();
+            protected string lU8_Dep_textbox;
+            public string LU8_Dep_textbox
+            {
+                get
+                {
+                    LU8_Dep_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU8_Dep_textbox;
+                    LU8_Dep_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU8_Dep_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU8_Dep_textbox = value;
+                    LU8_Dep_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+
+            #endregion
+
+            #region LU9
+            ReaderWriterLock LU9_Inf_textboxRWL = new ReaderWriterLock();
+            protected string lU9_Inf_textbox;
+            public string LU9_Inf_textbox
+            {
+                get
+                {
+                    LU9_Inf_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU9_Inf_textbox;
+                    LU9_Inf_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU9_Inf_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU9_Inf_textbox = value;
+                    LU9_Inf_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU9_Evap_textboxRWL = new ReaderWriterLock();
+            protected string lU9_Evap_textbox;
+            public string LU9_Evap_textbox
+            {
+                get
+                {
+                    LU9_Evap_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU9_Evap_textbox;
+                    LU9_Evap_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU9_Evap_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU9_Evap_textbox = value;
+                    LU9_Evap_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU9_Ero_textboxRWL = new ReaderWriterLock();
+            protected string lU9_Ero_textbox;
+            public string LU9_Ero_textbox
+            {
+                get
+                {
+                    LU9_Ero_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU9_Ero_textbox;
+                    LU9_Ero_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU9_Ero_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU9_Ero_textbox = value;
+                    LU9_Ero_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU9_Dep_textboxRWL = new ReaderWriterLock();
+            protected string lU9_Dep_textbox;
+            public string LU9_Dep_textbox
+            {
+                get
+                {
+                    LU9_Dep_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU9_Dep_textbox;
+                    LU9_Dep_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU9_Dep_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU9_Dep_textbox = value;
+                    LU9_Dep_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+
+            #endregion
+
+            #region LU10
+            ReaderWriterLock LU10_Inf_textboxRWL = new ReaderWriterLock();
+            protected string lU10_Inf_textbox;
+            public string LU10_Inf_textbox
+            {
+                get
+                {
+                    LU10_Inf_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU10_Inf_textbox;
+                    LU10_Inf_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU10_Inf_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU10_Inf_textbox = value;
+                    LU10_Inf_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU10_Evap_textboxRWL = new ReaderWriterLock();
+            protected string lU10_Evap_textbox;
+            public string LU10_Evap_textbox
+            {
+                get
+                {
+                    LU10_Evap_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU10_Evap_textbox;
+                    LU10_Evap_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU10_Evap_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU10_Evap_textbox = value;
+                    LU10_Evap_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU10_Ero_textboxRWL = new ReaderWriterLock();
+            protected string lU10_Ero_textbox;
+            public string LU10_Ero_textbox
+            {
+                get
+                {
+                    LU10_Ero_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU10_Ero_textbox;
+                    LU10_Ero_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU10_Ero_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU10_Ero_textbox = value;
+                    LU10_Ero_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+            ReaderWriterLock LU10_Dep_textboxRWL = new ReaderWriterLock();
+            protected string lU10_Dep_textbox;
+            public string LU10_Dep_textbox
+            {
+                get
+                {
+                    LU10_Dep_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = lU10_Dep_textbox;
+                    LU10_Dep_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    LU10_Dep_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    lU10_Dep_textbox = value;
+                    LU10_Dep_textboxRWL.ReleaseWriterLock();
+
+                    UpdateLanduse_determinator();
+                }
+            }
+
+            #endregion
+
+
+
         }
         public class soil_specifier
         {
@@ -1106,7 +1989,116 @@ namespace LORICAVariables
                 updateSoildata = usd;
             }
 
+            ReaderWriterLock CoarseboxRWL = new ReaderWriterLock();
+            protected string coarsebox;
+            public string Coarsebox
+            {
+                get
+                {
+                    CoarseboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = coarsebox;
+                    CoarseboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    CoarseboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    coarsebox = value;
+                    CoarseboxRWL.ReleaseWriterLock();
+
+                    UpdateSoildata();
+                }
+            }
+            ReaderWriterLock SandboxRWL = new ReaderWriterLock();
+            protected string sandbox;
+            public string Sandbox
+            {
+                get
+                {
+                    SandboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = sandbox;
+                    SandboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    SandboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    sandbox = value;
+                    SandboxRWL.ReleaseWriterLock();
+
+                    UpdateSoildata();
+                }
+            }
+            ReaderWriterLock SiltboxRWL = new ReaderWriterLock();
+            protected string siltbox;
+            public string Siltbox
+            {
+                get
+                {
+                    SiltboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = siltbox;
+                    SiltboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    SiltboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    siltbox = value;
+                    SiltboxRWL.ReleaseWriterLock();
+
+                    UpdateSoildata();
+                }
+            }
+            ReaderWriterLock ClayboxRWL = new ReaderWriterLock();
+            protected string claybox;
+            public string Claybox
+            {
+                get
+                {
+                    ClayboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = claybox;
+                    ClayboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    ClayboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    claybox = value;
+                    ClayboxRWL.ReleaseWriterLock();
+
+                    UpdateSoildata();
+                }
+            }
+            ReaderWriterLock FineclayboxRWL = new ReaderWriterLock();
+            protected string fineclaybox;
+            public string Fineclaybox
+            {
+                get
+                {
+                    FineclayboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = fineclaybox;
+                    FineclayboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    FineclayboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    fineclaybox = value;
+                    FineclayboxRWL.ReleaseWriterLock();
+
+                    UpdateSoildata();
+                }
+            }
+
         }
+
+
+
 
         ReaderWriterLock TimeseriesRWL = new ReaderWriterLock();
         protected output_timeseries timeseries;
@@ -1418,6 +2410,27 @@ namespace LORICAVariables
                 InfoStatusPanelRWL.ReleaseWriterLock();
 
                 UpdateStatusPannel();
+            }
+        }
+        ReaderWriterLock TimeStatusPanelRWL = new ReaderWriterLock();
+        protected string timeStatusPanel = "";
+        public string TimeStatusPanel
+        {
+            get
+            {
+                TimeStatusPanelRWL.AcquireReaderLock(Timeout.Infinite);
+                string temp = timeStatusPanel;
+                TimeStatusPanelRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                TimeStatusPanelRWL.AcquireWriterLock(Timeout.Infinite);
+                timeStatusPanel = value;
+                TimeStatusPanelRWL.ReleaseWriterLock();
+
+                UpdateTimePannel();
             }
         }
 
