@@ -94,6 +94,8 @@ namespace LORICAVariables
 
 
 
+
+
         ReaderWriterLock P_allRWL = new ReaderWriterLock();
         protected int[] p_all;
         public int[] P_all

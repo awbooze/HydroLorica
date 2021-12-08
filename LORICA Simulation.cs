@@ -37,10 +37,6 @@ namespace LORICA4
         double urfinalLati, urfinalLongi, llfinalLati, llfinalLongi, yurcorner, xurcorner = 0;
         TimeSpan geo_t, pedo_t, hydro_t, ponding_t;
 
-
-
-        public static int updateClick = 0;
-
         #region weird public variables
         AviWriter aw; // <JMW 20041018>
         bool frost_weathering_active,
@@ -96,6 +92,8 @@ namespace LORICA4
                 deposited_cells;
 
         double soildepth_error, dtm00;
+
+        //int GlobalMethods.n_texture_classes = 5;
 
         const int maximumdepressionsize = 1500;  // run the program once to find out the SIZE OF the largest depression. Any higher number will do....
         const double tangent_of_delta = 0.005;
@@ -220,29 +218,6 @@ namespace LORICA4
                old_depth_decay_constant,
                young_CTI_decay_constant;
 
-
-        double[,,]     //3D matrices for properties of soil layers in different x y (x,y,z)
-                    layerthickness_m,         // : thickness in m 
-                    young_SOM_kg,         // : OM mass in kgrams (per voxel = layer * thickness)
-                    old_SOM_kg,         // : OM mass in kgrams (per voxel = layer * thickness) 
-                    bulkdensity;            // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
-
-
-
-
-        int[,]  // integer matrices
-                    zones,
-                    mask,
-                    error_m,            // To store error locations as integer
-                    sinkmap,
-                    soilmap,            // integer numbers for soil map
-                    vegetation_type;
-
-
-
-        int calibration_length; // to assess if a process has to be calibrated mvdm, >1 is more runs
-
-
         // Decalcification parameters
         double[,,] CO3_kg;   // CaCO3, to track decalcification speed. Does not contribute to texture or soil mass (yet) MM
         double ini_CO3_content_frac;
@@ -355,7 +330,7 @@ namespace LORICA4
         {
             /*
             this.Invoke(new MethodInvoker(() => {
-                guiVariables.InfoStatusPanel = "Entered main program";
+                InfoStatusPanel.Text = "Entered main program";
             }
             ));
             */
@@ -918,11 +893,10 @@ namespace LORICA4
             {
                 for (int col = 0; col < GlobalMethods.nc; col++)
                 {
-
-                    if (GlobalMethods.original_dtm[row, col] != -9999)
+                    if (GlobalMethods.original_dtm[GlobalMethods.row, GlobalMethods.col] != -9999)
                     {
 
-                        if (GlobalMethods.original_dtm[row, col] > minimum_overwater_elevation && GlobalMethods.dtm[row, col] == -9999)
+                        if (GlobalMethods.original_dtm[GlobalMethods.row, GlobalMethods.col] > minimum_overwater_elevation && GlobalMethods.dtm[GlobalMethods.row, GlobalMethods.col] == -9999)
                         {
                             // these cases were not over water, but now will be.
                             GlobalMethods.dtm[row, col] = GlobalMethods.original_dtm[row, col];
@@ -954,19 +928,19 @@ namespace LORICA4
 
             //if (GlobalMethods.t == 0 | GlobalMethods.t == 1) { displaysoil(50, 0); }
             int i = 0;
-            guiVariables.TimeStatusPanel = "timestep " + (GlobalMethods.t + 1) + "/" + +guiVariables.End_time;
+            this.TimeStatusPanel.Text = "timestep " + (GlobalMethods.t + 1) + "/" + +guiVariables.End_time;
             updateClick = 1;
             // Debug.WriteLine("starting calculations - TIME " + GlobalMethods.t);
 
-            if (GlobalMethods.Ik_ben_Marijn)
+            if (guiVariables.Ik_ben_Marijn)
             { calculate_overwater_landscape_Spitsbergen(); }
             //displaysoil(0, 0);
 
             #region hydrological processes
-            //Debug.WriteLine("before water {0}",texture_kg[0,0,0,2]);
+            //Debug.WriteLine("before water {0}",GlobalMethods.texture_kg[0,0,0,2]);
             //Debug.WriteLine("before water balance");
             hydro_start = DateTime.Now;
-            if (guiVariables.Daily_Water)
+            if (daily_water.Checked)
             {
 
                 // Debug.WriteLine("Running daily water balance");
@@ -981,7 +955,7 @@ namespace LORICA4
 
             #region Vegetation
             // Debug.WriteLine("before vegetation");
-            if (guiVariables.Daily_Water)
+            if (daily_water.Checked)
             {
                 determine_vegetation_type();
                 change_vegetation_parameters();
@@ -999,9 +973,9 @@ namespace LORICA4
                 //Debug.WriteLine("before WE1");
 
                 initialise_every(); //fast
-                GlobalMethods.comb_sort();        //fast
+                comb_sort();        //fast
 
-                if (guiVariables.Daily_Water)
+                if (daily_water.Checked)
                 {
                     //Debug.WriteLine("before WE2");
                     calculate_water_ero_sed_daily();
@@ -1027,7 +1001,7 @@ namespace LORICA4
             }
 
             // Debug.WriteLine("before TF");
-            if (guiVariables.Treefall_checkbox)
+            if (treefall_checkbox.Checked)
             {
                 if (GlobalMethods.t <= (guiVariables.End_time - 500)) // if there is no tillage
                 {
@@ -1052,7 +1026,7 @@ namespace LORICA4
             {
                 try
                 {// Debug.WriteLine("calculating GlobalMethods.creep");
-                    GlobalMethods.comb_sort();
+                    comb_sort();
 
                     calculate_creep();
 
@@ -1066,9 +1040,9 @@ namespace LORICA4
             //displaysoil(0, 0);
             if (tillage_active)
             {
-                GlobalMethods.comb_sort();
+                comb_sort();
                 int tilltime = 0;
-                //if (check_time_till_fields.Checked) { tilltime = till_record[GlobalMethods.t]; }
+                //if (guivariables.Check_time_till_fields) { tilltime = till_record[GlobalMethods.t]; }
                 //else { tilltime = 1; }
 
                 if (GlobalMethods.t > (guiVariables.End_time - 500)) { tilltime = 1; }
@@ -1087,7 +1061,7 @@ namespace LORICA4
             if (landslide_active)
             {
                 Debug.WriteLine("calculating landsliding");
-                GlobalMethods.comb_sort();
+                comb_sort();
                 ini_slope();
                 calculate_critical_rain();
                 calculate_slide();
@@ -1107,7 +1081,7 @@ namespace LORICA4
             if (soil_phys_weath_active)
             {
                 // Debug.WriteLine("calculating soil physical weathering");
-                if (!GlobalMethods.Ik_ben_Marijn) { soil_physical_weathering(); }
+                if (!guiVariables.Ik_ben_Marijn) { soil_physical_weathering(); }
                 else
                 {
                     SPITS_soil_physical_weathering();
@@ -1152,7 +1126,7 @@ namespace LORICA4
             {
                 // Debug.WriteLine("calculating soil clay dynamics ");
 
-                if (GlobalMethods.Ik_ben_Marijn)
+                if (guiVariables.Ik_ben_Marijn)
                 {
                     soil_silt_translocation(); // Spitsbergen case study
                 }
@@ -1179,7 +1153,7 @@ namespace LORICA4
             if (soil_carbon_active)
             {
                 // Debug.WriteLine("calculating carbon dynamics ");
-                if (version_lux_checkbox.Checked)
+                if (guiVariables.Version_lux_checkbox)
                 {
                     soil_litter_cycle();
                 }
@@ -1190,7 +1164,7 @@ namespace LORICA4
 
             }
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found after soil carbon"); }
-            if (ecalcification_checkbox)
+            if (guiVariables.Decalcification_checkbox)
             {
                 //Debug.WriteLine("calculating decalcification");
                 soil_decalcification();
@@ -1244,7 +1218,7 @@ namespace LORICA4
                 // displaysoil(31, 12);
                 // Debug.WriteLine("Total catchment mass = " + total_catchment_mass());
 
-                if (guiVariables.Daily_Water)
+                if (daily_water.Checked)
                 {
                     Debug.WriteLine("writing daily water");
 
@@ -1260,11 +1234,12 @@ namespace LORICA4
                     try
                     {
                         GlobalMethods.out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_vegetationtype.asc", vegetation_type);
+                        
                         for (int row = 0; row < GlobalMethods.nr; row++)
                         {
                             for (int col = 0; col < GlobalMethods.nc; col++)
                             {
-                                vegetation_type[row, col] = 0; // reset vegetation_type, to give the output per output period
+                                GlobalMethods.vegetation_type[row, col] = 0; // reset vegetation_type, to give the output per output period
                             }
                         }
                     }
@@ -1274,7 +1249,7 @@ namespace LORICA4
 
                 }
 
-                if (version_lux_checkbox.Checked == true)
+                if (guiVariables.Version_lux_checkbox)
                 {
                     try
                     {
@@ -1303,6 +1278,7 @@ namespace LORICA4
                                 if (output == "toplayer_frac") { numberoflayers = 1; }
 
                                 double[,] output_litter_map = new double[GlobalMethods.nr, GlobalMethods.nc];
+
                                 for (int row = 0; row < GlobalMethods.nr; row++)
                                 {
                                     for (int col = 0; col < GlobalMethods.nc; col++)
@@ -1316,7 +1292,7 @@ namespace LORICA4
                                         {
                                             for (int tex = 0; tex < 5; tex++)
                                             {
-                                                mineralsoil_toplayer_kg += texture_kg[row, col, 0, tex];
+                                                mineralsoil_toplayer_kg += GlobalMethods.texture_kg[row, col, 0, tex];
                                             }
                                         }
 
@@ -1375,7 +1351,7 @@ namespace LORICA4
                                             {
                                                 for (int tex = 0; tex < 5; tex++)
                                                 {
-                                                    mineralsoil_kg += texture_kg[row, col, lay, tex];
+                                                    mineralsoil_kg += GlobalMethods.texture_kg[row, col, lay, tex];
                                                 }
                                             }
                                         }
@@ -1404,7 +1380,7 @@ namespace LORICA4
                 try
                 {
                     //Debug.WriteLine("writing all soils");
-                    writeallsoils();
+                    GlobalMethods.writeallsoils();
                 }
                 catch
                 {
@@ -1427,35 +1403,35 @@ namespace LORICA4
                     //try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + GlobalMethods.t + "_out_dzsed.asc", GlobalMethods.dz_sed_m); }
                     //catch { MessageBox.Show("dzsed has not been written"); }
                 }
-                if (guiVariables.Treefall_checkbox)
+                if (treefall_checkbox.Checked)
                 {
                     try
                     {
                         GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_dz_treefall.asc", GlobalMethods.dz_treefall);
-                        out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_treefallcount.asc", GlobalMethods.treefall_count);
+                        GlobalMethods.out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_treefallcount.asc", GlobalMethods.treefall_count);
 
                     }
                     catch { MessageBox.Show("treefall has not been written"); }
                 }
-                if (guiVariables.Soildepth_output_checkbox)
+                if (Soildepth_output_checkbox.Checked)
                 {
                     try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_soildepth.asc", GlobalMethods.soildepth_m); }
                     catch { MessageBox.Show("soildepth has not been written"); }
                 }
-                if (guiVariables.Alt_change_output_checkbox)
+                if (Alt_change_output_checkbox.Checked)
                 {
                     try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_change.asc", GlobalMethods.dtmchange); }
                     catch { MessageBox.Show("change has not been written"); }
                 }
 
-                if (guiVariables.Water_output_checkbox & guiVariables.Water_ero_checkbox)
+                if (water_output_checkbox.Checked & Water_ero_checkbox.Checked)
                 {
                     // Debug.WriteLine("before writing water flow");
 
 
                     try
                     {
-                        if (guiVariables.Daily_Water)
+                        if (daily_water.Checked)
                         {
                             for (int roww = 0; roww < GlobalMethods.nr; roww++)
                             {
@@ -1469,9 +1445,9 @@ namespace LORICA4
                     }
                     catch { MessageBox.Show("water has not been written"); }
                 }
-                if (guiVariables.Depressions_output_checkbox)
+                if (depressions_output_checkbox.Checked)
                 {
-                    try { out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_depress.asc", depression); }
+                    try { GlobalMethods.out_integer(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_depress.asc", depression); }
                     catch { MessageBox.Show("depressions have not been written"); }
                     try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_dtmfillA.asc", GlobalMethods.dtmfill_A); }
                     catch { MessageBox.Show("dfmfill has not been written"); }
@@ -1488,17 +1464,17 @@ namespace LORICA4
                     catch { MessageBox.Show("lakesed has not been written"); }
                 }
 
-                if (guiVariables.Water_ero_checkbox)
+                if (Water_ero_checkbox.Checked)
                 {
                     // Debug.WriteLine("before writing water erosion");
 
-                    if (guiVariables.All_process_output_checkbox)
+                    if (all_process_output_checkbox.Checked)
                     {
                         try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_water_erosion.asc", GlobalMethods.sum_water_erosion); }
                         catch { MessageBox.Show("water erosion has not been written"); }
                     }
                 }
-                if (guiVariables.Creep_active_checkbox)
+                if (creep_active_checkbox.Checked)
                 {
                     // Debug.WriteLine("before writing GlobalMethods.creep");
 
@@ -1507,11 +1483,11 @@ namespace LORICA4
 
                 }
 
-                if (guiVariables.Tillage_checkbox)
+                if (Tillage_checkbox.Checked)
                 {
                     // Debug.WriteLine("before writing tillage erosion");
 
-                    if (guiVariables.All_process_output_checkbox)
+                    if (all_process_output_checkbox.Checked)
                     {
                         try { GlobalMethods.out_double(GlobalMethods.Workdir + "\\" + run_number + "_" + t_out + "_out_tillage.asc", GlobalMethods.sum_tillage); }
                         catch { MessageBox.Show("tillage has not been written"); }
@@ -1571,12 +1547,12 @@ namespace LORICA4
                 {
                     if (profile.check_altitude_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_1_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                     if (profile.check_waterflow_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_1_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
@@ -1584,12 +1560,12 @@ namespace LORICA4
                 {
                     if (profile.check_altitude_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_1_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                     if (profile.check_waterflow_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_1_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
@@ -1597,12 +1573,12 @@ namespace LORICA4
                 {
                     if (profile.check_altitude_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_2_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                     if (profile.check_waterflow_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_2_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
@@ -1610,12 +1586,12 @@ namespace LORICA4
                 {
                     if (profile.check_altitude_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                     if (profile.check_waterflow_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_2_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
@@ -1623,12 +1599,12 @@ namespace LORICA4
                 {
                     if (profile.check_altitude_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, false, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_3_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                     if (profile.check_waterflow_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, false, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_3_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
@@ -1636,12 +1612,12 @@ namespace LORICA4
                 {
                     if (profile.check_altitude_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", GlobalMethods.dtm, true, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_3_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                     if (profile.check_waterflow_profile1.Checked)
                     {
-                        try { out_profile(GlobalMethods.Workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
+                        try { GlobalMethods.out_profile(GlobalMethods.Workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", GlobalMethods.waterflow_m3, true, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
                         catch { MessageBox.Show("profile_3_water_" + run_number + "_" + t_out + ".asc has not been written"); }
                     }
                 }
@@ -1695,7 +1671,7 @@ namespace LORICA4
                     Debug.WriteLine("Error finishing video output");
                 }
 
-                guiVariables.InfoStatusPanel = " --finished--";
+                this.InfoStatusPanel.Text = " --finished--";
                 stopwatch.Stop();
                 Debug.WriteLine("Elapsed time: " + stopwatch.Elapsed);
                 //Timeseries output
@@ -1894,17 +1870,17 @@ namespace LORICA4
             Debug.WriteLine("read sum_dz_soil");
             // SOIL INFORMATION
             // reset old info
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     for (int lay = 0; lay < GlobalMethods.max_soil_layers; lay++)
                     {
-                        texture_kg[row, col, lay, 0] = 0;
-                        texture_kg[row, col, lay, 1] = 0;
-                        texture_kg[row, col, lay, 2] = 0;
-                        texture_kg[row, col, lay, 3] = 0;
-                        texture_kg[row, col, lay, 4] = 0;
+                        GlobalMethods.texture_kg[row, col, lay, 0] = 0;
+                        GlobalMethods.texture_kg[row, col, lay, 1] = 0;
+                        GlobalMethods.texture_kg[row, col, lay, 2] = 0;
+                        GlobalMethods.texture_kg[row, col, lay, 3] = 0;
+                        GlobalMethods.texture_kg[row, col, lay, 4] = 0;
                         GlobalMethods.young_SOM_kg[row, col, lay] = 0;
                         GlobalMethods.old_SOM_kg[row, col, lay] = 0;
                         GlobalMethods.layerthickness_m[row, col, lay] = 0;
@@ -1930,11 +1906,11 @@ namespace LORICA4
                     col = Convert.ToInt32(values[1]);
                     lay = Convert.ToInt32(values[3]);
 
-                    texture_kg[row, col, lay, 0] = Convert.ToDouble(values[8]); //coarse
-                    texture_kg[row, col, lay, 1] = Convert.ToDouble(values[9]); // sand
-                    texture_kg[row, col, lay, 2] = Convert.ToDouble(values[10]); // silt
-                    texture_kg[row, col, lay, 3] = Convert.ToDouble(values[11]); // clay
-                    texture_kg[row, col, lay, 4] = Convert.ToDouble(values[12]); // fine clay
+                    GlobalMethods.texture_kg[row, col, lay, 0] = Convert.ToDouble(values[8]); //coarse
+                    GlobalMethods.texture_kg[row, col, lay, 1] = Convert.ToDouble(values[9]); // sand
+                    GlobalMethods.texture_kg[row, col, lay, 2] = Convert.ToDouble(values[10]); // silt
+                    GlobalMethods.texture_kg[row, col, lay, 3] = Convert.ToDouble(values[11]); // clay
+                    GlobalMethods.texture_kg[row, col, lay, 4] = Convert.ToDouble(values[12]); // fine clay
                     GlobalMethods.young_SOM_kg[row, col, lay] = Convert.ToDouble(values[13]); // young SOM
                     GlobalMethods.old_SOM_kg[row, col, lay] = Convert.ToDouble(values[14]); // old SOM
                     GlobalMethods.layerthickness_m[row, col, lay] = Convert.ToDouble(values[5]); // thickness
@@ -2134,7 +2110,7 @@ namespace LORICA4
                     }
                 }
             }
-            GlobalMethods.comb_sort();
+            comb_sort();
 
             double P_OF, snowmelt_m = 0;
             // Debug.WriteLine("wb3");
@@ -2229,9 +2205,9 @@ namespace LORICA4
             // yearly update infiltration
 
             bool Ineg = false;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     if (Iy[row, col] < 0)
                     {
@@ -2263,8 +2239,8 @@ namespace LORICA4
                         snow_wb += snowfall_m;
                         snow_start += snow_start_m;
                         snow_left += snow_m;
-                        OFy_0 += guiVariables.OFy_m[row, col, 0];
-                        OFy_9 += guiVariables.OFy_m[row, col, 9];
+                        OFy_0 += guiVariables.OFy_m[GlobalMethods.row, GlobalMethods.col, 0];
+                        OFy_9 += guiVariables.OFy_m[GlobalMethods.row, GlobalMethods.col, 9];
                     }
 
                 }
@@ -2299,9 +2275,9 @@ namespace LORICA4
         {
             double ET_out = 0;
             double count = 0;
-            for (row = 0; row < GlobalMethods.nr; row++)
+            for (int row = 0; row < GlobalMethods.nr; row++)
             {
-                for (col = 0; col < GlobalMethods.nc; col++)
+                for (int col = 0; col < GlobalMethods.nc; col++)
                 {
                     ET_out += ET0y[row, col];
                     count += 1;
@@ -2351,12 +2327,12 @@ namespace LORICA4
 
                                 for (int text = 0; text < 5; text++)
                                 {
-                                    tex_topsoil[text] += texture_kg[row, col, lay, text];
+                                    tex_topsoil[text] += GlobalMethods.texture_kg[row, col, lay, text];
                                 }
                                 tex_topsoil[5] += GlobalMethods.young_SOM_kg[row, col, lay];
                                 tex_topsoil[5] += GlobalMethods.old_SOM_kg[row, col, lay];
 
-                                BD_topsoil.Add(bulk_density_calc(texture_kg[row, col, lay, 0], texture_kg[row, col, lay, 1], texture_kg[row, col, lay, 2], texture_kg[row, col, lay, 3], texture_kg[row, col, lay, 4], GlobalMethods.old_SOM_kg[row, col, lay], GlobalMethods.young_SOM_kg[row, col, lay], depth));
+                                BD_topsoil.Add(bulk_density_calc(GlobalMethods.texture_kg[row, col, lay, 0], GlobalMethods.texture_kg[row, col, lay, 1], GlobalMethods.texture_kg[row, col, lay, 2], GlobalMethods.texture_kg[row, col, lay, 3], GlobalMethods.texture_kg[row, col, lay, 4], GlobalMethods.old_SOM_kg[row, col, lay], GlobalMethods.young_SOM_kg[row, col, lay], depth));
                                 depth += GlobalMethods.layerthickness_m[row, col, lay] / 2;
 
                             }
@@ -2367,6 +2343,7 @@ namespace LORICA4
                         fclay = 100 * (tex_topsoil[3] + tex_topsoil[4]) / (tex_topsoil[1] + tex_topsoil[2] + tex_topsoil[3] + tex_topsoil[4]); // only fine fraction
                         fOM = 100 * tex_topsoil[5] / (tex_topsoil[1] + tex_topsoil[2] + tex_topsoil[3] + tex_topsoil[4] + tex_topsoil[5]); // only fine fraction
                         BD_t = BD_topsoil.Average() / 1000;
+
                         slope_rad = calc_slope_stdesc(row, col);
                         double slope_test = Math.Cos(slope_rad);
 
@@ -2513,6 +2490,7 @@ namespace LORICA4
             // Debug.WriteLine("df2");
             double totalwater = 0, totalwater2 = 0;
             // create overland flow in current flow map. This will be reset after flowing out, to consider a new flux of water after saddle overflow, without counting the first flux twice. 
+
             for (int row = 0; row < GlobalMethods.nr; row++)
             {
                 for (int col = 0; col < GlobalMethods.nc; col++)
@@ -2544,7 +2522,8 @@ namespace LORICA4
                 //Debug.WriteLine("runner start of run: " + runner);
                 if (GlobalMethods.index[runner] != -9999)
                 {
-                    row = row_index[runner]; col = col_index[runner];
+                    int row = row_index[runner]; 
+                    int col = col_index[runner];
 
                     //if (row == 186 & col == 499 & GlobalMethods.t == 5) { minimaps(186, 499); }
 
@@ -2889,7 +2868,7 @@ namespace LORICA4
                 for (int c = 0; c < GlobalMethods.nc; c++)
                 {
                     //pond_y[r, c] += pond_d[r, c];
-                    if (pond_d[r, c] < -0.00000001) { Debug.WriteLine("negative ponding on row {0} and col {1}. Amount = {2} ", row, col, pond_d[r, c]); }
+                    if (pond_d[r, c] < -0.00000001) { Debug.WriteLine("negative ponding on row {0} and col {1}. Amount = {2} ", row1, col1, pond_d[r, c]); }
                 }
             }
             // if(negativeponding == true) { GlobalMethods.out_double(GlobalMethods.Workdir + "\\debug\\" + run_number + "_" + GlobalMethods.t + "_ "+ pmonth+"_ " + pday + "_out_ponding.asc", pond_d); }
@@ -2999,14 +2978,14 @@ namespace LORICA4
                             // Debug.WriteLine(layert);
                             for (i = 0; i < 5; i++)
                             {
-                                texture_kg[row2, col2, layert, i] = texture_kg[row2, col2, layert + 1, i];
+                                GlobalMethods.texture_kg[row2, col2, layert, i] = GlobalMethods.texture_kg[row2, col2, layert + 1, i];
                             }
                             GlobalMethods.old_SOM_kg[row2, col2, layert] = GlobalMethods.old_SOM_kg[row2, col2, layert + 1];
                             GlobalMethods.young_SOM_kg[row2, col2, layert] = GlobalMethods.young_SOM_kg[row2, col2, layert + 1];
                         }
                         for (i = 0; i < 5; i++)
                         {
-                            texture_kg[row2, col2, GlobalMethods.max_soil_layers - 1, i] = 0;
+                            GlobalMethods.texture_kg[row2, col2, GlobalMethods.max_soil_layers - 1, i] = 0;
                         }
                         GlobalMethods.old_SOM_kg[row2, col2, GlobalMethods.max_soil_layers - 1] = 0;
                         GlobalMethods.young_SOM_kg[row2, col2, GlobalMethods.max_soil_layers - 1] = 0;
@@ -3089,15 +3068,15 @@ namespace LORICA4
                             for (layer = 0; layer < GlobalMethods.max_soil_layers; layer++)
                             {
                                 ////update the layers' thickness now that textures and organic matter amounts have changed (if there is anything in the layer at all).
-                                //if (!(texture_kg[row, col, layer, 0] == 0 && texture_kg[row, col, layer, 1] == 0 && texture_kg[row, col, layer, 2] == 0 && texture_kg[row, col, layer, 3] == 0 && texture_kg[row, col, layer, 4] == 0 && GlobalMethods.young_SOM_kg[row, col, layer] == 0 && GlobalMethods.old_SOM_kg[row, col, layer] == 0))
+                                //if (!(GlobalMethods.texture_kg[row, col, layer, 0] == 0 && GlobalMethods.texture_kg[row, col, layer, 1] == 0 && GlobalMethods.texture_kg[row, col, layer, 2] == 0 && GlobalMethods.texture_kg[row, col, layer, 3] == 0 && GlobalMethods.texture_kg[row, col, layer, 4] == 0 && GlobalMethods.young_SOM_kg[row, col, layer] == 0 && GlobalMethods.old_SOM_kg[row, col, layer] == 0))
                                 //{
                                 GlobalMethods.layerthickness_m[row, col, layer] = thickness_calc(row, col, layer);
                                 //}
                                 if (timeseries.timeseries_soil_mass_checkbox.Checked && System.Convert.ToInt32(timeseries.timeseries_soil_cell_row.Text) == row && System.Convert.ToInt32(timeseries.timeseries_soil_cell_col.Text) == col)
                                 {
-                                    local_soil_mass_kg += texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
+                                    local_soil_mass_kg += GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
                                 }
-                                if (timeseries.timeseries_soil_mass_checkbox.Checked && layer == 0 && texture_kg[row, col, layer, 0] / (texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer]) > System.Convert.ToDouble(timeseries.timeseries_soil_coarser_fraction_textbox.Text))
+                                if (timeseries.timeseries_soil_mass_checkbox.Checked && layer == 0 && GlobalMethods.texture_kg[row, col, layer, 0] / (GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer]) > System.Convert.ToDouble(timeseries.timeseries_soil_coarser_fraction_textbox.Text))
                                 {
                                     number_soil_coarser_than++;
                                 }
@@ -3343,9 +3322,9 @@ namespace LORICA4
             {
                 //Debug.WriteLine("suscl2");
                 //displaysoil(0, 0);
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.dtm[row, col] != -9999)
                         {
@@ -3356,7 +3335,7 @@ namespace LORICA4
                             for (layer = 0; layer < GlobalMethods.max_soil_layers; layer++)
                             {
                                 ////update the layers' thickness now that textures and organic matter amounts have changed (if there is anything in the layer at all).
-                                //if (!(texture_kg[row, col, layer, 0] == 0 && texture_kg[row, col, layer, 1] == 0 && texture_kg[row, col, layer, 2] == 0 && texture_kg[row, col, layer, 3] == 0 && texture_kg[row, col, layer, 4] == 0 && GlobalMethods.young_SOM_kg[row, col, layer] == 0 && GlobalMethods.old_SOM_kg[row, col, layer] == 0))
+                                //if (!(GlobalMethods.texture_kg[row, col, layer, 0] == 0 && GlobalMethods.texture_kg[row, col, layer, 1] == 0 && GlobalMethods.texture_kg[row, col, layer, 2] == 0 && GlobalMethods.texture_kg[row, col, layer, 3] == 0 && GlobalMethods.texture_kg[row, col, layer, 4] == 0 && GlobalMethods.young_SOM_kg[row, col, layer] == 0 && GlobalMethods.old_SOM_kg[row, col, layer] == 0))
                                 //{
                                 //GlobalMethods.layerthickness_m[row, col, layer] = thickness_calc(row, col, layer);
                                 //GlobalMethods.layerthickness_m[row, col, layer] = thickness_calc(row, col, layer);
@@ -3365,13 +3344,13 @@ namespace LORICA4
                                 //}
                                 if (timeseries.timeseries_soil_mass_checkbox.Checked && System.Convert.ToInt32(timeseries.timeseries_soil_cell_row.Text) == row && System.Convert.ToInt32(timeseries.timeseries_soil_cell_col.Text) == col)
                                 {
-                                    local_soil_mass_kg += texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
+                                    local_soil_mass_kg += GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
                                     if (local_soil_mass_kg < 0)
                                     {
                                         Debug.WriteLine("err_uscl1");
                                     } //MMS
                                 }
-                                if (timeseries.timeseries_soil_mass_checkbox.Checked && layer == 0 && texture_kg[row, col, layer, 0] / (texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer]) > System.Convert.ToDouble(timeseries.timeseries_soil_coarser_fraction_textbox.Text))
+                                if (timeseries.timeseries_soil_mass_checkbox.Checked && layer == 0 && GlobalMethods.texture_kg[row, col, layer, 0] / (GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer]) > System.Convert.ToDouble(timeseries.timeseries_soil_coarser_fraction_textbox.Text))
                                 {
                                     number_soil_coarser_than++;
                                 }
@@ -3383,9 +3362,9 @@ namespace LORICA4
 
 
                 //displaysoil(0, 0);
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.dtm[row, col] != -9999)
                         {
@@ -3646,7 +3625,7 @@ namespace LORICA4
                             for (layer = 0; layer < GlobalMethods.max_soil_layers; layer++)
                             {
                                 ////update the layers' thickness now that textures and organic matter amounts have changed (if there is anything in the layer at all).
-                                //if (!(texture_kg[row, col, layer, 0] == 0 && texture_kg[row, col, layer, 1] == 0 && texture_kg[row, col, layer, 2] == 0 && texture_kg[row, col, layer, 3] == 0 && texture_kg[row, col, layer, 4] == 0 && GlobalMethods.young_SOM_kg[row, col, layer] == 0 && GlobalMethods.old_SOM_kg[row, col, layer] == 0))
+                                //if (!(GlobalMethods.texture_kg[row, col, layer, 0] == 0 && GlobalMethods.texture_kg[row, col, layer, 1] == 0 && GlobalMethods.texture_kg[row, col, layer, 2] == 0 && GlobalMethods.texture_kg[row, col, layer, 3] == 0 && GlobalMethods.texture_kg[row, col, layer, 4] == 0 && GlobalMethods.young_SOM_kg[row, col, layer] == 0 && GlobalMethods.old_SOM_kg[row, col, layer] == 0))
                                 //{
                                 //GlobalMethods.layerthickness_m[row, col, layer] = thickness_calc(row, col, layer);
                                 //GlobalMethods.layerthickness_m[row, col, layer] = thickness_calc(row, col, layer);
@@ -3655,10 +3634,10 @@ namespace LORICA4
                                 //}
                                 if (timeseries.timeseries_soil_mass_checkbox.Checked && System.Convert.ToInt32(timeseries.timeseries_soil_cell_row.Text) == row && System.Convert.ToInt32(timeseries.timeseries_soil_cell_col.Text) == col)
                                 {
-                                    local_soil_mass_kg += texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
+                                    local_soil_mass_kg += GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
                                     if (local_soil_mass_kg < 0) { Debugger.Break(); } //MMS
                                 }
-                                if (timeseries.timeseries_soil_mass_checkbox.Checked && layer == 0 && texture_kg[row, col, layer, 0] / (texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer]) > System.Convert.ToDouble(timeseries.timeseries_soil_coarser_fraction_textbox.Text))
+                                if (timeseries.timeseries_soil_mass_checkbox.Checked && layer == 0 && GlobalMethods.texture_kg[row, col, layer, 0] / (GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer]) > System.Convert.ToDouble(timeseries.timeseries_soil_coarser_fraction_textbox.Text))
                                 {
                                     number_soil_coarser_than++;
                                 }
@@ -3672,9 +3651,9 @@ namespace LORICA4
 
                 //displaysoil(0, 0);
                 depth_m = 0;
-                for (row = 0; row < GlobalMethods.nr; row++)
+                for (int row = 0; row < GlobalMethods.nr; row++)
                 {
-                    for (col = 0; col < GlobalMethods.nc; col++)
+                    for (int col = 0; col < GlobalMethods.nc; col++)
                     {
                         if (GlobalMethods.dtm[row, col] != -9999)
                         {
@@ -3865,7 +3844,7 @@ namespace LORICA4
                     {
                         for (int tt = 0; tt < 5; tt++)
                         {
-                            if (texture_kg[rr, cc, ll, tt] < 0)
+                            if (GlobalMethods.texture_kg[rr, cc, ll, tt] < 0)
                             {
                                 Debug.WriteLine("err_nt1");
                             }
@@ -3885,8 +3864,8 @@ namespace LORICA4
                 for (i = 0; i < 5; i++)
                 {
                     //account for total soil mass
-                    average_property_value = (texture_kg[rowwer, coller, lay1, i] + texture_kg[rowwer, coller, lay2, i]) / 2;
-                    property_difference = Math.Abs(texture_kg[rowwer, coller, lay1, i] - texture_kg[rowwer, coller, lay2, i]);
+                    average_property_value = (GlobalMethods.texture_kg[rowwer, coller, lay1, i] + GlobalMethods.texture_kg[rowwer, coller, lay2, i]) / 2;
+                    property_difference = Math.Abs(GlobalMethods.texture_kg[rowwer, coller, lay1, i] - GlobalMethods.texture_kg[rowwer, coller, lay2, i]);
                     sum_property_difference += property_difference / average_property_value;
                 }
                 average_property_value = (GlobalMethods.old_SOM_kg[rowwer, coller, lay1] + GlobalMethods.old_SOM_kg[rowwer, coller, lay2]) / 2;
@@ -3917,8 +3896,8 @@ namespace LORICA4
                 //Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller));
                 for (i = 0; i < 5; i++)
                 {
-                    texture_kg[rowwer, coller, lay1, i] += texture_kg[rowwer, coller, lay2, i];
-                    texture_kg[rowwer, coller, lay2, i] = 0;// set to zero. otherwise the shifting of the layers doesn'GlobalMethods.t work
+                    GlobalMethods.texture_kg[rowwer, coller, lay1, i] += GlobalMethods.texture_kg[rowwer, coller, lay2, i];
+                    GlobalMethods.texture_kg[rowwer, coller, lay2, i] = 0;// set to zero. otherwise the shifting of the layers doesn'GlobalMethods.t work
                     double new_soil_mass = total_soil_mass(rowwer, coller);
 
                 }
@@ -3931,14 +3910,14 @@ namespace LORICA4
 
                 //Debug.WriteLine("cl1");
                 //Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller));
-                GlobalMethods.layerthickness_m[row, col, lay1] = thickness_calc(row, col, lay1);    // thickness_calc uses a pdf to calculate bulk density and hence layer thickness
+                GlobalMethods.layerthickness_m[rowwer, coller, lay1] = thickness_calc(rowwer, coller, lay1);    // thickness_calc uses a pdf to calculate bulk density and hence layer thickness
 
                 for (int layert = lay2; layert < GlobalMethods.max_soil_layers - 1; layert++) // for all underlying layers, shift one up (since there is space anyway)
                 {
                     // Debug.WriteLine(layert);
                     for (i = 0; i < 5; i++)
                     {
-                        texture_kg[rowwer, coller, layert, i] = texture_kg[rowwer, coller, layert + 1, i];
+                        GlobalMethods.texture_kg[rowwer, coller, layert, i] = GlobalMethods.texture_kg[rowwer, coller, layert + 1, i];
                     }
                     GlobalMethods.old_SOM_kg[rowwer, coller, layert] = GlobalMethods.old_SOM_kg[rowwer, coller, layert + 1];
                     GlobalMethods.young_SOM_kg[rowwer, coller, layert] = GlobalMethods.young_SOM_kg[rowwer, coller, layert + 1];
@@ -3947,7 +3926,7 @@ namespace LORICA4
                 //now set the last layer to sentinel value of -1
                 for (i = 0; i < 5; i++)
                 {
-                    texture_kg[rowwer, coller, GlobalMethods.max_soil_layers - 1, i] = 0;
+                    GlobalMethods.texture_kg[rowwer, coller, GlobalMethods.max_soil_layers - 1, i] = 0;
                 }
                 GlobalMethods.old_SOM_kg[rowwer, coller, GlobalMethods.max_soil_layers - 1] = 0;
                 GlobalMethods.young_SOM_kg[rowwer, coller, GlobalMethods.max_soil_layers - 1] = 0;
@@ -4008,32 +3987,32 @@ namespace LORICA4
             //first calculate total soil mass to calculate mass percentages for the size fractions
             for (i = 1; i < 5; i++)
             {
-                soil_mass += texture_kg[rowwer, coller, lay1, i];
+                soil_mass += GlobalMethods.texture_kg[rowwer, coller, lay1, i];
             }
             soil_mass += GlobalMethods.old_SOM_kg[rowwer, coller, lay1] + GlobalMethods.young_SOM_kg[rowwer, coller, lay1];
             //if (GlobalMethods.t == 6 && row == 193 && col == 58) { Debug.WriteLine("A " + row + " " + col + " soil mass " + soil_mass); displaysoil(row, col); }
             if (soil_mass > 0)
             {
-                GlobalMethods.bulkdensity[rowwer, coller, lay1] = bulk_density_calc(texture_kg[rowwer, coller, lay1, 0], texture_kg[rowwer, coller, lay1, 1], texture_kg[rowwer, coller, lay1, 2], texture_kg[rowwer, coller, lay1, 3], texture_kg[rowwer, coller, lay1, 4], GlobalMethods.old_SOM_kg[rowwer, coller, lay1], GlobalMethods.young_SOM_kg[rowwer, coller, lay1], depth_m);
-                //sand_fraction = texture_kg[rowwer, coller, lay1, 1] / soil_mass;
-                //silt_fraction = texture_kg[rowwer, coller, lay1, 2] / soil_mass;
+                GlobalMethods.bulkdensity[rowwer, coller, lay1] = bulk_density_calc(GlobalMethods.texture_kg[rowwer, coller, lay1, 0], GlobalMethods.texture_kg[rowwer, coller, lay1, 1], GlobalMethods.texture_kg[rowwer, coller, lay1, 2], GlobalMethods.texture_kg[rowwer, coller, lay1, 3], GlobalMethods.texture_kg[rowwer, coller, lay1, 4], GlobalMethods.old_SOM_kg[rowwer, coller, lay1], GlobalMethods.young_SOM_kg[rowwer, coller, lay1], depth_m);
+                //sand_fraction = GlobalMethods.texture_kg[rowwer, coller, lay1, 1] / soil_mass;
+                //silt_fraction = GlobalMethods.texture_kg[rowwer, coller, lay1, 2] / soil_mass;
                 //combined_fraction = sand_fraction + 0.76 * silt_fraction;
                 //GlobalMethods.bulkdensity[rowwer, coller, lay1] = 1000 * (1.35 + 0.00452 * 100 * combined_fraction + Math.Pow(100 * combined_fraction - 44.65, 2) * -0.0000614);  // in kg/m3
                 ////now coarse fragment correction
 
-                //GlobalMethods.bulkdensity[rowwer, coller, lay1] = (soil_mass + texture_kg[rowwer, coller, lay1, 0]) / ((soil_mass / GlobalMethods.bulkdensity[rowwer, coller, lay1]) + (texture_kg[rowwer, coller, lay1, 0] / 2700)); // ooit through interface              
+                //GlobalMethods.bulkdensity[rowwer, coller, lay1] = (soil_mass + GlobalMethods.texture_kg[rowwer, coller, lay1, 0]) / ((soil_mass / GlobalMethods.bulkdensity[rowwer, coller, lay1]) + (GlobalMethods.texture_kg[rowwer, coller, lay1, 0] / 2700)); // ooit through interface              
                 // if (GlobalMethods.t == 6 && row == 193 && col == 58) { Debug.WriteLine("B " + row + " " + col + " soil mass " + soil_mass); }
             }
             else
             {
                 //either there is no soil at all, or there is only coarse material
-                if (texture_kg[rowwer, coller, lay1, 0] > 0)
+                if (GlobalMethods.texture_kg[rowwer, coller, lay1, 0] > 0)
                 {
                     GlobalMethods.bulkdensity[rowwer, coller, lay1] = 2700;   //kg/m3
                 }
             }
             // if (GlobalMethods.t == 6 && row == 193 && col == 58) { Debug.WriteLine("C " + row + " " + col + " soil mass " + soil_mass); }
-            soil_mass += texture_kg[rowwer, coller, lay1, 0];
+            soil_mass += GlobalMethods.texture_kg[rowwer, coller, lay1, 0];
             if (soil_mass == 0)
             {
                 thickness = 0;
@@ -4053,7 +4032,7 @@ namespace LORICA4
             {
                 for (int ii = 0; ii < GlobalMethods.n_texture_classes; ii++)
                 {
-                    tot_mass += texture_kg[rowmass, colmass, lay, ii];
+                    tot_mass += GlobalMethods.texture_kg[rowmass, colmass, lay, ii];
                 }
                 tot_mass += GlobalMethods.old_SOM_kg[rowmass, colmass, lay];
                 tot_mass += GlobalMethods.young_SOM_kg[rowmass, colmass, lay];
@@ -4067,7 +4046,7 @@ namespace LORICA4
 
             for (int ii = 0; ii < 5; ii++)
             {
-                tot_mass += texture_kg[rowmass, colmass, laymass, ii];
+                tot_mass += GlobalMethods.texture_kg[rowmass, colmass, laymass, ii];
             }
             tot_mass += GlobalMethods.old_SOM_kg[rowmass, colmass, laymass];
             tot_mass += GlobalMethods.young_SOM_kg[rowmass, colmass, laymass];
@@ -4081,7 +4060,7 @@ namespace LORICA4
 
             for (int ii = 1; ii < 5; ii++)
             {
-                tot_mass += texture_kg[rowmass, colmass, laymass, ii];
+                tot_mass += GlobalMethods.texture_kg[rowmass, colmass, laymass, ii];
             }
             tot_mass += GlobalMethods.old_SOM_kg[rowmass, colmass, laymass];
             tot_mass += GlobalMethods.young_SOM_kg[rowmass, colmass, laymass];
@@ -4103,7 +4082,7 @@ namespace LORICA4
                         {
                             for (int tex = 0; tex < GlobalMethods.n_texture_classes; tex++)
                             {
-                                if (texture_kg[row, col, lay, tex] < 0) { neg = true; }
+                                if (GlobalMethods.GlobalMethods.texture_kg[row, col, lay, tex] < 0) { neg = true; }
                             }
                         }
                     }
@@ -4125,7 +4104,7 @@ namespace LORICA4
             {
                 for (int colmass = 0; colmass < GlobalMethods.nc; colmass++)
                 {
-                    for (ii = 0; ii < 5; ii++)
+                    for (int ii = 0; ii < 5; ii++)
                     {
                         tot_mass += GlobalMethods.sediment_in_transport_kg[rowmass, colmass, ii];
                     }
@@ -4140,7 +4119,7 @@ namespace LORICA4
         double mass_in_transport_row_col(int row1, int col1)
         {
             double tot_mass = 0;
-            for (ii = 0; ii < 5; ii++)
+            for (int ii = 0; ii < 5; ii++)
             {
                 tot_mass += GlobalMethods.sediment_in_transport_kg[row1, col1, ii];
             }
@@ -4160,9 +4139,9 @@ namespace LORICA4
                 {
                     for (int lay = 0; lay < GlobalMethods.max_soil_layers; lay++)
                     {
-                        for (ii = 0; ii < 5; ii++)
+                        for (int ii = 0; ii < 5; ii++)
                         {
-                            tot_mass += texture_kg[rowmass, colmass, lay, ii];
+                            tot_mass += GlobalMethods.texture_kg[rowmass, colmass, lay, ii];
                         }
                         tot_mass += GlobalMethods.old_SOM_kg[rowmass, colmass, lay];
                         tot_mass += GlobalMethods.young_SOM_kg[rowmass, colmass, lay];
@@ -4258,10 +4237,10 @@ namespace LORICA4
                 for (laynum = GlobalMethods.max_soil_layers - 1; laynum >= lay1 + 2; laynum--)  // we want to clear layer lay1+1 (so we run through move-receiving layers from below up to lay1+2). 
                                                                                   //This means that layer laynum+1, into which we want to split, will be evacuated and will give its values to laynum+2;
                 {
-                    // Debug.WriteLine("sl2a, laynum = "+laynum+", lay1+2 = "+lay1 + 2+"tex lay 19 =" + texture_kg[rowwer,coller,19,2]);
+                    // Debug.WriteLine("sl2a, laynum = "+laynum+", lay1+2 = "+lay1 + 2+"tex lay 19 =" + GlobalMethods.texture_kg[rowwer,coller,19,2]);
                     for (i = 0; i < 5; i++)
                     {
-                        texture_kg[rowwer, coller, laynum, i] = texture_kg[rowwer, coller, laynum - 1, i];
+                        GlobalMethods.texture_kg[rowwer, coller, laynum, i] = GlobalMethods.texture_kg[rowwer, coller, laynum - 1, i];
                     }
                     // Debug.WriteLine("sl2b, ");
                     GlobalMethods.old_SOM_kg[rowwer, coller, laynum] = GlobalMethods.old_SOM_kg[rowwer, coller, laynum - 1];
@@ -4278,12 +4257,12 @@ namespace LORICA4
                     if (div > 1) { div = 1; }
                     for (i = 0; i < 5; i++)
                     {
-                        texture_kg[rowwer, coller, lay1 + 1, i] += texture_kg[rowwer, coller, lay1, i] * (1 - div); texture_kg[rowwer, coller, lay1, i] *= div;
-                        if (double.IsNaN(texture_kg[rowwer, coller, lay1, i]))
+                        GlobalMethods.texture_kg[rowwer, coller, lay1 + 1, i] += GlobalMethods.texture_kg[rowwer, coller, lay1, i] * (1 - div); GlobalMethods.texture_kg[rowwer, coller, lay1, i] *= div;
+                        if (double.IsNaN(GlobalMethods.texture_kg[rowwer, coller, lay1, i]))
                         {
                             Debug.WriteLine("err_spl1");
                         }
-                        if (double.IsNaN(texture_kg[rowwer, coller, lay1 + 1, i]))
+                        if (double.IsNaN(GlobalMethods.texture_kg[rowwer, coller, lay1 + 1, i]))
                         {
                             Debug.WriteLine("err_spl2");
                         }
@@ -4298,7 +4277,7 @@ namespace LORICA4
                 {
                     for (i = 0; i < 5; i++)
                     {
-                        texture_kg[rowwer, coller, lay1 + 1, i] = texture_kg[rowwer, coller, lay1, i] / 2; texture_kg[rowwer, coller, lay1, i] /= 2;
+                        GlobalMethods.texture_kg[rowwer, coller, lay1 + 1, i] = GlobalMethods.texture_kg[rowwer, coller, lay1, i] / 2; GlobalMethods.texture_kg[rowwer, coller, lay1, i] /= 2;
                     }
                     GlobalMethods.old_SOM_kg[rowwer, coller, lay1 + 1] = GlobalMethods.old_SOM_kg[rowwer, coller, lay1] / 2; GlobalMethods.old_SOM_kg[rowwer, coller, lay1] /= 2;
                     GlobalMethods.young_SOM_kg[rowwer, coller, lay1 + 1] = GlobalMethods.young_SOM_kg[rowwer, coller, lay1] / 2; GlobalMethods.young_SOM_kg[rowwer, coller, lay1] /= 2;
@@ -4353,7 +4332,7 @@ namespace LORICA4
             {
                 for (i = 0; i < 5; i++)
                 {
-                    texture_kg[rowwer, coller, laynum, i] = texture_kg[rowwer, coller, laynum - 1, i];
+                    GlobalMethods.texture_kg[rowwer, coller, laynum, i] = GlobalMethods.texture_kg[rowwer, coller, laynum - 1, i];
                 }
                 GlobalMethods.old_SOM_kg[rowwer, coller, laynum] = GlobalMethods.old_SOM_kg[rowwer, coller, laynum - 1];
                 GlobalMethods.young_SOM_kg[rowwer, coller, laynum] = GlobalMethods.young_SOM_kg[rowwer, coller, laynum - 1];
@@ -4364,7 +4343,7 @@ namespace LORICA4
             frac_soil = 1 - frac_ap;
             for (i = 0; i < 5; i++)
             {
-                texture_kg[rowwer, coller, lay1 + 1, i] = texture_kg[rowwer, coller, lay1, i] * frac_soil; texture_kg[rowwer, coller, lay1, i] *= frac_ap;
+                GlobalMethods.texture_kg[rowwer, coller, lay1 + 1, i] = GlobalMethods.texture_kg[rowwer, coller, lay1, i] * frac_soil; GlobalMethods.texture_kg[rowwer, coller, lay1, i] *= frac_ap;
             }
             GlobalMethods.old_SOM_kg[rowwer, coller, lay1 + 1] = GlobalMethods.old_SOM_kg[rowwer, coller, lay1] / 2; GlobalMethods.old_SOM_kg[rowwer, coller, lay1] /= 2;
             GlobalMethods.young_SOM_kg[rowwer, coller, lay1 + 1] = GlobalMethods.young_SOM_kg[rowwer, coller, lay1] / 2; GlobalMethods.young_SOM_kg[rowwer, coller, lay1] /= 2;
@@ -4412,25 +4391,25 @@ namespace LORICA4
                                 {
                                     int tempclass = tex_class;
                                     // calculate the mass involved in physical weathering
-                                    weathered_mass_kg = texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * Math.Exp(-Cone * depth) * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
+                                    weathered_mass_kg = GlobalMethods.texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * Math.Exp(-Cone * depth) * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
                                     total_phys_weathered_mass_kg += weathered_mass_kg;
                                     //Debug.WriteLine(" weathered mass is " + weathered_mass + " for class " + tempclass );
                                     // calculate the products involved
                                     if (tex_class == 0)
                                     {
-                                        texture_kg[row, tempcol, templayer, tempclass + 1] += 0.975 * weathered_mass_kg;
-                                        texture_kg[row, tempcol, templayer, tempclass + 2] += 0.025 * weathered_mass_kg;
+                                        GlobalMethods.texture_kg[row, tempcol, templayer, tempclass + 1] += 0.975 * weathered_mass_kg;
+                                        GlobalMethods.texture_kg[row, tempcol, templayer, tempclass + 2] += 0.025 * weathered_mass_kg;
                                     }
                                     if (tex_class == 1)
                                     {
-                                        texture_kg[row, tempcol, templayer, tempclass + 1] += 0.96 * weathered_mass_kg;
-                                        texture_kg[row, tempcol, templayer, tempclass + 2] += 0.04 * weathered_mass_kg;
+                                        GlobalMethods.texture_kg[row, tempcol, templayer, tempclass + 1] += 0.96 * weathered_mass_kg;
+                                        GlobalMethods.texture_kg[row, tempcol, templayer, tempclass + 2] += 0.04 * weathered_mass_kg;
                                     }
                                     if (tex_class == 2)
                                     {
-                                        texture_kg[row, tempcol, templayer, tempclass + 1] += weathered_mass_kg;
+                                        GlobalMethods.texture_kg[row, tempcol, templayer, tempclass + 1] += weathered_mass_kg;
                                     }
-                                    texture_kg[row, tempcol, templayer, tempclass] -= weathered_mass_kg;
+                                    GlobalMethods.texture_kg[row, tempcol, templayer, tempclass] -= weathered_mass_kg;
                                 }
                                 depth += GlobalMethods.layerthickness_m[row, tempcol, templayer] / 2;
                             }
@@ -4482,11 +4461,11 @@ namespace LORICA4
                                 tex_class = 0;
                                 int tempclass = tex_class;
                                 // calculate the mass involved in physical weathering
-                                weathered_mass_kg = texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * Math.Exp(-Cone * depth) * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
+                                weathered_mass_kg = GlobalMethods.texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * Math.Exp(-Cone * depth) * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
                                 //Debug.WriteLine(" weathered mass is " + weathered_mass + " for class " + tempclass );
                                 // calculate the products involved
-                                texture_kg[row, tempcol, templayer, tempclass + 2] += 0.1 * weathered_mass_kg;
-                                texture_kg[row, tempcol, templayer, tempclass] -= weathered_mass_kg;
+                                GlobalMethods.texture_kg[row, tempcol, templayer, tempclass + 2] += 0.1 * weathered_mass_kg;
+                                GlobalMethods.texture_kg[row, tempcol, templayer, tempclass] -= weathered_mass_kg;
                             }
                         }
                     }  //);
@@ -4508,7 +4487,7 @@ namespace LORICA4
                         if (GlobalMethods.tillfields[row, col] == 1)
                         {
                             //deposition in kg/m2/y is 0.063 
-                            texture_kg[row, col, 0, 1] += 0.063 * GlobalMethods.dx * GlobalMethods.dx;
+                            GlobalMethods.texture_kg[row, col, 0, 1] += 0.063 * GlobalMethods.dx * GlobalMethods.dx;
                         }
                     }
                 }
@@ -4538,57 +4517,57 @@ namespace LORICA4
                             depth += GlobalMethods.layerthickness_m[row, col, layer] / 2;
                             for (tex_class = 1; tex_class <= 4; tex_class++) // only sand, silt, clay and fine clay are chemically weathered
                             {
-                                weathered_mass_kg = texture_kg[row, col, layer, tex_class] * chemical_weathering_constant / 10 * Math.Exp(-Cthree * depth) * Cfour * specific_area[tex_class] * dt;
+                                weathered_mass_kg = GlobalMethods.texture_kg[row, col, layer, tex_class] * chemical_weathering_constant / 10 * Math.Exp(-Cthree * depth) * Cfour * specific_area[tex_class] * dt;
 
-                                if (guiVariables.Daily_Water) { weathered_mass_kg *= waterfactor[row, col]; }
+                                if (daily_water.Checked) { weathered_mass_kg *= waterfactor[row, col]; }
 
                                 //Debug.WriteLine(" weath mass for layer " + layer + " class " + tex_class + " is " + weathered_mass_kg + " " + Math.Exp(-Cthree * depth));
                                 // note that the chem_weath constant is in kg/m2 mineral surface / y (in contrast to the original value from Salvador Blanes (mol/m2 mineral/s)
-                                if (weathered_mass_kg > texture_kg[row, col, layer, tex_class]) { weathered_mass_kg = texture_kg[row, col, layer, tex_class]; }
+                                if (weathered_mass_kg > GlobalMethods.texture_kg[row, col, layer, tex_class]) { weathered_mass_kg = GlobalMethods.texture_kg[row, col, layer, tex_class]; }
                                 total_chem_weathered_mass_kg += weathered_mass_kg;
-                                texture_kg[row, col, layer, tex_class] -= weathered_mass_kg;
+                                GlobalMethods.texture_kg[row, col, layer, tex_class] -= weathered_mass_kg;
 
                                 //the following code accounts for the change in average size of the weathered class, 
                                 //and the fact that a fraction of it therefore falls into a finer class as well
 
                                 if (tex_class == 1)
                                 {
-                                    if (texture_kg[row, col, layer, tex_class] > 0.0000156252 * weathered_mass_kg)
+                                    if (GlobalMethods.texture_kg[row, col, layer, tex_class] > 0.0000156252 * weathered_mass_kg)
                                     {
 
-                                        texture_kg[row, col, layer, tex_class] -= 0.0000156252 * weathered_mass_kg;
-                                        texture_kg[row, col, layer, tex_class + 1] += 0.0000156252 * weathered_mass_kg;
+                                        GlobalMethods.texture_kg[row, col, layer, tex_class] -= 0.0000156252 * weathered_mass_kg;
+                                        GlobalMethods.texture_kg[row, col, layer, tex_class + 1] += 0.0000156252 * weathered_mass_kg;
                                     }
                                     else
                                     {
-                                        texture_kg[row, col, layer, tex_class + 1] += texture_kg[row, col, layer, tex_class];
-                                        texture_kg[row, col, layer, tex_class] = 0;
+                                        GlobalMethods.texture_kg[row, col, layer, tex_class + 1] += GlobalMethods.texture_kg[row, col, layer, tex_class];
+                                        GlobalMethods.texture_kg[row, col, layer, tex_class] = 0;
                                     }
                                 }
                                 if (tex_class == 2)
                                 {
-                                    if (texture_kg[row, col, layer, tex_class] > 0.0000640041 * weathered_mass_kg)
+                                    if (GlobalMethods.texture_kg[row, col, layer, tex_class] > 0.0000640041 * weathered_mass_kg)
                                     {
-                                        texture_kg[row, col, layer, tex_class] -= 0.0000640041 * weathered_mass_kg;
-                                        texture_kg[row, col, layer, tex_class + 1] += 0.0000640041 * weathered_mass_kg;
+                                        GlobalMethods.texture_kg[row, col, layer, tex_class] -= 0.0000640041 * weathered_mass_kg;
+                                        GlobalMethods.texture_kg[row, col, layer, tex_class + 1] += 0.0000640041 * weathered_mass_kg;
                                     }
                                     else
                                     {
-                                        texture_kg[row, col, layer, tex_class + 1] += texture_kg[row, col, layer, tex_class];
-                                        texture_kg[row, col, layer, tex_class] = 0;
+                                        GlobalMethods.texture_kg[row, col, layer, tex_class + 1] += GlobalMethods.texture_kg[row, col, layer, tex_class];
+                                        GlobalMethods.texture_kg[row, col, layer, tex_class] = 0;
                                     }
                                 }
                                 if (tex_class == 3)
                                 {
-                                    if (texture_kg[row, col, layer, tex_class] > 0.000125 * weathered_mass_kg)
+                                    if (GlobalMethods.texture_kg[row, col, layer, tex_class] > 0.000125 * weathered_mass_kg)
                                     {
-                                        texture_kg[row, col, layer, tex_class] -= 0.000125 * weathered_mass_kg;
-                                        texture_kg[row, col, layer, tex_class + 1] += 0.000125 * weathered_mass_kg;
+                                        GlobalMethods.texture_kg[row, col, layer, tex_class] -= 0.000125 * weathered_mass_kg;
+                                        GlobalMethods.texture_kg[row, col, layer, tex_class + 1] += 0.000125 * weathered_mass_kg;
                                     }
                                     else
                                     {
-                                        texture_kg[row, col, layer, tex_class + 1] += texture_kg[row, col, layer, tex_class];
-                                        texture_kg[row, col, layer, tex_class] = 0;
+                                        GlobalMethods.texture_kg[row, col, layer, tex_class + 1] += GlobalMethods.texture_kg[row, col, layer, tex_class];
+                                        GlobalMethods.texture_kg[row, col, layer, tex_class] = 0;
                                     }
                                 }
                                 total_weath_mass += weathered_mass_kg;  //leached amount
@@ -4601,8 +4580,8 @@ namespace LORICA4
                             //    Debug.WriteLine(" Warning: more than 100% of leached mass wants to become fine clay. This may indicate an error. Capping at 100%");
                             //    fraction_neoform = 1;
                             //}
-                            //if (guiVariables.Daily_Water) { fraction_neoform *= waterfactor[row,col]; }
-                            //texture_kg[row, col, layer, 4] += total_weath_mass * fraction_neoform;
+                            //if (daily_water.Checked) { fraction_neoform *= waterfactor[row,col]; }
+                            //GlobalMethods.texture_kg[row, col, layer, 4] += total_weath_mass * fraction_neoform;
                             //total_fine_neoformed_mass_kg += total_weath_mass * fraction_neoform;
                             //total_weath_mass -= total_weath_mass * fraction_neoform;
                             //depth += GlobalMethods.layerthickness_m[row, col, layer] / 2;
@@ -4674,7 +4653,7 @@ namespace LORICA4
                                 {
                                     for (int tex = 0; tex < 5; tex++)
                                     {
-                                        layer_0[tex] = texture_kg[row, col, 0, tex];
+                                        layer_0[tex] = GlobalMethods.texture_kg[row, col, 0, tex];
                                     }
                                     layer_0[5] = GlobalMethods.young_SOM_kg[row, col, 0];
                                     layer_0[6] = GlobalMethods.old_SOM_kg[row, col, 0];
@@ -4685,7 +4664,7 @@ namespace LORICA4
                                 //if (layer == 0 & !(GlobalMethods.layerthickness_m[row, col, layer] > 0)) { Debugger.Break(); }
                                 if (total_layer_mass(row, col, layer) > 0)  //this says: if the layer actually exists
                                 {
-                                    for (int prop = 0; prop < 5; prop++) { temp_tex_som_kg[layer, prop] = texture_kg[row, col, layer, prop]; }
+                                    for (int prop = 0; prop < 5; prop++) { temp_tex_som_kg[layer, prop] = GlobalMethods.texture_kg[row, col, layer, prop]; }
                                     temp_tex_som_kg[layer, 5] = GlobalMethods.young_SOM_kg[row, col, layer];
                                     temp_tex_som_kg[layer, 6] = GlobalMethods.old_SOM_kg[row, col, layer];
                                     total_soil_thickness_m += GlobalMethods.layerthickness_m[row, col, layer];
@@ -4696,7 +4675,7 @@ namespace LORICA4
                             } //can parallelize -PT
 
                             //LUX: in the lux case study, we need to know how much litter is hornbeam, i.e. palatable.
-                            if (version_lux_checkbox.Checked)
+                            if (guiVariables.Version_lux_checkbox)
                             {
                                 if (total_young_som_kg + total_old_som_kg > 0)
                                 {
@@ -4709,7 +4688,7 @@ namespace LORICA4
                             }
                             //select vegetation parameters, same as GlobalMethods.creep
                             potential_bioturbation_kg_m2_y = 4.5;
-                            if (guiVariables.Daily_Water)
+                            if (daily_water.Checked)
                             {
                                 if (aridity_vegetation[row, col] < 1) { potential_bioturbation_kg_m2_y = 4 + 0.3; } // grassland
                                 else { potential_bioturbation_kg_m2_y = 4 + 1.3; } // forest
@@ -4718,7 +4697,7 @@ namespace LORICA4
                             // if (findnegativetexture()) { Debugger.Break(); }
 
                             // geen split voor voor depth decay voor verschillende vegetaties. Depth decay van GlobalMethods.creep aanhouden. 
-                            //if(guiVariables.Daily_Water)
+                            //if(daily_water.Checked)
                             //{
                             //    if (aridity_vegetation[row, col] < 1)
                             //    {
@@ -4747,7 +4726,7 @@ namespace LORICA4
 
                             }
                             //LUX: if Luxembourg version: we assume that only hornbeam litter leads to bioturbation. More of it - more bioturbation.
-                            if (version_lux_checkbox.Checked) { local_bioturbation_kg *= lux_hornbeam_OM_litter_fraction; }
+                            if (guiVariables.Version_lux_checkbox) { local_bioturbation_kg *= lux_hornbeam_OM_litter_fraction; }
 
                             total_mass_bioturbed_kg += local_bioturbation_kg;
 
@@ -4788,21 +4767,21 @@ namespace LORICA4
 
                                             if (distance < 0) { Debug.WriteLine(" distance between layers is 0 m at row " + row + " col " + col + " layerdepth " + depth + " otherlayerdepth " + otherdepth); }
 
-                                            if (double.IsNaN(texture_kg[row, col, otherlayer, 1])) { Debug.WriteLine(" texture 1 NaN " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if (double.IsNaN(texture_kg[row, col, otherlayer, 2])) { Debug.WriteLine(" texture 2 NaN " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if (double.IsNaN(texture_kg[row, col, otherlayer, 3])) { Debug.WriteLine(" texture 3 NaN " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if (double.IsNaN(texture_kg[row, col, otherlayer, 4])) { Debug.WriteLine(" texture 4 NaN " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(GlobalMethods.texture_kg[row, col, otherlayer, 1])) { Debug.WriteLine(" texture 1 NaN " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(GlobalMethods.texture_kg[row, col, otherlayer, 2])) { Debug.WriteLine(" texture 2 NaN " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(GlobalMethods.texture_kg[row, col, otherlayer, 3])) { Debug.WriteLine(" texture 3 NaN " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(GlobalMethods.texture_kg[row, col, otherlayer, 4])) { Debug.WriteLine(" texture 4 NaN " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
                                             if (double.IsNaN(GlobalMethods.young_SOM_kg[row, col, otherlayer])) { Debug.WriteLine(" young som NaN " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
                                             if (double.IsNaN(GlobalMethods.old_SOM_kg[row, col, otherlayer])) { Debug.WriteLine(" old som NaN " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
 
-                                            if ((texture_kg[row, col, otherlayer, 1] < 0)) { Debug.WriteLine(" texture 1 null " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if ((texture_kg[row, col, otherlayer, 2] < 0)) { Debug.WriteLine(" texture 2 null " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if ((texture_kg[row, col, otherlayer, 3] < 0)) { Debug.WriteLine(" texture 3 null " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if ((texture_kg[row, col, otherlayer, 4] < 0)) { Debug.WriteLine(" texture 4 null " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if ((GlobalMethods.texture_kg[row, col, otherlayer, 1] < 0)) { Debug.WriteLine(" texture 1 null " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if ((GlobalMethods.texture_kg[row, col, otherlayer, 2] < 0)) { Debug.WriteLine(" texture 2 null " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if ((GlobalMethods.texture_kg[row, col, otherlayer, 3] < 0)) { Debug.WriteLine(" texture 3 null " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if ((GlobalMethods.texture_kg[row, col, otherlayer, 4] < 0)) { Debug.WriteLine(" texture 4 null " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
                                             if ((GlobalMethods.young_SOM_kg[row, col, otherlayer] < 0)) { Debug.WriteLine(" young som null " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
                                             if ((GlobalMethods.old_SOM_kg[row, col, otherlayer] < 0)) { Debug.WriteLine(" old som null " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
 
-                                            if (otherlayer != layer) { mass_distance_sum += (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + GlobalMethods.young_SOM_kg[row, col, otherlayer] + GlobalMethods.old_SOM_kg[row, col, otherlayer]) / distance; }
+                                            if (otherlayer != layer) { mass_distance_sum += (GlobalMethods.texture_kg[row, col, otherlayer, 1] + GlobalMethods.texture_kg[row, col, otherlayer, 2] + GlobalMethods.texture_kg[row, col, otherlayer, 3] + GlobalMethods.texture_kg[row, col, otherlayer, 4] + GlobalMethods.young_SOM_kg[row, col, otherlayer] + GlobalMethods.old_SOM_kg[row, col, otherlayer]) / distance; }
 
                                             otherdepth += GlobalMethods.layerthickness_m[row, col, otherlayer] / 2;
                                             if (double.IsNaN(mass_distance_sum)) { Debug.WriteLine(" B NaN mass distance in bioturbation GlobalMethods.t " + GlobalMethods.t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
@@ -4822,11 +4801,11 @@ namespace LORICA4
                                             distance = Math.Abs(otherdepth - depth);
                                             if (layer != otherlayer)
                                             {
-                                                mass_distance_layer = (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + GlobalMethods.young_SOM_kg[row, col, otherlayer] + GlobalMethods.old_SOM_kg[row, col, otherlayer]) / distance;
+                                                mass_distance_layer = (GlobalMethods.texture_kg[row, col, otherlayer, 1] + GlobalMethods.texture_kg[row, col, otherlayer, 2] + GlobalMethods.texture_kg[row, col, otherlayer, 3] + GlobalMethods.texture_kg[row, col, otherlayer, 4] + GlobalMethods.young_SOM_kg[row, col, otherlayer] + GlobalMethods.old_SOM_kg[row, col, otherlayer]) / distance;
                                             }
                                             else
                                             {
-                                                mass_distance_layer = (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + GlobalMethods.young_SOM_kg[row, col, otherlayer] + GlobalMethods.old_SOM_kg[row, col, otherlayer]) / (GlobalMethods.layerthickness_m[row, col, otherlayer] / 2);
+                                                mass_distance_layer = (GlobalMethods.texture_kg[row, col, otherlayer, 1] + GlobalMethods.texture_kg[row, col, otherlayer, 2] + GlobalMethods.texture_kg[row, col, otherlayer, 3] + GlobalMethods.texture_kg[row, col, otherlayer, 4] + GlobalMethods.young_SOM_kg[row, col, otherlayer] + GlobalMethods.old_SOM_kg[row, col, otherlayer]) / (GlobalMethods.layerthickness_m[row, col, otherlayer] / 2);
                                             }
                                             if (double.IsNaN(mass_distance_layer))
                                             {
@@ -4848,7 +4827,7 @@ namespace LORICA4
                                                 Debug.WriteLine("err_sbt4");
 
                                             }
-                                            fine_otherlayer_mass = texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + GlobalMethods.young_SOM_kg[row, col, otherlayer] + GlobalMethods.old_SOM_kg[row, col, otherlayer];
+                                            fine_otherlayer_mass = GlobalMethods.texture_kg[row, col, otherlayer, 1] + GlobalMethods.texture_kg[row, col, otherlayer, 2] + GlobalMethods.texture_kg[row, col, otherlayer, 3] + GlobalMethods.texture_kg[row, col, otherlayer, 4] + GlobalMethods.young_SOM_kg[row, col, otherlayer] + GlobalMethods.old_SOM_kg[row, col, otherlayer];
                                             if (double.IsNaN(fine_otherlayer_mass)) { Debug.WriteLine(" NaN fine otherlayer mass in bioturbation "); }
                                             if ((fine_otherlayer_mass <= 0))
                                             {
@@ -4882,8 +4861,8 @@ namespace LORICA4
 
                                                     //determine how much mass can be exchanged,. Do not take more than is present in the temporary layer to prevent negative textures in the end
                                                     //Should not happen, mass of top layer should stay constant, but happens anyway
-                                                    dmass_l = (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
-                                                    dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
+                                                    dmass_l = (fromlayertomixture_kg / fine_layer_mass) * GlobalMethods.texture_kg[row, col, layer, prop];
+                                                    dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * GlobalMethods.texture_kg[row, col, otherlayer, prop];
 
                                                     if (dmass_l > temp_tex_som_kg[layer, prop]) { dmass_l = temp_tex_som_kg[layer, prop]; }
                                                     if (dmass_ol > temp_tex_som_kg[otherlayer, prop]) { dmass_ol = temp_tex_som_kg[otherlayer, prop]; }
@@ -4896,15 +4875,15 @@ namespace LORICA4
                                                     temp_tex_som_kg[layer, prop] -= dmass_l;
                                                     temp_tex_som_kg[otherlayer, prop] -= dmass_ol;
 
-                                                    //mixture_kg[prop] += (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
-                                                    //if ((fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop] < 0) { Debugger.Break(); }
-                                                    //massfromlayer += (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
-                                                    //mixture_kg[prop] += (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
-                                                    //massfromotherlayer += (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
-                                                    //if ((fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop] < 0) { Debugger.Break(); }
+                                                    //mixture_kg[prop] += (fromlayertomixture_kg / fine_layer_mass) * GlobalMethods.texture_kg[row, col, layer, prop];
+                                                    //if ((fromlayertomixture_kg / fine_layer_mass) * GlobalMethods.texture_kg[row, col, layer, prop] < 0) { Debugger.Break(); }
+                                                    //massfromlayer += (fromlayertomixture_kg / fine_layer_mass) * GlobalMethods.texture_kg[row, col, layer, prop];
+                                                    //mixture_kg[prop] += (fromotherlayertomixture_kg / fine_otherlayer_mass) * GlobalMethods.texture_kg[row, col, otherlayer, prop];
+                                                    //massfromotherlayer += (fromotherlayertomixture_kg / fine_otherlayer_mass) * GlobalMethods.texture_kg[row, col, otherlayer, prop];
+                                                    //if ((fromotherlayertomixture_kg / fine_otherlayer_mass) * GlobalMethods.texture_kg[row, col, otherlayer, prop] < 0) { Debugger.Break(); }
 
-                                                    //temp_tex_som_kg[otherlayer, prop] -= (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
-                                                    //temp_tex_som_kg[layer, prop] -= (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
+                                                    //temp_tex_som_kg[otherlayer, prop] -= (fromotherlayertomixture_kg / fine_otherlayer_mass) * GlobalMethods.texture_kg[row, col, otherlayer, prop];
+                                                    //temp_tex_som_kg[layer, prop] -= (fromlayertomixture_kg / fine_layer_mass) * GlobalMethods.texture_kg[row, col, layer, prop];
 
                                                     if (temp_tex_som_kg[layer, prop] < 0)
                                                     {
@@ -5044,7 +5023,7 @@ namespace LORICA4
                                     depth += GlobalMethods.layerthickness_m[row, col, layer] / 2;
                                 }
                             } // end for layer
-                              // now we know the new, bioturbated amounts in every layer in this row col, let's store them in the main texture_kg variables
+                              // now we know the new, bioturbated amounts in every layer in this row col, let's store them in the main GlobalMethods.texture_kg variables
                             for (layer = 0; layer < GlobalMethods.max_soil_layers; layer++)
                             {
                                 if (layer == 0 & temp_tex_som_kg[0, 2] == 0)
@@ -5063,7 +5042,7 @@ namespace LORICA4
                                     {
                                         Debug.WriteLine("err_sbt17");
                                     }
-                                    texture_kg[row, col, layer, prop] = temp_tex_som_kg[layer, prop];
+                                    GlobalMethods.texture_kg[row, col, layer, prop] = temp_tex_som_kg[layer, prop];
                                     layer_0_after[prop] = temp_tex_som_kg[layer, prop];
                                     temp_tex_som_kg[layer, prop] = 0;
                                 }
@@ -5156,7 +5135,7 @@ namespace LORICA4
                 double dz_dx, dz_dy, slope_local, dynamic_TWI;
                 int layer;
                 total_OM_input_kg = 0;
-                if (version_lux_checkbox.Checked)
+                if (guiVariables.Version_lux_checkbox)
                 {
                     calculate_TPI(7);
                     double a = -0.33;
@@ -5183,7 +5162,7 @@ namespace LORICA4
                     //Parallel.For(0, GlobalMethods.nc, i =>                    //we parallelize over cols
                     for (col = 0; col < GlobalMethods.nc; col++)
                     {
-                        if (guiVariables.Daily_Water)
+                        if (daily_water.Checked)
                         {
                             if (aridity_vegetation[row, col] < 1) { potential_OM_input = 0.67; } // grassland
                             else { potential_OM_input = 0.62; } // forest
@@ -5211,7 +5190,7 @@ namespace LORICA4
                                 total_OM_input_index = -1 / OM_input_depth_decay_constant * (Math.Exp(-OM_input_depth_decay_constant * (total_soil_thickness)) - 1);
                                 layer_OM_input_kg = (layer_OM_input_index / total_OM_input_index) * local_OM_input_kg;
 
-                                if (version_lux_checkbox.Checked)
+                                if (guiVariables.Version_lux_checkbox)
                                 {
                                     GlobalMethods.young_SOM_kg[row, col, layer] += layer_OM_input_kg * (GlobalMethods.hornbeam_cover_fraction[row, col]);
                                     GlobalMethods.old_SOM_kg[row, col, layer] += layer_OM_input_kg * (1 - GlobalMethods.hornbeam_cover_fraction[row, col]);
@@ -5264,7 +5243,7 @@ namespace LORICA4
             //possibly a function of local wetness / infiltration, but for now not/.
             double Iavg = 0, Imin = 10000000, Imax = 0;
 
-            if (guiVariables.Daily_Water)
+            if (daily_water.Checked)
             {
                 int Icount = 0;
                 for (row = 0; row < GlobalMethods.nr; row++)
@@ -5299,27 +5278,27 @@ namespace LORICA4
                         {
                             if (GlobalMethods.layerthickness_m[row, col, layer] > 0 && GlobalMethods.layerthickness_m[row, col, layer + 1] > 0)  // both source and sink layers have to exist.
                             {
-                                if (texture_kg[row, col, layer, 4] > 0)
+                                if (GlobalMethods.texture_kg[row, col, layer, 4] > 0)
                                 {
                                     depth += GlobalMethods.layerthickness_m[row, col, layer] / 2;
-                                    double totalweight = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
+                                    double totalweight = GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
                                     //calculate the mass of eluviation
-                                    if (CT_depth_decay_checkbox.Checked) { eluviated_kg = max_eluviation * (1 - Math.Exp(-Cclay * texture_kg[row, col, layer, 4] / totalweight)) * Math.Exp(-ct_depthdec * depth) * dt * GlobalMethods.dx * GlobalMethods.dx; }
-                                    else { eluviated_kg = max_eluviation * (1 - Math.Exp(-Cclay * texture_kg[row, col, layer, 4] / totalweight)) * dt * GlobalMethods.dx * GlobalMethods.dx; }
+                                    if (CT_depth_decay_checkbox.Checked) { eluviated_kg = max_eluviation * (1 - Math.Exp(-Cclay * GlobalMethods.texture_kg[row, col, layer, 4] / totalweight)) * Math.Exp(-ct_depthdec * depth) * dt * GlobalMethods.dx * GlobalMethods.dx; }
+                                    else { eluviated_kg = max_eluviation * (1 - Math.Exp(-Cclay * GlobalMethods.texture_kg[row, col, layer, 4] / totalweight)) * dt * GlobalMethods.dx * GlobalMethods.dx; }
                                     //
-                                    if (guiVariables.Daily_Water)
+                                    if (daily_water.Checked)
                                     {
                                         eluviated_kg *= waterfactor[row, col];
                                         ;
 
                                     }
 
-                                    if (eluviated_kg > texture_kg[row, col, layer, 4]) { eluviated_kg = texture_kg[row, col, layer, 4]; }
+                                    if (eluviated_kg > GlobalMethods.texture_kg[row, col, layer, 4]) { eluviated_kg = GlobalMethods.texture_kg[row, col, layer, 4]; }
 
 
                                     total_fine_eluviated_mass_kg += eluviated_kg;
-                                    texture_kg[row, col, layer, 4] -= eluviated_kg;
-                                    texture_kg[row, col, layer + 1, 4] += eluviated_kg;
+                                    GlobalMethods.texture_kg[row, col, layer, 4] -= eluviated_kg;
+                                    GlobalMethods.texture_kg[row, col, layer + 1, 4] += eluviated_kg;
                                     //improve for lowers - where does the fine clay go?
                                     //count the amount of clay and leached chem exiting catchment
                                     // SOIL possibly improve with coarse clay fraction
@@ -5364,7 +5343,7 @@ namespace LORICA4
                                 Debug.WriteLine("ctj1");
                             }
 
-                            if (guiVariables.Daily_Water)
+                            if (daily_water.Checked)
                             {
                                 local_I = Math.Max(Iy[row, col], 0);
                                 ct_adv0 = ct_adv0_all * (1 - Math.Exp(-local_I / (2.0 * (1.0 / 3)))); // Exponential function to determine v0, based on infiltration. The function approaches a v0 of 1. I of 0.5~v0 of 0.5. the 2 indicates the range of the variogram. 
@@ -5377,14 +5356,14 @@ namespace LORICA4
                                 if (GlobalMethods.layerthickness_m[row, col, layer] > 0)  // source layer has to exist. Adjusted for free drainage, receiving layer doesn'GlobalMethods.t have to be present
                                 {
 
-                                    if (texture_kg[row, col, layer, 3] > 0)
+                                    if (GlobalMethods.texture_kg[row, col, layer, 3] > 0)
                                     {
                                         depth += GlobalMethods.layerthickness_m[row, col, layer] / 2;
 
 
 
-                                        f_clay = texture_kg[row, col, layer, 3] / (texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3]); // fine earth fraction of clay. No fine clay
-                                        f_oc = (GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer]) / (GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3]); // fine earth fraction of clay. No fine clay
+                                        f_clay = GlobalMethods.texture_kg[row, col, layer, 3] / (GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3]); // fine earth fraction of clay. No fine clay
+                                        f_oc = (GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer]) / (GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3]); // fine earth fraction of clay. No fine clay
                                         f_oc /= 1.72; // calculate from SOM to SOC: https://www.researchgate.net/post/How_can_I_convert_percent_soil_organic_matter_into_soil_C
 
                                         if ((layer + 1) < GlobalMethods.max_soil_layers)
@@ -5411,20 +5390,20 @@ namespace LORICA4
                                         eluviated_kg = ct_advi / 100 * GlobalMethods.bulkdensity[row, col, layer] * f_clay * GlobalMethods.dx * GlobalMethods.dx;
                                         // eluviated_kg = 1 / d_depth * (ct_advi * f_clay) * 1000 / GlobalMethods.bulkdensity[row, col, layer];
 
-                                        if (eluviated_kg > (texture_kg[row, col, layer, 3] * wdclay))
+                                        if (eluviated_kg > (GlobalMethods.texture_kg[row, col, layer, 3] * wdclay))
                                         {
-                                            eluviated_kg = texture_kg[row, col, layer, 3] * wdclay;
+                                            eluviated_kg = GlobalMethods.texture_kg[row, col, layer, 3] * wdclay;
                                         }
 
 
-                                        if (eluviated_kg > texture_kg[row, col, layer, 3]) { eluviated_kg = texture_kg[row, col, layer, 3]; } // correct for too muchy clay eluviating, not necessary anymore due to limitation water-dispersible clay
+                                        if (eluviated_kg > GlobalMethods.texture_kg[row, col, layer, 3]) { eluviated_kg = GlobalMethods.texture_kg[row, col, layer, 3]; } // correct for too muchy clay eluviating, not necessary anymore due to limitation water-dispersible clay
 
 
 
 
                                         total_fine_eluviated_mass_kg += eluviated_kg;
-                                        texture_kg[row, col, layer, 3] -= eluviated_kg;
-                                        if ((layer + 1) < GlobalMethods.max_soil_layers) { texture_kg[row, col, layer + 1, 3] += eluviated_kg; } // in case there is a lower receiving layer
+                                        GlobalMethods.texture_kg[row, col, layer, 3] -= eluviated_kg;
+                                        if ((layer + 1) < GlobalMethods.max_soil_layers) { GlobalMethods.texture_kg[row, col, layer + 1, 3] += eluviated_kg; } // in case there is a lower receiving layer
 
 
                                         depth += GlobalMethods.layerthickness_m[row, col, layer] / 2;
@@ -5471,13 +5450,13 @@ namespace LORICA4
                         {
                             if (GlobalMethods.layerthickness_m[row, col, layer] > 0 && GlobalMethods.layerthickness_m[row, col, layer + 1] > 0)  // both source and sink layers have to exist.
                             {
-                                if (texture_kg[row, col, layer, 2] > 0)
+                                if (GlobalMethods.texture_kg[row, col, layer, 2] > 0)
                                 {
                                     //calculate the mass of eluviation
-                                    eluviated_kg = max_eluviation * (1 - Math.Exp(-Cclay * texture_kg[row, col, layer, 2])) * dt * GlobalMethods.dx * GlobalMethods.dx;
-                                    texture_kg[row, col, layer, 2] -= eluviated_kg;
-                                    if (texture_kg[row, col, layer, 2] < 0) { Debug.WriteLine("error: too much clay eluviation "); }
-                                    texture_kg[row, col, layer + 1, 2] += eluviated_kg;
+                                    eluviated_kg = max_eluviation * (1 - Math.Exp(-Cclay * GlobalMethods.texture_kg[row, col, layer, 2])) * dt * GlobalMethods.dx * GlobalMethods.dx;
+                                    GlobalMethods.texture_kg[row, col, layer, 2] -= eluviated_kg;
+                                    if (GlobalMethods.texture_kg[row, col, layer, 2] < 0) { Debug.WriteLine("error: too much clay eluviation "); }
+                                    GlobalMethods.texture_kg[row, col, layer + 1, 2] += eluviated_kg;
                                     //improve for lowers
                                     //count the amount of clay and leached chem exiting catchment
                                     // SOIL possibly improve with coarse clay fraction
@@ -5571,14 +5550,14 @@ namespace LORICA4
                     depth += GlobalMethods.layerthickness_m[row, col, layer] / 2;
                     if (depth <= lp4[5, 0])
                     {
-                        double totalweight = texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4]; // calibrate on fine soil fraction only
+                        double totalweight = GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4]; // calibrate on fine soil fraction only
                         while (depth > lp4[lp4_row, 0])
                         {
                             lp4_row++;
                         }
                         lp4_clay = lp4[lp4_row, 1];
 
-                        err = ((texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4]) / totalweight) - lp4_clay;
+                        err = ((GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4]) / totalweight) - lp4_clay;
                         rmse_ct += err * err;
                         me_ct += err;
                         layercount += 1;
@@ -5638,7 +5617,7 @@ namespace LORICA4
             {
                 for (int texNA = 0; texNA < 5; texNA++)
                 {
-                    if (Double.IsNaN(texture_kg[rowNA, colNA, layNA, texNA]) | Double.IsInfinity(texture_kg[rowNA, colNA, layNA, texNA]))
+                    if (Double.IsNaN(GlobalMethods.texture_kg[rowNA, colNA, layNA, texNA]) | Double.IsInfinity(GlobalMethods.texture_kg[rowNA, colNA, layNA, texNA]))
                     {
                         boolNA = true;
                         Debug.WriteLine("NA in row {0}, col {1}, lay {2}, tex {3}", rowNA, colNA, layNA, texNA);
@@ -5866,7 +5845,7 @@ namespace LORICA4
                                                 {
 
                                                     //first, calculate how much we are going to erode. Not as much as we want to if the soil is protected by rocks or plants
-                                                    rock_fraction = texture_kg[row, col, 0, 0] / (texture_kg[row, col, 0, 0] + texture_kg[row, col, 0, 1] + texture_kg[row, col, 0, 2] + texture_kg[row, col, 0, 3] + texture_kg[row, col, 0, 4]);
+                                                    rock_fraction = GlobalMethods.texture_kg[row, col, 0, 0] / (GlobalMethods.texture_kg[row, col, 0, 0] + GlobalMethods.texture_kg[row, col, 0, 1] + GlobalMethods.texture_kg[row, col, 0, 2] + GlobalMethods.texture_kg[row, col, 0, 3] + GlobalMethods.texture_kg[row, col, 0, 4]);
                                                     if (aridity_vegetation[row, col] >= 1) { vegetation_cover_fraction = 1; }
                                                     else { vegetation_cover_fraction = aridity_vegetation[row, col]; }// 
                                                     mass_to_be_eroded = (transport_capacity_kg - total_sediment_in_transport_kg) * Math.Exp(-rock_protection_constant * rock_fraction) * Math.Exp(-bio_protection_constant * vegetation_cover_fraction);
@@ -5890,17 +5869,17 @@ namespace LORICA4
                                                     {
 
                                                         selectivity_fraction = (1 / Math.Pow(upper_particle_size[size], constant_b1)) / sum_diameter_power;    // unit [-]
-                                                        if (texture_kg[row, col, 0, size] >= selectivity_fraction * mass_to_be_eroded)
+                                                        if (GlobalMethods.texture_kg[row, col, 0, size] >= selectivity_fraction * mass_to_be_eroded)
                                                         {    // typical situation
                                                             if (size > 2)
                                                             {
                                                                 clayeroded_0_kg += selectivity_fraction * mass_to_be_eroded;
-                                                                claypresent_0_kg += texture_kg[row, col, 0, size];
+                                                                claypresent_0_kg += GlobalMethods.texture_kg[row, col, 0, size];
 
                                                             }
                                                             mass_difference_input_output[row, col] += selectivity_fraction * mass_to_be_eroded;
                                                             total_mass_eroded[size] += selectivity_fraction * mass_to_be_eroded;
-                                                            texture_kg[row, col, 0, size] -= selectivity_fraction * mass_to_be_eroded;   // unit [kg]
+                                                            GlobalMethods.texture_kg[row, col, 0, size] -= selectivity_fraction * mass_to_be_eroded;   // unit [kg]
                                                             GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += selectivity_fraction * mass_to_be_eroded;  // unit [kg]
                                                             total_ero += selectivity_fraction * mass_to_be_eroded;
 
@@ -5916,37 +5895,37 @@ namespace LORICA4
                                                         {
                                                             // exceptional. If we want to erode more than present in the layer, we will take it from one layer down.
                                                             //this is to avoid exceptionally thin rocky layers blocking all erosion
-                                                            mass_difference_input_output[row, col] += texture_kg[row, col, 0, size];
-                                                            total_mass_eroded[size] += texture_kg[row, col, 0, size];
-                                                            double left = (selectivity_fraction * mass_to_be_eroded) - texture_kg[row, col, 0, size]; // unit [kg]
+                                                            mass_difference_input_output[row, col] += GlobalMethods.texture_kg[row, col, 0, size];
+                                                            total_mass_eroded[size] += GlobalMethods.texture_kg[row, col, 0, size];
+                                                            double left = (selectivity_fraction * mass_to_be_eroded) - GlobalMethods.texture_kg[row, col, 0, size]; // unit [kg]
 
-                                                            GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += texture_kg[row, col, 0, size];
-                                                            total_ero += texture_kg[row, col, 0, size];
+                                                            GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += GlobalMethods.texture_kg[row, col, 0, size];
+                                                            total_ero += GlobalMethods.texture_kg[row, col, 0, size];
 
                                                             if (size > 2)
                                                             {
-                                                                clayeroded_0_kg += texture_kg[row, col, 0, size];
+                                                                clayeroded_0_kg += GlobalMethods.texture_kg[row, col, 0, size];
                                                                 claypresent_0_kg += 0;
                                                             }
 
                                                             // local mass balance
-                                                            local_mass_balance[row + i, col + j, 0] += texture_kg[row, col, 0, size]; // incoming mass next cell
-                                                            local_mass_balance[row, col, 1] += texture_kg[row, col, 0, size]; // outgoing mass current cell
-                                                            local_mass_balance[row, col, 2] += texture_kg[row, col, 0, size]; // eroded mass current cell
+                                                            local_mass_balance[row + i, col + j, 0] += GlobalMethods.texture_kg[row, col, 0, size]; // incoming mass next cell
+                                                            local_mass_balance[row, col, 1] += GlobalMethods.texture_kg[row, col, 0, size]; // outgoing mass current cell
+                                                            local_mass_balance[row, col, 2] += GlobalMethods.texture_kg[row, col, 0, size]; // eroded mass current cell
 
-                                                            texture_kg[row, col, 0, size] = 0;
+                                                            GlobalMethods.texture_kg[row, col, 0, size] = 0;
 
-                                                            if (texture_kg[row, col, 1, size] >= left)
+                                                            if (GlobalMethods.texture_kg[row, col, 1, size] >= left)
                                                             {   // typical
                                                                 mass_difference_input_output[row, col] += left;
                                                                 total_mass_eroded[size] += left;
                                                                 if (size > 2)
                                                                 {
                                                                     clayeroded_1_kg += left;
-                                                                    claypresent_1_kg += texture_kg[row, col, 1, size] - left;
+                                                                    claypresent_1_kg += GlobalMethods.texture_kg[row, col, 1, size] - left;
                                                                 }
 
-                                                                texture_kg[row, col, 1, size] -= left;  // unit [kg]
+                                                                GlobalMethods.texture_kg[row, col, 1, size] -= left;  // unit [kg]
                                                                 GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += left;  // unit [kg]
                                                                 total_ero += left;
 
@@ -5961,25 +5940,25 @@ namespace LORICA4
                                                             else
                                                             {
 
-                                                                total_mass_eroded[size] += texture_kg[row, col, 1, size];
-                                                                mass_difference_input_output[row, col] += texture_kg[row, col, 1, size];
+                                                                total_mass_eroded[size] += GlobalMethods.texture_kg[row, col, 1, size];
+                                                                mass_difference_input_output[row, col] += GlobalMethods.texture_kg[row, col, 1, size];
 
                                                                 if (size > 2)
                                                                 {
-                                                                    clayeroded_1_kg += texture_kg[row, col, 1, size];
+                                                                    clayeroded_1_kg += GlobalMethods.texture_kg[row, col, 1, size];
                                                                     claypresent_1_kg += 0; //MM Leidt dit niet tot delen door nul?
                                                                 }
 
-                                                                GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += texture_kg[row, col, 1, size];// unit [kg] // MM adjusted in water erosion
-                                                                total_ero += texture_kg[row, col, 1, size];
+                                                                GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += GlobalMethods.texture_kg[row, col, 1, size];// unit [kg] // MM adjusted in water erosion
+                                                                total_ero += GlobalMethods.texture_kg[row, col, 1, size];
 
                                                                 // local mass balance
-                                                                local_mass_balance[row + i, col + j, 0] += texture_kg[row, col, 1, size]; // incoming mass next cell
-                                                                local_mass_balance[row, col, 1] += texture_kg[row, col, 1, size]; // outgoing mass current cell
-                                                                local_mass_balance[row, col, 2] += texture_kg[row, col, 1, size]; // eroded mass current cell
+                                                                local_mass_balance[row + i, col + j, 0] += GlobalMethods.texture_kg[row, col, 1, size]; // incoming mass next cell
+                                                                local_mass_balance[row, col, 1] += GlobalMethods.texture_kg[row, col, 1, size]; // outgoing mass current cell
+                                                                local_mass_balance[row, col, 2] += GlobalMethods.texture_kg[row, col, 1, size]; // eroded mass current cell
 
 
-                                                                texture_kg[row, col, 1, size] = 0;
+                                                                GlobalMethods.texture_kg[row, col, 1, size] = 0;
 
                                                             } // end else 
 
@@ -6051,7 +6030,7 @@ namespace LORICA4
                                                         local_mass_balance[row, col, 1] += potential_transported_amount_kg; // outgoing mass current cell
 
 
-                                                        texture_kg[row, col, 0, size] += fraction * GlobalMethods.sediment_in_transport_kg[row, col, size] - potential_transported_amount_kg;        // unit [kg]
+                                                        GlobalMethods.texture_kg[row, col, 0, size] += fraction * GlobalMethods.sediment_in_transport_kg[row, col, size] - potential_transported_amount_kg;        // unit [kg]
                                                         total_dep += fraction * GlobalMethods.sediment_in_transport_kg[row, col, size] - potential_transported_amount_kg;
                                                         GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += potential_transported_amount_kg;                                    // unit [kg]  
 
@@ -6096,6 +6075,7 @@ namespace LORICA4
                                 }
                             } // end j
                         } // end i
+
                         if (fracsum < 0.9999 & !search_nodataneighbour(row, col))
                         {
                             Debug.WriteLine("fracsum = " + fracsum);
@@ -6151,7 +6131,7 @@ namespace LORICA4
                                 total_mass_eroded[size] -= GlobalMethods.sediment_in_transport_kg[row, col, size];
                                 mass_difference_input_output[row, col] -= GlobalMethods.sediment_in_transport_kg[row, col, size];
 
-                                texture_kg[row, col, 0, size] += GlobalMethods.sediment_in_transport_kg[row, col, size];  //all in kg 
+                                GlobalMethods.texture_kg[row, col, 0, size] += GlobalMethods.sediment_in_transport_kg[row, col, size];  //all in kg 
                                 total_dep += GlobalMethods.sediment_in_transport_kg[row, col, size];
 
                                 // local mass balance
@@ -6252,7 +6232,7 @@ namespace LORICA4
                     total_kg_deposited += total_mass_deposited[size];
                 }
             }
-            guiVariables.InfoStatusPanel = "calc movement has been finished";
+            this.InfoStatusPanel.Text = "calc movement has been finished";
             this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
 
             //double mass_after = total_catchment_mass();
@@ -6281,7 +6261,7 @@ namespace LORICA4
 
         void calculate_water_ero_sed()    //where the water starts flowing, eroding and transporting
         {
-            guiVariables.InfoStatusPanel = "water erosion calculation";
+            this.InfoStatusPanel.Text = "water erosion calculation";
             dhmax_errors = 0;
             //set all start q values effective precipitation at time GlobalMethods.t
             nb_ok = 0;  // nb_ok is 1 als er uberhaupt buren zijn, dus 0 als er alleen maar NODATA is
@@ -6581,8 +6561,8 @@ namespace LORICA4
                                                         {
 
                                                             //first, calculate how much we are going to erode. Not as much as we want to if the soil is protected by rocks or plants
-                                                            rock_fraction = texture_kg[row, col, 0, 0] / (texture_kg[row, col, 0, 0] + texture_kg[row, col, 0, 1] + texture_kg[row, col, 0, 2] + texture_kg[row, col, 0, 3] + texture_kg[row, col, 0, 4]);
-                                                            if (version_lux_checkbox.Checked == false)
+                                                            rock_fraction = GlobalMethods.texture_kg[row, col, 0, 0] / (GlobalMethods.texture_kg[row, col, 0, 0] + GlobalMethods.texture_kg[row, col, 0, 1] + GlobalMethods.texture_kg[row, col, 0, 2] + GlobalMethods.texture_kg[row, col, 0, 3] + GlobalMethods.texture_kg[row, col, 0, 4]);
+                                                            if (guiVariables.Version_lux_checkbox == false)
                                                             {
                                                                 mass_to_be_eroded = (transport_capacity_kg - total_sediment_in_transport_kg)
                                                                 * Math.Exp(-rock_protection_constant * rock_fraction)
@@ -6625,51 +6605,51 @@ namespace LORICA4
                                                             for (size = 0; size < 5; size++)
                                                             {
                                                                 selectivity_fraction = (1 / Math.Pow(upper_particle_size[size], constant_b1)) / sum_diameter_power;    // unit [-]
-                                                                if (texture_kg[row, col, 0, size] >= selectivity_fraction * mass_to_be_eroded)
+                                                                if (GlobalMethods.texture_kg[row, col, 0, size] >= selectivity_fraction * mass_to_be_eroded)
                                                                 {    // typical situation
                                                                     if (size > 2)
                                                                     {
                                                                         clayeroded_0_kg += selectivity_fraction * mass_to_be_eroded;
-                                                                        claypresent_0_kg += texture_kg[row, col, 0, size];
+                                                                        claypresent_0_kg += GlobalMethods.texture_kg[row, col, 0, size];
                                                                     }
                                                                     total_mass_eroded[size] += selectivity_fraction * mass_to_be_eroded;
-                                                                    texture_kg[row, col, 0, size] -= selectivity_fraction * mass_to_be_eroded;   // unit [kg]
+                                                                    GlobalMethods.texture_kg[row, col, 0, size] -= selectivity_fraction * mass_to_be_eroded;   // unit [kg]
                                                                     GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += selectivity_fraction * mass_to_be_eroded;  // unit [kg]
                                                                 }
                                                                 else
                                                                 {    // exceptional. If we want to erode more than present in the layer, we will take it from one layer down.
                                                                      //this is to avoid exceptionally thin rocky layers blocking all erosion
                                                                      //we will then first erode everything from the top layer (layer "0") and then erode from the second layer  (i.e. layer "1").
-                                                                    total_mass_eroded[size] += texture_kg[row, col, 0, size];
-                                                                    double left = (selectivity_fraction * mass_to_be_eroded) - texture_kg[row, col, 0, size]; // unit [kg]
-                                                                    GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += texture_kg[row, col, 0, size];
+                                                                    total_mass_eroded[size] += GlobalMethods.texture_kg[row, col, 0, size];
+                                                                    double left = (selectivity_fraction * mass_to_be_eroded) - GlobalMethods.texture_kg[row, col, 0, size]; // unit [kg]
+                                                                    GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += GlobalMethods.texture_kg[row, col, 0, size];
                                                                     if (size > 2)
                                                                     {
-                                                                        clayeroded_0_kg += texture_kg[row, col, 0, size];
+                                                                        clayeroded_0_kg += GlobalMethods.texture_kg[row, col, 0, size];
                                                                         claypresent_0_kg += 0;
                                                                     }
-                                                                    texture_kg[row, col, 0, size] = 0;
-                                                                    if (texture_kg[row, col, 1, size] >= left)
+                                                                    GlobalMethods.texture_kg[row, col, 0, size] = 0;
+                                                                    if (GlobalMethods.texture_kg[row, col, 1, size] >= left)
                                                                     {   // typical
                                                                         total_mass_eroded[size] += left;
                                                                         if (size > 2)
                                                                         {
                                                                             clayeroded_1_kg += left;
-                                                                            claypresent_1_kg += texture_kg[row, col, 1, size] - left;
+                                                                            claypresent_1_kg += GlobalMethods.texture_kg[row, col, 1, size] - left;
                                                                         }
-                                                                        texture_kg[row, col, 1, size] -= left;  // unit [kg]
+                                                                        GlobalMethods.texture_kg[row, col, 1, size] -= left;  // unit [kg]
                                                                         GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += left;  // unit [kg]
                                                                     }
                                                                     else
                                                                     {
-                                                                        total_mass_eroded[size] += texture_kg[row, col, 1, size];
-                                                                        GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += texture_kg[row, col, 1, size];// unit [kg]
+                                                                        total_mass_eroded[size] += GlobalMethods.texture_kg[row, col, 1, size];
+                                                                        GlobalMethods.sediment_in_transport_kg[row + i, col + j, size] += GlobalMethods.texture_kg[row, col, 1, size];// unit [kg]
                                                                         if (size > 2)
                                                                         {
-                                                                            clayeroded_1_kg += texture_kg[row, col, 1, size];
+                                                                            clayeroded_1_kg += GlobalMethods.texture_kg[row, col, 1, size];
                                                                             claypresent_1_kg += 0;
                                                                         }
-                                                                        texture_kg[row, col, 1, size] = 0;
+                                                                        GlobalMethods.texture_kg[row, col, 1, size] = 0;
                                                                     }
                                                                 }
                                                             }
@@ -6718,7 +6698,7 @@ namespace LORICA4
                                                             if (potential_transported_amount_kg < GlobalMethods.sediment_in_transport_kg[row, col, size])
                                                             {
                                                                 total_mass_deposited_kg[size] += GlobalMethods.sediment_in_transport_kg[row, col, size] - potential_transported_amount_kg;
-                                                                texture_kg[row, col, 0, size] += GlobalMethods.sediment_in_transport_kg[row, col, size] - potential_transported_amount_kg;        // unit [kg]
+                                                                GlobalMethods.texture_kg[row, col, 0, size] += GlobalMethods.sediment_in_transport_kg[row, col, size] - potential_transported_amount_kg;        // unit [kg]
                                                                 GlobalMethods.sediment_in_transport_kg[row + i, col + j, 0] = potential_transported_amount_kg;                                    // unit [kg]  
 
                                                                 if (size > 2)
@@ -6871,7 +6851,7 @@ namespace LORICA4
                     Debug.WriteLine(" on m-basis: sedimented into " + depressions_delta + " of " + totaldepressions + " depressions, " + sediment_delta + "  sediment used");
                 } */
             }
-            guiVariables.InfoStatusPanel = "calc movement has been finished";
+            this.InfoStatusPanel.Text = "calc movement has been finished";
             this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * GlobalMethods.dx * GlobalMethods.dx / 1000);
 
 
@@ -6985,7 +6965,7 @@ namespace LORICA4
         {
             // from steepest local slope, contributing area and stability parameters
             // start calculation number of contributing draining cells by multiple flow algorithm
-            guiVariables.InfoStatusPanel = "critical rainfall calculation";
+            this.InfoStatusPanel.Text = "critical rainfall calculation";
             double beta;
             //set all start q values effective precipitation at time GlobalMethods.t
             nb_ok = 0; nb_check = 0; all_grids = 0;
@@ -7192,7 +7172,7 @@ namespace LORICA4
         {
             try
             {
-                guiVariables.InfoStatusPanel = "landslide calculation";
+                this.InfoStatusPanel.Text = "landslide calculation";
                 int tell;
                 //set all start q values effective precipitation at time GlobalMethods.t
                 nb_ok = 0; nb_check = 0; all_grids = 0.0;
@@ -7427,7 +7407,7 @@ namespace LORICA4
             try
             {
                 double mass_before = total_catchment_mass();
-                guiVariables.InfoStatusPanel = "tillage calculation";
+                this.InfoStatusPanel.Text = "tillage calculation";
                 int row, col, i, j;
                 double slope_sum, dz_min, d_x, dz_max, dh, fraction, temptill, tempdep, temptill_kg,
                             slope;
@@ -7480,7 +7460,7 @@ namespace LORICA4
 
                             for (int tex = 0; tex < 5; tex++)
                             {
-                                tilled_text[tex] += texture_kg[row, col, lay, tex];
+                                tilled_text[tex] += GlobalMethods.texture_kg[row, col, lay, tex];
                             }
                             tilled_om[0] += GlobalMethods.old_SOM_kg[row, col, lay];
                             tilled_om[1] += GlobalMethods.young_SOM_kg[row, col, lay];
@@ -7496,9 +7476,9 @@ namespace LORICA4
                         }
                         for (int tex = 0; tex < 5; tex++) // add partial mass of partial layer
                         {
-                            tilled_text[tex] += texture_kg[row, col, completelayers, tex] * frac_ap; // add fraction from partial layer
-                            texture_kg[row, col, completelayers, tex] *= (1 - frac_ap); // subtract mixed part
-                            texture_kg[row, col, completelayers, tex] += tilled_text[tex] * (GlobalMethods.layerthickness_m[row, col, completelayers] * frac_ap) / plough_depth; // add part from mixed 
+                            tilled_text[tex] += GlobalMethods.texture_kg[row, col, completelayers, tex] * frac_ap; // add fraction from partial layer
+                            GlobalMethods.texture_kg[row, col, completelayers, tex] *= (1 - frac_ap); // subtract mixed part
+                            GlobalMethods.texture_kg[row, col, completelayers, tex] += tilled_text[tex] * (GlobalMethods.layerthickness_m[row, col, completelayers] * frac_ap) / plough_depth; // add part from mixed 
                         }
 
                         tilled_om[0] += GlobalMethods.old_SOM_kg[row, col, completelayers] * frac_ap;
@@ -7514,7 +7494,7 @@ namespace LORICA4
                         {
                             for (int tex = 0; tex < 5; tex++)
                             {
-                                texture_kg[row, col, lay, tex] = tilled_text[tex] * (alldepths[lay] / plough_depth);
+                                GlobalMethods.texture_kg[row, col, lay, tex] = tilled_text[tex] * (alldepths[lay] / plough_depth);
 
                             }
                             GlobalMethods.old_SOM_kg[row, col, lay] = tilled_om[0] * (alldepths[lay] / plough_depth);
@@ -7650,8 +7630,8 @@ namespace LORICA4
                                             {
                                                 for (int tex = 0; tex < 5; tex++)
                                                 {
-                                                    texture_kg[row + i, col + j, 0, tex] += texture_kg[row, col, layero, tex];
-                                                    texture_kg[row, col, layero, tex] = 0;
+                                                    GlobalMethods.texture_kg[row + i, col + j, 0, tex] += GlobalMethods.texture_kg[row, col, layero, tex];
+                                                    GlobalMethods.texture_kg[row, col, layero, tex] = 0;
                                                 }
                                                 GlobalMethods.young_SOM_kg[row + i, col + j, 0] += GlobalMethods.young_SOM_kg[row, col, layero];
                                                 GlobalMethods.young_SOM_kg[row, col, layero] = 0;
@@ -7668,8 +7648,8 @@ namespace LORICA4
                                             // mass fraction eroded
                                             for (int tex = 0; tex < 5; tex++)
                                             {
-                                                texture_kg[row + i, col + j, 0, tex] += texture_kg[row, col, layero, tex] * frac_eroded;
-                                                texture_kg[row, col, layero, tex] -= texture_kg[row, col, layero, tex] * frac_eroded;
+                                                GlobalMethods.texture_kg[row + i, col + j, 0, tex] += GlobalMethods.texture_kg[row, col, layero, tex] * frac_eroded;
+                                                GlobalMethods.texture_kg[row, col, layero, tex] -= GlobalMethods.texture_kg[row, col, layero, tex] * frac_eroded;
                                             }
                                             GlobalMethods.young_SOM_kg[row + i, col + j, 0] += GlobalMethods.young_SOM_kg[row, col, layero] * frac_eroded;
                                             GlobalMethods.young_SOM_kg[row, col, layero] -= GlobalMethods.young_SOM_kg[row, col, layero] * frac_eroded;
@@ -7733,7 +7713,7 @@ namespace LORICA4
         /*
         private void calculate_creep()
         {
-            guiVariables.InfoStatusPanel = "GlobalMethods.creep calculation";
+            this.InfoStatusPanel.Text = "GlobalMethods.creep calculation";
             int row, col,
                         i, j,
                         nb_ok;
@@ -7852,7 +7832,7 @@ namespace LORICA4
         {
             try
             {
-                guiVariables.InfoStatusPanel = "GlobalMethods.creep calculation";
+                this.InfoStatusPanel.Text = "GlobalMethods.creep calculation";
                 int row, col,
                             i, j,
                             nb_ok,
@@ -8034,7 +8014,8 @@ namespace LORICA4
                     Debugger.Break();
                 }
 
-                guiVariables.InfoStatusPanel = "GlobalMethods.creep calculation";
+                this.InfoStatusPanel.Text = "GlobalMethods.creep calculation";
+
                 int row, col,
                             i, j,
                             nb_ok,
@@ -8115,7 +8096,7 @@ namespace LORICA4
                         // potential_creep_kg = 4.5;
                         potential_creep_kg = Convert.ToDouble(potential_bioturbation_textbox.Text);
 
-                        if (guiVariables.Daily_Water)
+                        if (daily_water.Checked)
                         {
                             if (aridity_vegetation[row, col] < 1) { potential_creep_kg = 4 + 0.3; } // grassland
                             else { potential_creep_kg = 4 + 1.3; } // forest
@@ -8478,8 +8459,8 @@ namespace LORICA4
                 if (fraction_overlap > 1) { fraction_overlap = 1; }
                 for (int tex = 0; tex < 5; tex++)
                 {
-                    texture_kg[torow, tocol, tolay, tex] += texture_kg[fromrow, fromcol, fromlay, tex] * fraction_transport;
-                    texture_kg[fromrow, fromcol, fromlay, tex] -= texture_kg[fromrow, fromcol, fromlay, tex] * fraction_transport;
+                    GlobalMethods.texture_kg[torow, tocol, tolay, tex] += GlobalMethods.texture_kg[fromrow, fromcol, fromlay, tex] * fraction_transport;
+                    GlobalMethods.texture_kg[fromrow, fromcol, fromlay, tex] -= GlobalMethods.texture_kg[fromrow, fromcol, fromlay, tex] * fraction_transport;
                 }
                 GlobalMethods.young_SOM_kg[torow, tocol, tolay] += GlobalMethods.young_SOM_kg[fromrow, fromcol, fromlay] * fraction_transport;
                 GlobalMethods.young_SOM_kg[fromrow, fromcol, fromlay] -= GlobalMethods.young_SOM_kg[fromrow, fromcol, fromlay] * fraction_transport;
@@ -8506,7 +8487,7 @@ namespace LORICA4
 
             try
             {
-                guiVariables.InfoStatusPanel = "tree fall calculation";
+                this.InfoStatusPanel.Text = "tree fall calculation";
 
                 bool fallen = false;
                 int i_tf = 0, j_tf = 0;
@@ -8669,8 +8650,8 @@ namespace LORICA4
                                                 // uptake of sediments
                                                 for (int tex = 0; tex < 5; tex++)
                                                 {
-                                                    tree_fall_mass[tex] += texture_kg[row + ii, col + jj, lay, tex] * tf_frac_dz * tf_frac_dx;
-                                                    texture_kg[row + ii, col + jj, lay, tex] -= texture_kg[row + ii, col + jj, lay, tex] * tf_frac_dz * tf_frac_dx;
+                                                    tree_fall_mass[tex] += GlobalMethods.texture_kg[row + ii, col + jj, lay, tex] * tf_frac_dz * tf_frac_dx;
+                                                    GlobalMethods.texture_kg[row + ii, col + jj, lay, tex] -= GlobalMethods.texture_kg[row + ii, col + jj, lay, tex] * tf_frac_dz * tf_frac_dx;
                                                 }
                                                 tree_fall_om[0] += GlobalMethods.old_SOM_kg[row + ii, col + jj, lay] * tf_frac_dz * tf_frac_dx;
                                                 GlobalMethods.old_SOM_kg[row + ii, col + jj, lay] -= GlobalMethods.old_SOM_kg[row + ii, col + jj, lay] * tf_frac_dz * tf_frac_dx;
@@ -8767,7 +8748,7 @@ namespace LORICA4
 
                                             for (int tex = 0; tex < 5; tex++)
                                             {
-                                                texture_kg[rowsink + ii, colsink + jj, 0, tex] += tree_fall_mass[tex] * tf_frac_dx;
+                                                GlobalMethods.texture_kg[rowsink + ii, colsink + jj, 0, tex] += tree_fall_mass[tex] * tf_frac_dx;
                                             }
                                             GlobalMethods.old_SOM_kg[rowsink + ii, colsink + jj, 0] += tree_fall_om[0] * tf_frac_dx;
                                             GlobalMethods.old_SOM_kg[rowsink + ii, colsink + jj, 0] += tree_fall_om[1] * tf_frac_dx;
@@ -8872,7 +8853,7 @@ namespace LORICA4
         {
             // as function of infiltration?
             double Iavg = 0, Imin = 10000000, Imax = 0;
-            if (guiVariables.Daily_Water)
+            if (daily_water.Checked)
             {
                 int Icount = 0;
                 for (row = 0; row < GlobalMethods.nr; row++)
@@ -8913,7 +8894,7 @@ namespace LORICA4
 
                         if (rockweath_method.SelectedIndex == 2)
                         {
-                            if (guiVariables.Daily_Water)
+                            if (daily_water.Checked)
                             {
                                 GlobalMethods.bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
                             }
@@ -8928,7 +8909,7 @@ namespace LORICA4
                             lowest_soil_layer = soil_layer;
                             soil_layer++;
                         }
-                        texture_kg[row, col, lowest_soil_layer, 0] += GlobalMethods.bedrock_weathering_m[row, col] * 2700 * GlobalMethods.dx * GlobalMethods.dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
+                        GlobalMethods.texture_kg[row, col, lowest_soil_layer, 0] += GlobalMethods.bedrock_weathering_m[row, col] * 2700 * GlobalMethods.dx * GlobalMethods.dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
                     }
                 }
             }
@@ -8936,7 +8917,8 @@ namespace LORICA4
 
         private void calculate_tilting()
         {
-            guiVariables.InfoStatusPanel = "tilting calculation";
+            this.InfoStatusPanel.Text = "tilting calculation";
+
             int row, col;
 
             for (row = 0; row < GlobalMethods.nr; row++)
@@ -8953,7 +8935,8 @@ namespace LORICA4
 
         private void calculate_uplift()
         {
-            guiVariables.InfoStatusPanel = "uplift calculation";
+            this.InfoStatusPanel.Text = "uplift calculation";
+
             int row, col;
 
             for (row = 0; row < GlobalMethods.nr; row++)
@@ -9116,6 +9099,7 @@ namespace LORICA4
                 if (windowsize % 2 == 0) { MessageBox.Show("window size for TPI calculations should be an uneven number"); }
 
                 int windowrange = (windowsize - 1) / 2;
+
                 for (int row = 0; row < GlobalMethods.nr; row++)
                 {
                     for (int col = 0; col < GlobalMethods.nc; col++)
@@ -9362,8 +9346,8 @@ namespace LORICA4
                 //{
                 cumthick += GlobalMethods.layerthickness_m[row, col, layer];
                 depth -= GlobalMethods.layerthickness_m[row, col, layer] / 2;
-                double totalweight = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
-                try { Debug.WriteLine(row + " " + col + " " + GlobalMethods.t + " " + layer + " " + cumthick + " " + GlobalMethods.layerthickness_m[row, col, layer] + " " + depth + " " + z_layer + " " + texture_kg[row, col, layer, 0] + " " + texture_kg[row, col, layer, 1] + " " + texture_kg[row, col, layer, 2] + " " + texture_kg[row, col, layer, 3] + " " + texture_kg[row, col, layer, 4] + " " + GlobalMethods.young_SOM_kg[row, col, layer] + " " + GlobalMethods.old_SOM_kg[row, col, layer] + " " + GlobalMethods.young_SOM_kg[row, col, layer] / GlobalMethods.old_SOM_kg[row, col, layer] + " " + texture_kg[row, col, layer, 0] / totalweight + " " + texture_kg[row, col, layer, 1] / totalweight + " " + texture_kg[row, col, layer, 2] / totalweight + " " + texture_kg[row, col, layer, 3] / totalweight + " " + texture_kg[row, col, layer, 4] / totalweight + " " + GlobalMethods.bulkdensity[row, col, layer]); }
+                double totalweight = GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
+                try { Debug.WriteLine(row + " " + col + " " + GlobalMethods.t + " " + layer + " " + cumthick + " " + GlobalMethods.layerthickness_m[row, col, layer] + " " + depth + " " + z_layer + " " + GlobalMethods.texture_kg[row, col, layer, 0] + " " + GlobalMethods.texture_kg[row, col, layer, 1] + " " + GlobalMethods.texture_kg[row, col, layer, 2] + " " + GlobalMethods.texture_kg[row, col, layer, 3] + " " + GlobalMethods.texture_kg[row, col, layer, 4] + " " + GlobalMethods.young_SOM_kg[row, col, layer] + " " + GlobalMethods.old_SOM_kg[row, col, layer] + " " + GlobalMethods.young_SOM_kg[row, col, layer] / GlobalMethods.old_SOM_kg[row, col, layer] + " " + GlobalMethods.texture_kg[row, col, layer, 0] / totalweight + " " + GlobalMethods.texture_kg[row, col, layer, 1] / totalweight + " " + GlobalMethods.texture_kg[row, col, layer, 2] / totalweight + " " + GlobalMethods.texture_kg[row, col, layer, 3] / totalweight + " " + GlobalMethods.texture_kg[row, col, layer, 4] / totalweight + " " + GlobalMethods.bulkdensity[row, col, layer]); }
                 catch { Debug.WriteLine("Cannot write soilprofile"); }
                 depth -= GlobalMethods.layerthickness_m[row, col, layer] / 2;
                 z_layer -= GlobalMethods.layerthickness_m[row, col, layer];
@@ -9379,8 +9363,8 @@ namespace LORICA4
                     {
 
                         cumthick += GlobalMethods.layerthickness_m[row, col, layer];
-                        double totalweight = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
-                        try { Debug.WriteLine(GlobalMethods.t + " " + cumthick + " " + GlobalMethods.layerthickness_m[row, col, layer] + " " + texture_kg[row, col, layer, 0] + " " + texture_kg[row, col, layer, 1] + " " + texture_kg[row, col, layer, 2] + " " + texture_kg[row, col, layer, 3] + " " + texture_kg[row, col, layer, 4] + " " + GlobalMethods.young_SOM_kg[row, col, layer] + " " + GlobalMethods.old_SOM_kg[row, col, layer] + " " + GlobalMethods.young_SOM_kg[row, col, layer] / GlobalMethods.old_SOM_kg[row, col, layer] + " " + (texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4]) / totalweight + " " + texture_kg[row, col, layer, 2] / totalweight + " " + texture_kg[row, col, layer, 1] / totalweight); }
+                        double totalweight = GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
+                        try { Debug.WriteLine(GlobalMethods.t + " " + cumthick + " " + GlobalMethods.layerthickness_m[row, col, layer] + " " + GlobalMethods.texture_kg[row, col, layer, 0] + " " + GlobalMethods.texture_kg[row, col, layer, 1] + " " + GlobalMethods.texture_kg[row, col, layer, 2] + " " + GlobalMethods.texture_kg[row, col, layer, 3] + " " + GlobalMethods.texture_kg[row, col, layer, 4] + " " + GlobalMethods.young_SOM_kg[row, col, layer] + " " + GlobalMethods.old_SOM_kg[row, col, layer] + " " + GlobalMethods.young_SOM_kg[row, col, layer] / GlobalMethods.old_SOM_kg[row, col, layer] + " " + (GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4]) / totalweight + " " + GlobalMethods.texture_kg[row, col, layer, 2] / totalweight + " " + GlobalMethods.texture_kg[row, col, layer, 1] / totalweight); }
                         catch { Debug.WriteLine("Cannot write soilprofile"); }
                     }
                 }
@@ -9395,7 +9379,7 @@ namespace LORICA4
             {
                 for (int tex = 0; tex < 5; tex++)
                 {
-                    if (texture_kg[row, col, layer1, tex] < 0)
+                    if (GlobalMethods.texture_kg[row, col, layer1, tex] < 0)
                     {
                         check = true;
                     }
@@ -9430,7 +9414,7 @@ namespace LORICA4
 
         void findsinks()
         {
-            guiVariables.InfoStatusPanel = "findtrouble has been entered";
+            this.InfoStatusPanel.Text = "findtrouble has been entered";
             int number, twoequals = 0, threeequals = 0, moreequals = 0;
             int[] intoutlet = new int[9];
             int x;
@@ -9490,7 +9474,7 @@ namespace LORICA4
 
             //reports
 
-            guiVariables.InfoStatusPanel = "found " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells";
+            this.InfoStatusPanel.Text = "found " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells";
             Debug.WriteLine("\n\n--sinks overview at GlobalMethods.t = " + GlobalMethods.t + "--");
 
             if (numsinks / (GlobalMethods.nr * GlobalMethods.nc) > 0.0075) { Debug.WriteLine("this DEM contains " + numsinks + " true sinks in " + GlobalMethods.nr * GlobalMethods.nc + "  cells\n That's a lot!"); }
@@ -9506,7 +9490,7 @@ namespace LORICA4
         void searchdepressions()
         {
             int z;
-            guiVariables.InfoStatusPanel = "searchdepressions has been entered";
+            this.InfoStatusPanel.Text = "searchdepressions has been entered";
             for (row = 0; row < GlobalMethods.nr; row++)
             {        //visit all cells in the DEM and  ...
                 for (col = 0; col < GlobalMethods.nc; col++)
@@ -9908,7 +9892,7 @@ namespace LORICA4
             // to membercells so they drain towards the outlet.
             // we cannot simply use distance_to_outlet for each member cell, since depressions can round corners....
 
-            guiVariables.InfoStatusPanel = "def fillheight has been entered";
+            this.InfoStatusPanel.Text = "def fillheight has been entered";
             //Debug.WriteLine("defining fillheight\n");
             int notyetdone, done, depressiontt;
 
@@ -10654,7 +10638,7 @@ namespace LORICA4
         void initialise_once()        //fills the inputgrids with values
         {
 
-            if (guiVariables.Daily_Water && GlobalMethods.input_data_error == false)
+            if (daily_water.Checked && GlobalMethods.input_data_error == false)
             {
                 try
                 {
@@ -10666,7 +10650,7 @@ namespace LORICA4
                     string fn = filename.Substring(0, (namelength - 4));
                     filename = fn + "_sc" + P_scen + ".csv";
 
-                    read_record(filename, guiVariables.P_all);
+                    GlobalMethods.read_record(filename, guiVariables.P_all);
                     // Debug.WriteLine("guiVariables.P_all read successfully");
 
                     //filename = this.dailyET0.Text;
@@ -10676,22 +10660,22 @@ namespace LORICA4
 
                     filename = this.dailyD.Text;
                     if (memory_records_d == false) { makedailyrecords(filename); }
-                    read_record(filename, guiVariables.D_all);
+                    GlobalMethods.read_record(filename, guiVariables.D_all);
                     // Debug.WriteLine("guiVariables.D_all read successfully");
 
                     filename = this.dailyT_avg.Text;
                     if (memory_records_d == false) { makedailyrecords(filename); }
-                    read_record(filename, guiVariables.Tavg_all);
+                    GlobalMethods.read_record(filename, guiVariables.Tavg_all);
                     // Debug.WriteLine("guiVariables.Tavg_all read successfully");
 
                     filename = this.dailyT_min.Text;
                     if (memory_records_d == false) { makedailyrecords(filename); }
-                    read_record(filename, guiVariables.Tmin_all);
+                    GlobalMethods.read_record(filename, guiVariables.Tmin_all);
                     // Debug.WriteLine("guiVariables.Tmin_all read successfully");
 
                     filename = this.dailyT_max.Text;
                     if (memory_records_d == false) { makedailyrecords(filename); }
-                    read_record(filename, guiVariables.Tmax_all);
+                    GlobalMethods.read_record(filename, guiVariables.Tmax_all);
                     // Debug.WriteLine("guiVariables.Tmax_all read successfully");
 
                     //// Hargreaves extraterrestrial radiation
@@ -10747,73 +10731,73 @@ namespace LORICA4
             if (check_space_soildepth.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.soildepth_input_filename_textbox.Text;
-                read_double(filename, GlobalMethods.soildepth_m);
+                GlobalMethods.read_double(filename, GlobalMethods.soildepth_m);
                 Debug.WriteLine("read soildepth");
             }
             if (check_space_till_fields.Checked && GlobalMethods.input_data_error == false)
             {
-                filename = this.tillfields_input_filename_textbox.Text;
-                read_integer(filename, GlobalMethods.tillfields);
+                filename = guivariables.Tillfields_input_filename_textbox;
+                GlobalMethods.read_integer(filename, GlobalMethods.tillfields);
                 Debug.WriteLine("read GlobalMethods.tillfields");
             }
             if (check_space_landuse.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.landuse_input_filename_textbox.Text;
-                read_integer(filename, GlobalMethods.landuse);
+                GlobalMethods.read_integer(filename, GlobalMethods.landuse);
                 Debug.WriteLine("read GlobalMethods.landuse");
             }
             if (check_space_evap.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.evap_input_filename_textbox.Text;
-                read_double(filename, GlobalMethods.evapotranspiration);
+                GlobalMethods.read_double(filename, GlobalMethods.evapotranspiration);
             }
             if (check_space_infil.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.infil_input_filename_textbox.Text;
-                read_double(filename, GlobalMethods.infil);
+                GlobalMethods.read_double(filename, GlobalMethods.infil);
             }
             if (check_space_rain.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.rain_input_filename_textbox.Text;
-                read_double(filename, GlobalMethods.rain);
+                GlobalMethods.read_double(filename, GlobalMethods.rain);
             }
             // If required, read timeseries instead.
             if (check_time_landuse.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.landuse_input_filename_textbox.Text;
-                read_integer(filename, GlobalMethods.landuse);
+                GlobalMethods.read_integer(filename, GlobalMethods.landuse);
             }
             if (check_time_evap.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.evap_input_filename_textbox.Text;
                 if (memory_records == false) { makerecords(filename); }
-                read_record(filename, evap_record);
+                GlobalMethods.read_record(filename, evap_record);
             }
             if (check_time_infil.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.infil_input_filename_textbox.Text;
                 if (memory_records == false) { makerecords(filename); }
-                read_record(filename, infil_record);
+                GlobalMethods.read_record(filename, infil_record);
             }
             if (check_time_rain.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.rain_input_filename_textbox.Text;
                 if (memory_records == false) { makerecords(filename); }
-                read_record(filename, rainfall_record);
+                GlobalMethods.read_record(filename, rainfall_record);
             }
             if (check_time_T.Checked && GlobalMethods.input_data_error == false)
             {
                 filename = this.temp_input_filename_textbox.Text;
                 if (memory_records == false) { makerecords(filename); }
-                read_record(filename, temp_record);
+                GlobalMethods.read_record(filename, temp_record);
             }
 
 
-            if (check_time_till_fields.Checked && GlobalMethods.input_data_error == false)
+            if (guivariables.Check_time_till_fields && GlobalMethods.input_data_error == false) 
             {
-                filename = this.tillfields_input_filename_textbox.Text;
+                filename = guivariables.Tillfields_input_filename_textbox;
                 if (memory_records == false) { makerecords(filename); }
-                read_record(filename, till_record);
+                GlobalMethods.read_record(filename, till_record);
                 Debug.WriteLine("Tillage time parameters read");
             }
 
@@ -10827,17 +10811,17 @@ namespace LORICA4
                         GlobalMethods.dz_soil[row, col] = 0;
                         if (Creep_Checkbox.Checked) { GlobalMethods.sum_creep_grid[row, col] = 0; GlobalMethods.creep[row, col] = 0; }
                         if (Solifluction_checkbox.Checked) { GlobalMethods.sum_solifluction[row, col] = 0; }
-                        if (guiVariables.Water_ero_checkbox && only_waterflow_checkbox.Checked == false) { GlobalMethods.sum_water_erosion[row, col] = 0; total_sed_export = 0; }
-                        if (guiVariables.Treefall_checkbox) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
+                        if (Water_ero_checkbox.Checked && only_waterflow_checkbox.Checked == false) { GlobalMethods.sum_water_erosion[row, col] = 0; total_sed_export = 0; }
+                        if (treefall_checkbox.Checked) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
                         if (Biological_weathering_checkbox.Checked) { GlobalMethods.sum_biological_weathering[row, col] = 0; }
                         if (Frost_weathering_checkbox.Checked) { GlobalMethods.sum_frost_weathering[row, col] = 0; }
-                        if (guiVariables.Tillage_checkbox) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; GlobalMethods.dz_till_bd[row, col] = 0; }
+                        if (Tillage_checkbox.Checked) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; GlobalMethods.dz_till_bd[row, col] = 0; }
                         if (guiVariables.Landslide_checkbox) { GlobalMethods.sum_landsliding[row, col] = 0; total_sum_tillage = 0; }
                         if (GlobalMethods.soildepth_m[row, col] < 0.0 && GlobalMethods.soildepth_m[row, col] != -9999) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
-                        if (uplift_active_checkbox.Checked) { GlobalMethods.sum_uplift[row, col] = 0; total_sum_uplift = 0; }
+                        if (uplift_active_checkbox.Checked) { GlobalMethods.sum_uplift[row, col] = 0; sum_uplift = 0; }
                         if (tilting_active_checkbox.Checked) { GlobalMethods.sum_tilting[row, col] = 0; total_sum_tilting = 0; }
                         if (check_space_soildepth.Checked != true) { GlobalMethods.soildepth_m[row, col] = soildepth_value; }
-                        if (check_space_till_fields.Checked != true && guiVariables.Tillage_checkbox)
+                        if (check_space_till_fields.Checked != true && Tillage_checkbox.Checked)
                         {
                             GlobalMethods.tillfields[row, col] = 1;
 
@@ -10845,12 +10829,12 @@ namespace LORICA4
 
 
 
-                        if (guiVariables.Water_ero_checkbox && only_waterflow_checkbox.Checked == false)
+                        if (Water_ero_checkbox.Checked && only_waterflow_checkbox.Checked == false)
                         {
                             GlobalMethods.K_fac[row, col] = advection_erodibility; GlobalMethods.P_fac[row, col] = P_act;
                         } //WVG GlobalMethods.K_fac matrix initialisation is needed when GlobalMethods.landuse is disabled
 
-                        if (guiVariables.Water_ero_checkbox && check_space_landuse.Checked == true)
+                        if (Water_ero_checkbox.Checked && check_space_landuse.Checked == true)
                         {
                             //currently, this will throw an exception if GlobalMethods.landuse is actually spatial //development required //ArT
                             if (GlobalMethods.landuse[row, col] == 1)
@@ -10927,10 +10911,10 @@ namespace LORICA4
                     } //for
                 } //for
                   // Debug.WriteLine(" assigned starting values for geomorph  ");
-                  // Debug.WriteLine("before initialise soil {0}", texture_kg[0, 0, 0, 2]);
+                  // Debug.WriteLine("before initialise soil {0}", GlobalMethods.texture_kg[0, 0, 0, 2]);
 
                 initialise_soil();
-                //Debug.WriteLine("after initialise soil {0}", texture_kg[0, 0, 0, 2]);
+                //Debug.WriteLine("after initialise soil {0}", GlobalMethods.texture_kg[0, 0, 0, 2]);
                 if (findnegativetexture())
                 {
                     Debug.WriteLine("err_ini1");
@@ -11083,7 +11067,7 @@ namespace LORICA4
                         {
                             for (texture_class = 0; texture_class < GlobalMethods.n_texture_classes; texture_class++)
                             {
-                                texture_kg[row, col, soil_layer, texture_class] = 0;
+                                GlobalMethods.texture_kg[row, col, soil_layer, texture_class] = 0;
                             }
                             GlobalMethods.young_SOM_kg[row, col, soil_layer] = 0;
                             GlobalMethods.old_SOM_kg[row, col, soil_layer] = 0;
@@ -11170,11 +11154,11 @@ namespace LORICA4
                                 depth_m += GlobalMethods.layerthickness_m[row, col, soil_layer] / 2;
                                 location_bd = bulk_density_calc(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, 0, 0, depth_m);
                                 depth_m += GlobalMethods.layerthickness_m[row, col, soil_layer] / 2;
-                                texture_kg[row, col, soil_layer, 0] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * coarsefrac * GlobalMethods.dx * GlobalMethods.dx;   //  kg = kg/m3 * m * kg/kg * m * m
-                                texture_kg[row, col, soil_layer, 1] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * sandfrac * GlobalMethods.dx * GlobalMethods.dx;
-                                texture_kg[row, col, soil_layer, 2] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * siltfrac * GlobalMethods.dx * GlobalMethods.dx;
-                                texture_kg[row, col, soil_layer, 3] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * clayfrac * GlobalMethods.dx * GlobalMethods.dx;
-                                texture_kg[row, col, soil_layer, 4] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * fclayfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 0] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * coarsefrac * GlobalMethods.dx * GlobalMethods.dx;   //  kg = kg/m3 * m * kg/kg * m * m
+                                GlobalMethods.texture_kg[row, col, soil_layer, 1] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * sandfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 2] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * siltfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 3] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * clayfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 4] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * fclayfrac * GlobalMethods.dx * GlobalMethods.dx;
                                 GlobalMethods.bulkdensity[row, col, soil_layer] = location_bd;
 
                                 if (guiVariables.Decalcification_checkbox)
@@ -11246,7 +11230,7 @@ namespace LORICA4
                         {
                             for (texture_class = 0; texture_class < GlobalMethods.n_texture_classes; texture_class++)
                             {
-                                texture_kg[row, col, soil_layer, texture_class] = 0;
+                                GlobalMethods.texture_kg[row, col, soil_layer, texture_class] = 0;
                             }
                             GlobalMethods.young_SOM_kg[row, col, soil_layer] = 0;
                             GlobalMethods.old_SOM_kg[row, col, soil_layer] = 0;
@@ -11284,11 +11268,11 @@ namespace LORICA4
                                 depth_m += GlobalMethods.layerthickness_m[row, col, soil_layer] / 2;
                                 location_bd = bulk_density_calc(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, 0, 0, depth_m);
                                 depth_m += GlobalMethods.layerthickness_m[row, col, soil_layer] / 2;
-                                texture_kg[row, col, soil_layer, 0] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * coarsefrac * GlobalMethods.dx * GlobalMethods.dx;   //  kg = kg/m3 * m * kg/kg * m * m
-                                texture_kg[row, col, soil_layer, 1] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * sandfrac * GlobalMethods.dx * GlobalMethods.dx;
-                                texture_kg[row, col, soil_layer, 2] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * siltfrac * GlobalMethods.dx * GlobalMethods.dx;
-                                texture_kg[row, col, soil_layer, 3] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * clayfrac * GlobalMethods.dx * GlobalMethods.dx;
-                                texture_kg[row, col, soil_layer, 4] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * fclayfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 0] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * coarsefrac * GlobalMethods.dx * GlobalMethods.dx;   //  kg = kg/m3 * m * kg/kg * m * m
+                                GlobalMethods.texture_kg[row, col, soil_layer, 1] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * sandfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 2] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * siltfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 3] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * clayfrac * GlobalMethods.dx * GlobalMethods.dx;
+                                GlobalMethods.texture_kg[row, col, soil_layer, 4] = location_bd * GlobalMethods.layerthickness_m[row, col, soil_layer] * fclayfrac * GlobalMethods.dx * GlobalMethods.dx;
                                 GlobalMethods.bulkdensity[row, col, soil_layer] = location_bd;
 
                                 if (guiVariables.Decalcification_checkbox)
@@ -11321,7 +11305,7 @@ namespace LORICA4
 
         void initialise_every_till()
         {
-            if (check_time_till_fields.Checked && check_space_till_fields.Checked == false)
+            if (guivariables.Check_time_till_fields && check_space_till_fields.Checked == false)
             {
                 for (row = 0; row < GlobalMethods.nr; row++)
                 {
@@ -11383,16 +11367,16 @@ namespace LORICA4
                     {
                         GlobalMethods.dz_soil[row, col] = 0;
                         if (Creep_Checkbox.Checked) { GlobalMethods.sum_creep_grid[row, col] = 0; GlobalMethods.creep[row, col] = 0; }
-                        if (guiVariables.Treefall_checkbox) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
+                        if (treefall_checkbox.Checked) { GlobalMethods.dz_treefall[row, col] = 0; GlobalMethods.treefall_count[row, col] = 0; }
                         if (Solifluction_checkbox.Checked) { GlobalMethods.sum_solifluction[row, col] = 0; }
-                        if (guiVariables.Water_ero_checkbox) { GlobalMethods.sum_water_erosion[row, col] = 0; }
+                        if (Water_ero_checkbox.Checked) { GlobalMethods.sum_water_erosion[row, col] = 0; }
                         if (Biological_weathering_checkbox.Checked) { GlobalMethods.sum_biological_weathering[row, col] = 0; }
                         if (Frost_weathering_checkbox.Checked) { GlobalMethods.sum_frost_weathering[row, col] = 0; }
-                        if (guiVariables.Tillage_checkbox) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; }
+                        if (Tillage_checkbox.Checked) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; }
                         if (GlobalMethods.soildepth_m[row, col] < 0.0) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
                     }
                     if (GlobalMethods.soildepth_m[row, col] < 0.0) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
-                    if (guiVariables.Water_ero_checkbox) { GlobalMethods.waterflow_m3[row, col] = 0.0; }
+                    if (Water_ero_checkbox.Checked) { GlobalMethods.waterflow_m3[row, col] = 0.0; }
 
                 } //for
             } //for
@@ -11447,7 +11431,7 @@ namespace LORICA4
             if (check_time_evap.Checked) { evap_record = new int[recordsize]; }
             if (check_time_infil.Checked) { infil_record = new int[recordsize]; }
             if (check_time_T.Checked) { temp_record = new int[recordsize]; }
-            if (check_time_till_fields.Checked) { till_record = new int[recordsize]; }
+            if (guivariables.Check_time_till_fields) { till_record = new int[recordsize]; }
 
             memory_records = true;
         }
@@ -11503,7 +11487,7 @@ namespace LORICA4
                     }
                     catch { GlobalMethods.input_data_error = true; MessageBox.Show("Calibration ratio input error"); }
                 }
-            try { calib_levels = Convert.ToInt32(calibration_levels_textbox.Text); }
+            try { GUcalib_levels = Convert.ToInt32(calibration_levels_textbox.Text); }
             catch { GlobalMethods.input_data_error = true; MessageBox.Show("Calibration iterations must be an integer"); }
             maxruns = calib_levels * Convert.ToInt32(Math.Pow(ratiowords.Length, calibparacount));
             Debug.WriteLine(" the number of runs for calibration will be " + maxruns);
@@ -11649,15 +11633,5 @@ namespace LORICA4
         }
 
         #endregion
-
-
-
-
-
-
-
-
-
-
     }
 }
