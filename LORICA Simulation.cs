@@ -488,7 +488,7 @@ namespace LORICA4
                 //INPUTS
                 //GENERAL INPUTS
                 //Entry point for consecutive runs for sensitivity analyses or calibration 
-                maxruns = 1;
+                maxruns = 5;
                 int currentlevel = 0;
 
                 if (guiVariables.Calibration_button)
