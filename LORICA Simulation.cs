@@ -1099,23 +1099,23 @@ namespace LORICA4
                 //Debug.WriteLine("calculating soil chemical weathering");
                 soil_chemical_weathering();
                 soil_update_split_and_combine_layers();
-                if (timeseries.total_average_soilthickness_checkbox.Checked)
+                if (guiVariables.Timeseries.Total_average_soilthickness_checkbox)
                 {
                     timeseries_matrix[GlobalMethods.t, timeseries_order[21]] = total_average_soilthickness_m;
                 }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked)
+                if (guiVariables.Timeseries.Timeseries_number_soil_thicker_checkbox)
                 {
                     timeseries_matrix[GlobalMethods.t, timeseries_order[22]] = number_soil_thicker_than;
                 }
-                if (timeseries.timeseries_coarser_checkbox.Checked)
+                if (guiVariables.Timeseries.Timeseries_coarser_checkbox)
                 {
                     timeseries_matrix[GlobalMethods.t, timeseries_order[23]] = number_soil_coarser_than;
                 }
-                if (timeseries.timeseries_soil_depth_checkbox.Checked)
+                if (guiVariables.Timeseries.Timeseries_soil_depth_checkbox)
                 {
                     timeseries_matrix[GlobalMethods.t, timeseries_order[24]] = local_soil_depth_m;
                 }
-                if (timeseries.timeseries_soil_mass_checkbox.Checked)
+                if (guiVariables.Timeseries.Timeseries_soil_mass_checkbox)
                 {
                     timeseries_matrix[GlobalMethods.t, timeseries_order[25]] = local_soil_mass_kg;
                 }
@@ -1929,61 +1929,61 @@ namespace LORICA4
             using (StreamWriter sw = new StreamWriter(FILENAME))
             {
                 //geomprph centred
-                if (timeseries.timeseries_cell_waterflow_check.Checked) { sw.Write("cell_waterflow "); }
-                if (timeseries.timeseries_cell_altitude_check.Checked) { sw.Write("cell_altitude "); }
-                if (timeseries.timeseries_net_ero_check.Checked) { sw.Write("net_erosion "); }
-                if (timeseries.timeseries_number_dep_check.Checked) { sw.Write("deposited_cells "); }
-                if (timeseries.timeseries_number_erosion_check.Checked) { sw.Write("eroded_cells "); }
-                if (timeseries.timeseries_number_waterflow_check.Checked) { sw.Write("wet_cells "); }
-                if (timeseries.timeseries_SDR_check.Checked) { sw.Write("SDR "); }
-                if (timeseries.timeseries_total_average_alt_check.Checked) { sw.Write("average_alt "); }
-                if (timeseries.timeseries_total_dep_check.Checked) { sw.Write("total_dep "); }
-                if (timeseries.timeseries_total_ero_check.Checked) { sw.Write("total_ero "); }
-                if (timeseries.timeseries_total_evap_check.Checked) { sw.Write("total_evap "); }
-                if (timeseries.timeseries_total_infil_check.Checked) { sw.Write("total_infil "); }
-                if (timeseries.timeseries_total_outflow_check.Checked) { sw.Write("total_outflow "); }
-                if (timeseries.timeseries_total_rain_check.Checked) { sw.Write("total_rain "); }
+                if (guiVariables.Timeseries.Timeseries_cell_waterflow_check) { sw.Write("cell_waterflow "); }
+                if (guiVariables.Timeseries.Timeseries_cell_altitude_check) { sw.Write("cell_altitude "); }
+                if (guiVariables.Timeseries.Timeseries_net_ero_check) { sw.Write("net_erosion "); }
+                if (guiVariables.Timeseries.Timeseries_number_dep_check) { sw.Write("deposited_cells "); }
+                if (guiVariables.Timeseries.Timeseries_number_erosion_check) { sw.Write("eroded_cells "); }
+                if (guiVariables.Timeseries.Timeseries_number_waterflow_check) { sw.Write("wet_cells "); }
+                if (guiVariables.Timeseries.Timeseries_SDR_check) { sw.Write("SDR "); }
+                if (guiVariables.Timeseries.Timeseries_total_average_alt_check) { sw.Write("average_alt "); }
+                if (guiVariables.Timeseries.Timeseries_total_dep_check) { sw.Write("total_dep "); }
+                if (guiVariables.Timeseries.Timeseries_total_ero_check) { sw.Write("total_ero "); }
+                if (guiVariables.Timeseries.Timeseries_total_evap_check) { sw.Write("total_evap "); }
+                if (guiVariables.Timeseries.Timeseries_total_infil_check) { sw.Write("total_infil "); }
+                if (guiVariables.Timeseries.Timeseries_total_outflow_check) { sw.Write("total_outflow "); }
+                if (guiVariables.Timeseries.Timeseries_total_rain_check) { sw.Write("total_rain "); }
                 //soil_centred
-                if (timeseries.total_phys_weath_checkbox.Checked) { sw.Write("phys_weath "); }
-                if (timeseries.total_chem_weath_checkbox.Checked) { sw.Write("chem_weath "); }
-                if (timeseries.total_fine_formed_checkbox.Checked) { sw.Write("fine_clay_formed "); }
-                if (timeseries.total_fine_eluviated_checkbox.Checked) { sw.Write("fine_clay_eluviated "); }
-                if (timeseries.total_mass_bioturbed_checkbox.Checked) { sw.Write("mass_bioturbed "); }
-                if (timeseries.total_OM_input_checkbox.Checked) { sw.Write("OM_input "); }
-                if (timeseries.total_average_soilthickness_checkbox.Checked) { sw.Write("average_soilthickness "); }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_thicker "); }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_coarser "); }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_thickness "); }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_mass "); }
+                if (guiVariables.Timeseries.Total_phys_weath_checkbox) { sw.Write("phys_weath "); }
+                if (guiVariables.Timeseries.Total_chem_weath_checkbox) { sw.Write("chem_weath "); }
+                if (guiVariables.Timeseries.Total_fine_formed_checkbox) { sw.Write("fine_clay_formed "); }
+                if (guiVariables.Timeseries.Total_fine_eluviated_checkbox) { sw.Write("fine_clay_eluviated "); }
+                if (guiVariables.Timeseries.Total_mass_bioturbed_checkbox) { sw.Write("mass_bioturbed "); }
+                if (guiVariables.Timeseries.Total_OM_input_checkbox) { sw.Write("OM_input "); }
+                if (guiVariables.Timeseries.Total_average_soilthickness_checkbox) { sw.Write("average_soilthickness "); }
+                if (guiVariables.Timeseries.Timeseries_number_soil_thicker_checkbox) { sw.Write("soil_thicker "); }
+                if (guiVariables.Timeseries.Timeseries_number_soil_thicker_checkbox) { sw.Write("soil_coarser "); }
+                if (guiVariables.Timeseries.Timeseries_number_soil_thicker_checkbox) { sw.Write("soil_thickness "); }
+                if (guiVariables.Timeseries.Timeseries_number_soil_thicker_checkbox) { sw.Write("soil_mass "); }
                 sw.Write("\r\n");
                 for (step = 0; step <= guiVariables.End_time - 1; step++)
                 {
-                    if (timeseries.timeseries_cell_waterflow_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[1]]); sw.Write(" "); }
-                    if (timeseries.timeseries_cell_altitude_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[2]]); sw.Write(" "); }
-                    if (timeseries.timeseries_net_ero_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[3]]); sw.Write(" "); }
-                    if (timeseries.timeseries_number_dep_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[4]]); sw.Write(" "); }
-                    if (timeseries.timeseries_number_erosion_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[5]]); sw.Write(" "); }
-                    if (timeseries.timeseries_number_waterflow_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[6]]); sw.Write(" "); }
-                    if (timeseries.timeseries_SDR_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[7]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_average_alt_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[8]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_dep_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[9]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_ero_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[10]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_evap_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[11]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_infil_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[12]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_outflow_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[13]]); sw.Write(" "); }
-                    if (timeseries.timeseries_total_rain_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[14]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_cell_waterflow_check) { sw.Write(timeseries_matrix[step, timeseries_order[1]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_cell_altitude_check) { sw.Write(timeseries_matrix[step, timeseries_order[2]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_net_ero_check) { sw.Write(timeseries_matrix[step, timeseries_order[3]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_number_dep_check) { sw.Write(timeseries_matrix[step, timeseries_order[4]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_number_erosion_check) { sw.Write(timeseries_matrix[step, timeseries_order[5]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_number_waterflow_check) { sw.Write(timeseries_matrix[step, timeseries_order[6]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_SDR_check) { sw.Write(timeseries_matrix[step, timeseries_order[7]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_total_average_alt_check) { sw.Write(timeseries_matrix[step, timeseries_order[8]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_total_dep_check) { sw.Write(timeseries_matrix[step, timeseries_order[9]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_total_ero_check) { sw.Write(timeseries_matrix[step, timeseries_order[10]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_total_evap_check) { sw.Write(timeseries_matrix[step, timeseries_order[11]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_total_infil_check) { sw.Write(timeseries_matrix[step, timeseries_order[12]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_total_outflow_check) { sw.Write(timeseries_matrix[step, timeseries_order[13]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_total_rain_check) { sw.Write(timeseries_matrix[step, timeseries_order[14]]); sw.Write(" "); }
                     //soil_centred
-                    if (timeseries.total_phys_weath_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[15]]); sw.Write(" "); }
-                    if (timeseries.total_chem_weath_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[16]]); sw.Write(" "); }
-                    if (timeseries.total_fine_formed_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[17]]); sw.Write(" "); }
-                    if (timeseries.total_fine_eluviated_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[18]]); sw.Write(" "); }
-                    if (timeseries.total_mass_bioturbed_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[19]]); sw.Write(" "); }
-                    if (timeseries.total_OM_input_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[20]]); sw.Write(" "); }
-                    if (timeseries.total_average_soilthickness_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[21]]); sw.Write(" "); }
-                    if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[22]]); sw.Write(" "); }
-                    if (timeseries.timeseries_coarser_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[23]]); sw.Write(" "); }
-                    if (timeseries.timeseries_soil_depth_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[24]]); sw.Write(" "); }
-                    if (timeseries.timeseries_soil_mass_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[25]]); }
+                    if (guiVariables.Timeseries.Total_phys_weath_checkbox) { sw.Write(timeseries_matrix[step, timeseries_order[15]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Total_chem_weath_checkbox) { sw.Write(timeseries_matrix[step, timeseries_order[16]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Total_fine_formed_checkbox) { sw.Write(timeseries_matrix[step, timeseries_order[17]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Total_fine_eluviated_checkbox) { sw.Write(timeseries_matrix[step, timeseries_order[18]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Total_mass_bioturbed_checkbox) { sw.Write(timeseries_matrix[step, timeseries_order[19]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Total_OM_input_checkbox) { sw.Write(timeseries_matrix[step, timeseries_order[20]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Total_average_soilthickness_checkbox) { sw.Write(timeseries_matrix[step, timeseries_order[21]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_number_soil_thicker_checkbox) { sw.Write(timeseries_matrix[step, timeseries_order[22]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_coarser_checkbox) { sw.Write(timeseries_matrix[step, timeseries_order[23]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_soil_depth_checkbox) { sw.Write(timeseries_matrix[step, timeseries_order[24]]); sw.Write(" "); }
+                    if (guiVariables.Timeseries.Timeseries_soil_mass_checkbox) { sw.Write(timeseries_matrix[step, timeseries_order[25]]); }
                     sw.Write("\r\n");
                 }
             }
@@ -3342,7 +3342,7 @@ namespace LORICA4
                                 //if (GlobalMethods.layerthickness_m[row,col,layer] < 0) { Debugger.Break(); } //MMS
                                 //find_negative_texture_rcl(row, col, layer); //MMS
                                 //}
-                                if (timeseries.timeseries_soil_mass_checkbox.Checked && System.Convert.ToInt32(timeseries.timeseries_soil_cell_row.Text) == row && System.Convert.ToInt32(timeseries.timeseries_soil_cell_col.Text) == col)
+                                if (guiVariables.Timeseries.Timeseries_soil_mass_checkbox && System.Convert.ToInt32(guiVariables.Timeseries.Timeseries_soil_cell_row) == row && System.Convert.ToInt32(guiVariables.Timeseries.Timeseries_soil_cell_col) == col)
                                 {
                                     local_soil_mass_kg += GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer];
                                     if (local_soil_mass_kg < 0)
@@ -3350,7 +3350,7 @@ namespace LORICA4
                                         Debug.WriteLine("err_uscl1");
                                     } //MMS
                                 }
-                                if (timeseries.timeseries_soil_mass_checkbox.Checked && layer == 0 && GlobalMethods.texture_kg[row, col, layer, 0] / (GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer]) > System.Convert.ToDouble(timeseries.timeseries_soil_coarser_fraction_textbox.Text))
+                                if (guiVariables.Timeseries.Timeseries_soil_mass_checkbox && layer == 0 && GlobalMethods.texture_kg[row, col, layer, 0] / (GlobalMethods.texture_kg[row, col, layer, 0] + GlobalMethods.texture_kg[row, col, layer, 1] + GlobalMethods.texture_kg[row, col, layer, 2] + GlobalMethods.texture_kg[row, col, layer, 3] + GlobalMethods.texture_kg[row, col, layer, 4] + GlobalMethods.young_SOM_kg[row, col, layer] + GlobalMethods.old_SOM_kg[row, col, layer]) > System.Convert.ToDouble(guiVariables.Timeseries.Timeseries_soil_coarser_fraction_textbox))
                                 {
                                     number_soil_coarser_than++;
                                 }
@@ -3540,9 +3540,9 @@ namespace LORICA4
                                 Debug.WriteLine(" Warning - loss of soil data ");
                                 //displaysoil(row, col);
                             }
-                            if (timeseries.timeseries_number_soil_thicker_checkbox.Checked && System.Convert.ToDouble(timeseries.timeseries_soil_thicker_textbox.Text) < depth_m) { number_soil_thicker_than++; }
-                            if (timeseries.total_average_soilthickness_checkbox.Checked) { total_average_soilthickness_m += depth_m; }
-                            if (timeseries.timeseries_soil_depth_checkbox.Checked && System.Convert.ToInt32(timeseries.timeseries_soil_cell_row.Text) == row && System.Convert.ToInt32(timeseries.timeseries_soil_cell_col.Text) == col)
+                            if (guiVariables.Timeseries.Timeseries_number_soil_thicker_checkbox && System.Convert.ToDouble(guiVariables.Timeseries.Timeseries_soil_thicker_textbox) < depth_m) { number_soil_thicker_than++; }
+                            if (guiVariables.Timeseries.Total_average_soilthickness_checkbox) { total_average_soilthickness_m += depth_m; }
+                            if (guiVariables.Timeseries.Timeseries_soil_depth_checkbox && System.Convert.ToInt32(guiVariables.Timeseries.Timeseries_soil_cell_row) == row && System.Convert.ToInt32(guiVariables.Timeseries.Timeseries_soil_cell_col) == col)
                             {
                                 local_soil_depth_m = depth_m;
                             }
@@ -3560,7 +3560,7 @@ namespace LORICA4
                     } // end col
                 } // end row
 
-                if (timeseries.total_average_soilthickness_checkbox.Checked) { total_average_soilthickness_m /= GlobalMethods.number_of_data_cells; }
+                if (guiVariables.Timeseries.Total_average_soilthickness_checkbox) { total_average_soilthickness_m /= GlobalMethods.number_of_data_cells; }
             }
             catch { }
             double mass_after = total_catchment_mass();
@@ -3803,9 +3803,9 @@ namespace LORICA4
                                 Debug.WriteLine("err_uscl20");
 
                             }
-                            if (timeseries.timeseries_number_soil_thicker_checkbox.Checked && System.Convert.ToDouble(timeseries.timeseries_soil_thicker_textbox.Text) < depth_m) { number_soil_thicker_than++; }
-                            if (timeseries.total_average_soilthickness_checkbox.Checked) { total_average_soilthickness_m += depth_m; }
-                            if (timeseries.timeseries_soil_depth_checkbox.Checked && System.Convert.ToInt32(timeseries.timeseries_soil_cell_row.Text) == row && System.Convert.ToInt32(timeseries.timeseries_soil_cell_col.Text) == col)
+                            if (guiVariables.Timeseries.Timeseries_number_soil_thicker_checkbox && System.Convert.ToDouble(guiVariables.Timeseries.Timeseries_soil_thicker_textbox) < depth_m) { number_soil_thicker_than++; }
+                            if (guiVariables.Timeseries.Total_average_soilthickness_checkbox) { total_average_soilthickness_m += depth_m; }
+                            if (guiVariables.Timeseries.Timeseries_soil_depth_checkbox && System.Convert.ToInt32(guiVariables.Timeseries.Timeseries_soil_cell_row) == row && System.Convert.ToInt32(guiVariables.Timeseries.Timeseries_soil_cell_col) == col)
                             {
                                 local_soil_depth_m = depth_m;
                             }
@@ -3823,7 +3823,7 @@ namespace LORICA4
                     } // end col
                 } // end row
 
-                if (timeseries.total_average_soilthickness_checkbox.Checked) { total_average_soilthickness_m /= GlobalMethods.number_of_data_cells; }
+                if (guiVariables.Timeseries.Total_average_soilthickness_checkbox) { total_average_soilthickness_m /= GlobalMethods.number_of_data_cells; }
             }
             catch
             {
@@ -4417,7 +4417,7 @@ namespace LORICA4
                     }  //);
                 } // end for cells
                   //timeseries
-                if (timeseries.timeseries_cell_waterflow_check.Checked)
+                if (guiVariables.Timeseries.Timeseries_cell_waterflow_check)
                 {
                     timeseries_matrix[GlobalMethods.t, timeseries_order[15]] = total_phys_weathered_mass_kg;
                 }
@@ -4590,11 +4590,11 @@ namespace LORICA4
                 }
             }  //);
                //timeseries
-            if (timeseries.total_chem_weath_checkbox.Checked)
+            if (guiVariables.Timeseries.Total_chem_weath_checkbox)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[16]] = total_chem_weathered_mass_kg;
             }
-            if (timeseries.total_fine_formed_checkbox.Checked)
+            if (guiVariables.Timeseries.Total_fine_formed_checkbox)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[17]] = total_fine_neoformed_mass_kg;
             }
@@ -5070,7 +5070,7 @@ namespace LORICA4
                   // if (findnegativetexture()) { Debugger.Break(); }
 
 
-                if (timeseries.total_mass_bioturbed_checkbox.Checked)
+                if (guiVariables.Timeseries.Total_mass_bioturbed_checkbox)
                 {
                     timeseries_matrix[GlobalMethods.t, timeseries_order[19]] = total_mass_bioturbed_kg;
                 }
@@ -5224,7 +5224,7 @@ namespace LORICA4
                     }
 
                 }
-                if (timeseries.total_OM_input_checkbox.Checked)
+                if (guiVariables.Timeseries.Total_OM_input_checkbox)
                 {
                     timeseries_matrix[GlobalMethods.t, timeseries_order[20]] = total_OM_input_kg;
                 }
@@ -5308,7 +5308,7 @@ namespace LORICA4
                         }
                     }
                 }
-                if (timeseries.total_fine_eluviated_checkbox.Checked)
+                if (guiVariables.Timeseries.Total_fine_eluviated_checkbox)
                 {
                     timeseries_matrix[GlobalMethods.t, timeseries_order[18]] = total_fine_eluviated_mass_kg;
                 }
@@ -5420,7 +5420,7 @@ namespace LORICA4
                             }
                         }
                     }
-                    if (timeseries.total_fine_eluviated_checkbox.Checked)
+                    if (guiVariables.Timeseries.Total_fine_eluviated_checkbox)
                     {
                         timeseries_matrix[GlobalMethods.t, timeseries_order[18]] = total_fine_eluviated_mass_kg;
                     }
@@ -6192,8 +6192,8 @@ namespace LORICA4
                             { GlobalMethods.dz_ero_m[row, col] += new_thickness - old_thickness; }
                             else { GlobalMethods.dz_sed_m[row, col] += new_thickness - old_thickness; }
 
-                            if (-GlobalMethods.dz_ero_m[row, col] > timeseries.timeseries_erosion_threshold) { eroded_cells++; }
-                            if (GlobalMethods.dz_sed_m[row, col] + GlobalMethods.lake_sed_m[row, col] > timeseries.timeseries_deposition_threshold) { deposited_cells++; }
+                            if (-GlobalMethods.dz_ero_m[row, col] > guiVariables.Timeseries.Timeseries_erosion_threshold) { eroded_cells++; }
+                            if (GlobalMethods.dz_sed_m[row, col] + GlobalMethods.lake_sed_m[row, col] > guiVariables.Timeseries.Timeseries_deposition_threshold) { deposited_cells++; }
                         }
 
                         // 7: Update timeseries
@@ -6203,7 +6203,7 @@ namespace LORICA4
                         total_evap += evap_value_m;
                         if (check_space_infil.Checked == true) { total_infil += GlobalMethods.infil[row, col]; }
                         total_infil += infil_value_m;
-                        if (GlobalMethods.waterflow_m3[row, col] * GlobalMethods.dx * GlobalMethods.dx > timeseries.timeseries_waterflow_threshold) { wet_cells++; }
+                        if (GlobalMethods.waterflow_m3[row, col] * GlobalMethods.dx * GlobalMethods.dx > guiVariables.Timeseries.Timeseries_waterflow_threshold) { wet_cells++; }
                     } // end for nodata
                 }   // end for col
             } // end for row
@@ -6794,8 +6794,8 @@ namespace LORICA4
                             GlobalMethods.dtm[row, col] += GlobalMethods.dz_ero_m[row, col] + GlobalMethods.dz_sed_m[row, col];                           //No need to add lake_sed to GlobalMethods.dtm in the next line
                             GlobalMethods.sum_water_erosion[row, col] += GlobalMethods.dz_ero_m[row, col] + GlobalMethods.dz_sed_m[row, col] + GlobalMethods.lake_sed_m[row, col];
 
-                            if (-GlobalMethods.dz_ero_m[row, col] > timeseries.timeseries_erosion_threshold) { eroded_cells++; }
-                            if (GlobalMethods.dz_sed_m[row, col] + GlobalMethods.lake_sed_m[row, col] > timeseries.timeseries_deposition_threshold) { deposited_cells++; }
+                            if (-GlobalMethods.dz_ero_m[row, col] > guiVariables.Timeseries.Timeseries_erosion_threshold) { eroded_cells++; }
+                            if (GlobalMethods.dz_sed_m[row, col] + GlobalMethods.lake_sed_m[row, col] > guiVariables.Timeseries.Timeseries_deposition_threshold) { deposited_cells++; }
                         }
                         if (check_space_rain.Checked == true) { total_rain += GlobalMethods.rain[row, col]; }
                         total_rain += rain_value_m;
@@ -6803,7 +6803,7 @@ namespace LORICA4
                         total_evap += evap_value_m;
                         if (check_space_infil.Checked == true) { total_infil += GlobalMethods.infil[row, col]; }
                         total_infil += infil_value_m;
-                        if (GlobalMethods.waterflow_m3[row, col] * GlobalMethods.dx * GlobalMethods.dx > timeseries.timeseries_waterflow_threshold) { wet_cells++; }
+                        if (GlobalMethods.waterflow_m3[row, col] * GlobalMethods.dx * GlobalMethods.dx > guiVariables.Timeseries.Timeseries_waterflow_threshold) { wet_cells++; }
                     } // end for nodata
                 }   // end for col
             } // end for row
@@ -6857,59 +6857,59 @@ namespace LORICA4
 
 
             //save timeseries_outputs
-            if (timeseries.timeseries_cell_waterflow_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_cell_waterflow_check)
             {
-                timeseries_matrix[GlobalMethods.t, timeseries_order[1]] = GlobalMethods.waterflow_m3[System.Convert.ToInt32(timeseries.timeseries_textbox_cell_row.Text), System.Convert.ToInt32(timeseries.timeseries_textbox_cell_col.Text)];
+                timeseries_matrix[GlobalMethods.t, timeseries_order[1]] = GlobalMethods.waterflow_m3[System.Convert.ToInt32(guiVariables.Timeseries.Timeseries_textbox_cell_row), System.Convert.ToInt32(guiVariables.Timeseries.Timeseries_textbox_cell_col)];
             }
-            if (timeseries.timeseries_cell_altitude_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_cell_altitude_check)
             {
-                timeseries_matrix[GlobalMethods.t, timeseries_order[2]] = GlobalMethods.dtm[System.Convert.ToInt32(timeseries.timeseries_textbox_cell_row.Text), System.Convert.ToInt32(timeseries.timeseries_textbox_cell_col.Text)];
+                timeseries_matrix[GlobalMethods.t, timeseries_order[2]] = GlobalMethods.dtm[System.Convert.ToInt32(guiVariables.Timeseries.Timeseries_textbox_cell_row), System.Convert.ToInt32(guiVariables.Timeseries.Timeseries_textbox_cell_col)];
             }
-            if (timeseries.timeseries_net_ero_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_net_ero_check)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[3]] = volume_eroded + volume_deposited + sediment_delta_m + sediment_filled_m;
             }
-            if (timeseries.timeseries_number_dep_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_number_dep_check)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[4]] = deposited_cells;
             }
-            if (timeseries.timeseries_number_erosion_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_number_erosion_check)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[5]] = eroded_cells;
             }
-            if (timeseries.timeseries_number_waterflow_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_number_waterflow_check)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[6]] = wet_cells;
             }
-            if (timeseries.timeseries_SDR_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_SDR_check)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[7]] = (volume_eroded + volume_deposited + sediment_delta_m + sediment_filled_m) / volume_eroded;
             }
-            if (timeseries.timeseries_total_average_alt_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_total_average_alt_check)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[8]] = total_average_altitude;
             }
-            if (timeseries.timeseries_total_dep_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_total_dep_check)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[9]] = volume_deposited + sediment_delta_m + sediment_filled_m;
             }
-            if (timeseries.timeseries_total_ero_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_total_ero_check)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[10]] = -volume_eroded;
             }
-            if (timeseries.timeseries_total_evap_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_total_evap_check)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[11]] = total_evap;
             }
-            if (timeseries.timeseries_total_infil_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_total_infil_check)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[12]] = total_infil;
             }
-            if (timeseries.timeseries_total_outflow_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_total_outflow_check)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[13]] = total_outflow;
             }
-            if (timeseries.timeseries_total_rain_check.Checked)
+            if (guiVariables.Timeseries.Timeseries_total_rain_check)
             {
                 timeseries_matrix[GlobalMethods.t, timeseries_order[14]] = total_rain;
             }
@@ -10995,31 +10995,31 @@ namespace LORICA4
             try
             {
                 number_of_outputs = 0;
-                if (timeseries.timeseries_cell_waterflow_check.Checked) { timeseries_order[1] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_cell_altitude_check.Checked) { timeseries_order[2] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_net_ero_check.Checked) { timeseries_order[3] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_number_dep_check.Checked) { timeseries_order[4] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_number_erosion_check.Checked) { timeseries_order[5] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_number_waterflow_check.Checked) { timeseries_order[6] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_SDR_check.Checked) { timeseries_order[7] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_total_average_alt_check.Checked) { timeseries_order[8] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_total_dep_check.Checked) { timeseries_order[9] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_total_ero_check.Checked) { timeseries_order[10] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_total_evap_check.Checked) { timeseries_order[11] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_total_infil_check.Checked) { timeseries_order[12] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_total_outflow_check.Checked) { timeseries_order[13] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_total_rain_check.Checked) { timeseries_order[14] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_phys_weath_checkbox.Checked) { timeseries_order[15] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_chem_weath_checkbox.Checked) { timeseries_order[16] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_fine_formed_checkbox.Checked) { timeseries_order[17] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_fine_eluviated_checkbox.Checked) { timeseries_order[18] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_mass_bioturbed_checkbox.Checked) { timeseries_order[19] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_OM_input_checkbox.Checked) { timeseries_order[20] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_average_soilthickness_checkbox.Checked) { timeseries_order[21] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { timeseries_order[22] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_coarser_checkbox.Checked) { timeseries_order[23] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_soil_depth_checkbox.Checked) { timeseries_order[24] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_soil_mass_checkbox.Checked) { timeseries_order[25] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_cell_waterflow_check) { timeseries_order[1] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_cell_altitude_check) { timeseries_order[2] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_net_ero_check) { timeseries_order[3] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_number_dep_check) { timeseries_order[4] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_number_erosion_check) { timeseries_order[5] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_number_waterflow_check) { timeseries_order[6] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_SDR_check) { timeseries_order[7] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_total_average_alt_check) { timeseries_order[8] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_total_dep_check) { timeseries_order[9] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_total_ero_check) { timeseries_order[10] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_total_evap_check) { timeseries_order[11] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_total_infil_check) { timeseries_order[12] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_total_outflow_check) { timeseries_order[13] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_total_rain_check) { timeseries_order[14] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Total_phys_weath_checkbox) { timeseries_order[15] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Total_chem_weath_checkbox) { timeseries_order[16] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Total_fine_formed_checkbox) { timeseries_order[17] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Total_fine_eluviated_checkbox) { timeseries_order[18] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Total_mass_bioturbed_checkbox) { timeseries_order[19] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Total_OM_input_checkbox) { timeseries_order[20] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Total_average_soilthickness_checkbox) { timeseries_order[21] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_number_soil_thicker_checkbox) { timeseries_order[22] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_coarser_checkbox) { timeseries_order[23] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_soil_depth_checkbox) { timeseries_order[24] = number_of_outputs; number_of_outputs++; }
+                if (guiVariables.Timeseries.Timeseries_soil_mass_checkbox) { timeseries_order[25] = number_of_outputs; number_of_outputs++; }
             }
             catch { Debug.WriteLine("timeseries preparation was unsuccesful"); }
 

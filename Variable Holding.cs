@@ -78,26 +78,749 @@ namespace LORICAVariables
                 updateTimeSeries = uts;
             }
 
-
-
-
-            ReaderWriterLock ThingRWL = new ReaderWriterLock();
-            protected string thing = "";
-            public string Thing
+            ReaderWriterLock Timeseries_number_soil_thicker_checkboxRWL = new ReaderWriterLock();
+            protected bool timeseries_number_soil_thicker_checkbox = false;
+            public bool Timeseries_number_soil_thicker_checkbox
             {
                 get
                 {
-                    ThingRWL.AcquireReaderLock(Timeout.Infinite);
-                    string temp = thing;
-                    ThingRWL.ReleaseReaderLock();
+                    Timeseries_number_soil_thicker_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_number_soil_thicker_checkbox;
+                    Timeseries_number_soil_thicker_checkboxRWL.ReleaseReaderLock();
 
                     return temp;
                 }
                 set
                 {
-                    ThingRWL.AcquireWriterLock(Timeout.Infinite);
-                    thing = value;
-                    ThingRWL.ReleaseWriterLock();
+                    Timeseries_number_soil_thicker_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_number_soil_thicker_checkbox = value;
+                    Timeseries_number_soil_thicker_checkboxRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_soil_thicker_textboxRWL = new ReaderWriterLock();
+            protected string timeseries_soil_thicker_textbox = "";
+            public string Timeseries_soil_thicker_textbox
+            {
+                get
+                {
+                    Timeseries_soil_thicker_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = timeseries_soil_thicker_textbox;
+                    Timeseries_soil_thicker_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_soil_thicker_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_soil_thicker_textbox = value;
+                    Timeseries_soil_thicker_textboxRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Total_average_soilthickness_checkboxRWL = new ReaderWriterLock();
+            protected bool total_average_soilthickness_checkbox = false;
+            public bool Total_average_soilthickness_checkbox
+            {
+                get
+                {
+                    Total_average_soilthickness_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = total_average_soilthickness_checkbox;
+                    Total_average_soilthickness_checkboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Total_average_soilthickness_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    total_average_soilthickness_checkbox = value;
+                    Total_average_soilthickness_checkboxRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_soil_depth_checkboxRWL = new ReaderWriterLock();
+            protected bool timeseries_soil_depth_checkbox = false;
+            public bool Timeseries_soil_depth_checkbox
+            {
+                get
+                {
+                    Timeseries_soil_depth_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_soil_depth_checkbox;
+                    Timeseries_soil_depth_checkboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_soil_depth_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_soil_depth_checkbox = value;
+                    Timeseries_soil_depth_checkboxRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_soil_cell_rowRWL = new ReaderWriterLock();
+            protected string timeseries_soil_cell_row = "";
+            public string Timeseries_soil_cell_row
+            {
+                get
+                {
+                    Timeseries_soil_cell_rowRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = timeseries_soil_cell_row;
+                    Timeseries_soil_cell_rowRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_soil_cell_rowRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_soil_cell_row = value;
+                    Timeseries_soil_cell_rowRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_soil_cell_colRWL = new ReaderWriterLock();
+            protected string timeseries_soil_cell_col = "";
+            public string Timeseries_soil_cell_col
+            {
+                get
+                {
+                    Timeseries_soil_cell_colRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = timeseries_soil_cell_col;
+                    Timeseries_soil_cell_colRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_soil_cell_colRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_soil_cell_col = value;
+                    Timeseries_soil_cell_colRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_cell_waterflow_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_cell_waterflow_check = false;
+            public bool Timeseries_cell_waterflow_check
+            {
+                get
+                {
+                    Timeseries_cell_waterflow_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_cell_waterflow_check;
+                    Timeseries_cell_waterflow_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_cell_waterflow_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_cell_waterflow_check = value;
+                    Timeseries_cell_waterflow_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Total_chem_weath_checkboxRWL = new ReaderWriterLock();
+            protected bool total_chem_weath_checkbox = false;
+            public bool Total_chem_weath_checkbox
+            {
+                get
+                {
+                    Total_chem_weath_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = total_chem_weath_checkbox;
+                    Total_chem_weath_checkboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Total_chem_weath_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    total_chem_weath_checkbox = value;
+                    Total_chem_weath_checkboxRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Total_fine_formed_checkboxRWL = new ReaderWriterLock();
+            protected bool total_fine_formed_checkbox = false;
+            public bool Total_fine_formed_checkbox
+            {
+                get
+                {
+                    Total_fine_formed_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = total_fine_formed_checkbox;
+                    Total_fine_formed_checkboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Total_fine_formed_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    total_fine_formed_checkbox = value;
+                    Total_fine_formed_checkboxRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Total_mass_bioturbed_checkboxRWL = new ReaderWriterLock();
+            protected bool total_mass_bioturbed_checkbox = false;
+            public bool Total_mass_bioturbed_checkbox
+            {
+                get
+                {
+                    Total_mass_bioturbed_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = total_mass_bioturbed_checkbox;
+                    Total_mass_bioturbed_checkboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Total_mass_bioturbed_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    total_mass_bioturbed_checkbox = value;
+                    Total_mass_bioturbed_checkboxRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Total_OM_input_checkboxRWL = new ReaderWriterLock();
+            protected bool total_OM_input_checkbox = false;
+            public bool Total_OM_input_checkbox
+            {
+                get
+                {
+                    Total_OM_input_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = total_OM_input_checkbox;
+                    Total_OM_input_checkboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Total_OM_input_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    total_OM_input_checkbox = value;
+                    Total_OM_input_checkboxRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Total_fine_eluviated_checkboxRWL = new ReaderWriterLock();
+            protected bool total_fine_eluviated_checkbox = false;
+            public bool Total_fine_eluviated_checkbox
+            {
+                get
+                {
+                    Total_fine_eluviated_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = total_fine_eluviated_checkbox;
+                    Total_fine_eluviated_checkboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Total_fine_eluviated_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    total_fine_eluviated_checkbox = value;
+                    Total_fine_eluviated_checkboxRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_erosion_thresholdRWL = new ReaderWriterLock();
+            protected double timeseries_erosion_threshold = 0;
+            public double Timeseries_erosion_threshold
+            {
+                get
+                {
+                    Timeseries_erosion_thresholdRWL.AcquireReaderLock(Timeout.Infinite);
+                    double temp = timeseries_erosion_threshold;
+                    Timeseries_erosion_thresholdRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_erosion_thresholdRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_erosion_threshold = value;
+                    Timeseries_erosion_thresholdRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_deposition_thresholdRWL = new ReaderWriterLock();
+            protected double timeseries_deposition_threshold = 0;
+            public double Timeseries_deposition_threshold
+            {
+                get
+                {
+                    Timeseries_deposition_thresholdRWL.AcquireReaderLock(Timeout.Infinite);
+                    double temp = timeseries_deposition_threshold;
+                    Timeseries_deposition_thresholdRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_deposition_thresholdRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_deposition_threshold = value;
+                    Timeseries_deposition_thresholdRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_waterflow_thresholdRWL = new ReaderWriterLock();
+            protected double timeseries_waterflow_threshold = 0;
+            public double Timeseries_waterflow_threshold
+            {
+                get
+                {
+                    Timeseries_waterflow_thresholdRWL.AcquireReaderLock(Timeout.Infinite);
+                    double temp = timeseries_waterflow_threshold;
+                    Timeseries_waterflow_thresholdRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_waterflow_thresholdRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_waterflow_threshold = value;
+                    Timeseries_waterflow_thresholdRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_net_ero_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_net_ero_check = false;
+            public bool Timeseries_net_ero_check
+            {
+                get
+                {
+                    Timeseries_net_ero_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_net_ero_check;
+                    Timeseries_net_ero_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_net_ero_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_net_ero_check = value;
+                    Timeseries_net_ero_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_textbox_cell_rowRWL = new ReaderWriterLock();
+            protected string timeseries_textbox_cell_row = "";
+            public string Timeseries_textbox_cell_row
+            {
+                get
+                {
+                    Timeseries_textbox_cell_rowRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = timeseries_textbox_cell_row;
+                    Timeseries_textbox_cell_rowRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_textbox_cell_rowRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_textbox_cell_row = value;
+                    Timeseries_textbox_cell_rowRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_textbox_cell_colRWL = new ReaderWriterLock();
+            protected string timeseries_textbox_cell_col = "";
+            public string Timeseries_textbox_cell_col
+            {
+                get
+                {
+                    Timeseries_textbox_cell_colRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = timeseries_textbox_cell_col;
+                    Timeseries_textbox_cell_colRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_textbox_cell_colRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_textbox_cell_col = value;
+                    Timeseries_textbox_cell_colRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_number_dep_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_number_dep_check = false;
+            public bool Timeseries_number_dep_check
+            {
+                get
+                {
+                    Timeseries_number_dep_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_number_dep_check;
+                    Timeseries_number_dep_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_number_dep_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_number_dep_check = value;
+                    Timeseries_number_dep_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_cell_altitude_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_cell_altitude_check = false;
+            public bool Timeseries_cell_altitude_check
+            {
+                get
+                {
+                    Timeseries_cell_altitude_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_cell_altitude_check;
+                    Timeseries_cell_altitude_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_cell_altitude_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_cell_altitude_check = value;
+                    Timeseries_cell_altitude_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_number_erosion_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_number_erosion_check = false;
+            public bool Timeseries_number_erosion_check
+            {
+                get
+                {
+                    Timeseries_number_erosion_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_number_erosion_check;
+                    Timeseries_number_erosion_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_number_erosion_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_number_erosion_check = value;
+                    Timeseries_number_erosion_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_number_waterflow_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_number_waterflow_check = false;
+            public bool Timeseries_number_waterflow_check
+            {
+                get
+                {
+                    Timeseries_number_waterflow_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_number_waterflow_check;
+                    Timeseries_number_waterflow_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_number_waterflow_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_number_waterflow_check = value;
+                    Timeseries_number_waterflow_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_SDR_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_SDR_check = false;
+            public bool Timeseries_SDR_check
+            {
+                get
+                {
+                    Timeseries_SDR_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_SDR_check;
+                    Timeseries_SDR_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_SDR_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_SDR_check = value;
+                    Timeseries_SDR_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_total_average_alt_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_total_average_alt_check = false;
+            public bool Timeseries_total_average_alt_check
+            {
+                get
+                {
+                    Timeseries_total_average_alt_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_total_average_alt_check;
+                    Timeseries_total_average_alt_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_total_average_alt_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_total_average_alt_check = value;
+                    Timeseries_total_average_alt_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_total_dep_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_total_dep_check = false;
+            public bool Timeseries_total_dep_check
+            {
+                get
+                {
+                    Timeseries_total_dep_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_total_dep_check;
+                    Timeseries_total_dep_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_total_dep_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_total_dep_check = value;
+                    Timeseries_total_dep_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_total_ero_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_total_ero_check = false;
+            public bool Timeseries_total_ero_check
+            {
+                get
+                {
+                    Timeseries_total_ero_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_total_ero_check;
+                    Timeseries_total_ero_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_total_ero_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_total_ero_check = value;
+                    Timeseries_total_ero_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_total_evap_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_total_evap_check = false;
+            public bool Timeseries_total_evap_check
+            {
+                get
+                {
+                    Timeseries_total_evap_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_total_evap_check;
+                    Timeseries_total_evap_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_total_evap_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_total_evap_check = value;
+                    Timeseries_total_evap_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_total_infil_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_total_infil_check = false;
+            public bool Timeseries_total_infil_check
+            {
+                get
+                {
+                    Timeseries_total_infil_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_total_infil_check;
+                    Timeseries_total_infil_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_total_infil_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_total_infil_check = value;
+                    Timeseries_total_infil_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_total_outflow_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_total_outflow_check = false;
+            public bool Timeseries_total_outflow_check
+            {
+                get
+                {
+                    Timeseries_total_outflow_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_total_outflow_check;
+                    Timeseries_total_outflow_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_total_outflow_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_total_outflow_check = value;
+                    Timeseries_total_outflow_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_total_rain_checkRWL = new ReaderWriterLock();
+            protected bool timeseries_total_rain_check = false;
+            public bool Timeseries_total_rain_check
+            {
+                get
+                {
+                    Timeseries_total_rain_checkRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_total_rain_check;
+                    Timeseries_total_rain_checkRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_total_rain_checkRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_total_rain_check = value;
+                    Timeseries_total_rain_checkRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Total_phys_weath_checkboxRWL = new ReaderWriterLock();
+            protected bool total_phys_weath_checkbox = false;
+            public bool Total_phys_weath_checkbox
+            {
+                get
+                {
+                    Total_phys_weath_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = total_phys_weath_checkbox;
+                    Total_phys_weath_checkboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Total_phys_weath_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    total_phys_weath_checkbox = value;
+                    Total_phys_weath_checkboxRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_coarser_checkboxRWL = new ReaderWriterLock();
+            protected bool timeseries_coarser_checkbox = false;
+            public bool Timeseries_coarser_checkbox
+            {
+                get
+                {
+                    Timeseries_coarser_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_coarser_checkbox;
+                    Timeseries_coarser_checkboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_coarser_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_coarser_checkbox = value;
+                    Timeseries_coarser_checkboxRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_soil_mass_checkboxRWL = new ReaderWriterLock();
+            protected bool timeseries_soil_mass_checkbox = false;
+            public bool Timeseries_soil_mass_checkbox
+            {
+                get
+                {
+                    Timeseries_soil_mass_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    bool temp = timeseries_soil_mass_checkbox;
+                    Timeseries_soil_mass_checkboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_soil_mass_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_soil_mass_checkbox = value;
+                    Timeseries_soil_mass_checkboxRWL.ReleaseWriterLock();
+
+                    UpdateTimeSeries();
+                }
+            }
+
+            ReaderWriterLock Timeseries_soil_coarser_fraction_textboxRWL = new ReaderWriterLock();
+            protected string timeseries_soil_coarser_fraction_textbox = "";
+            public string Timeseries_soil_coarser_fraction_textbox
+            {
+                get
+                {
+                    Timeseries_soil_coarser_fraction_textboxRWL.AcquireReaderLock(Timeout.Infinite);
+                    string temp = timeseries_soil_coarser_fraction_textbox;
+                    Timeseries_soil_coarser_fraction_textboxRWL.ReleaseReaderLock();
+
+                    return temp;
+                }
+                set
+                {
+                    Timeseries_soil_coarser_fraction_textboxRWL.AcquireWriterLock(Timeout.Infinite);
+                    timeseries_soil_coarser_fraction_textbox = value;
+                    Timeseries_soil_coarser_fraction_textboxRWL.ReleaseWriterLock();
 
                     UpdateTimeSeries();
                 }
@@ -105,6 +828,7 @@ namespace LORICAVariables
 
 
 
+            //******************************************************
 
 
         }
