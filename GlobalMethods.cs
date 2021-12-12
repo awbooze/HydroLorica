@@ -1,4 +1,8 @@
-﻿using System;
+﻿/***********************************************************
+ * GlobalMethods.cs
+ ***********************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +29,8 @@ namespace LORICA4
 {
     public static class GlobalMethods
     {
+        #region Global Variable Declaration
+
         public static Graphics mygraphics;
         public static System.Drawing.Bitmap m_objDrawingSurface;// = new Bitmap(FILENAMENEEDED);
 
@@ -144,8 +150,9 @@ namespace LORICA4
         public static int max_soil_layers = 5;
         public static int ngrains = 100; // For OSL calculations
 
+        #endregion
 
-
+        // Get/Set methods for Workdir
         static ReaderWriterLock WorkdirRWL = new ReaderWriterLock();
         static string workdir;
         public static string Workdir
@@ -173,11 +180,7 @@ namespace LORICA4
             t = T;
             t_intervene = T_intervene;
             guiVariables = gv;
-        }
-
-
-
-
+        } // end setUp()
 
         public static void calculate_terrain_derivatives()
         {
@@ -459,7 +462,7 @@ namespace LORICA4
             out_double("slhcliff.asc", slhcliff);
             out_double("sllcliff.asc", sllcliff);
             Debug.WriteLine("variables exported to ASCII");
-        }
+        } // end calculate_terrain_derivatives()
 
         public static void dtm_file(string name1)
         {
@@ -586,7 +589,7 @@ namespace LORICA4
                 if (dem_integer_error == 1) { MessageBox.Show("Warning: Digital Elevation Model may only contain integer values\n LORICA can proceed, but may experience problems"); }
 
             }
-        }
+        } // end dtm_file()
 
         public static void out_double(string name4, double[,] output)
         {
@@ -616,7 +619,7 @@ namespace LORICA4
                 sw.Close();
             }
 
-        } //end out_double
+        } //end out_double()
 
         public static void comb_sort()      //sorts the data cells in a dtm in order of increasing altitude
         {
@@ -706,8 +709,7 @@ namespace LORICA4
             {
                 //Debug.WriteLine(" Sorting test successful ");
             }
-        }
-
+        } // end comb_sort()
 
         public static int makematrices()
         {
@@ -852,7 +854,7 @@ namespace LORICA4
             Tau = new double[nr, nc];
             // Debug.WriteLine("memory assigned succesfully");
             return 1;
-        }
+        } // end makematrices()
 
         public static void read_double(string name2, double[,] map1)
         {
@@ -1033,7 +1035,7 @@ namespace LORICA4
             }
             sr.Close();
 
-        }
+        }  // end read_record()
 
         public static void out_mf(string name4, double[,,] output)
         {
@@ -1063,7 +1065,7 @@ namespace LORICA4
 
                 sw.Close();
             }
-        }
+        } // end out_mf()
 
         public static void out_integer(string name4, int[,] output)
         {
@@ -1088,7 +1090,7 @@ namespace LORICA4
                 }
                 sw.Close();
             }
-        } //end out_integer
+        } //end out_integer()
 
         public static void out_profile(string name5, double[,] output, bool row_is_fixed, int row_or_col)
         {
@@ -1129,7 +1131,7 @@ namespace LORICA4
                 }
                 catch { Debug.WriteLine("Profile could not be written"); }
 
-        } //WVG end out_profile
+        } // end out_profile()
 
         public static void writesoil(int row, int col)
         {
@@ -1158,7 +1160,7 @@ namespace LORICA4
                 }
                 sw.Close();
             }
-        }// end writesoil
+        }// end writesoil()
 
         public static void writeallsoils()
         {
@@ -1201,7 +1203,7 @@ namespace LORICA4
                 sw.Close();
             }
 
-        }// end writeallsoils
+        }// end writeallsoils()
 
         public static void write_longitudinal_profile(int startrow, int startcol, string name4)
         {
@@ -1321,7 +1323,7 @@ namespace LORICA4
                 catch { Debug.WriteLine(" issue with writing the content of the full output file for this timestep"); }
                 sw.Close();
             }
-        }
+        } // end write_full_output()
 
         public static double calc_slope_stdesc(int row_s, int col_s)
         {
@@ -1347,7 +1349,7 @@ namespace LORICA4
 
             slope_desc = Math.Atan(slope_desc); // slope in radians
             return (slope_desc);
-        }
+        } // end calc_slope_stdesc()
 
         public static void update_slope_and_aspect()
         {
@@ -1488,7 +1490,7 @@ namespace LORICA4
                     }
                 }
             }
-        }
+        } // end update_slope_and_aspect()
 
     }
 }
