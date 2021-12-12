@@ -1,4 +1,8 @@
-﻿using System;
+﻿/***********************************************************
+ * Variable Holding.cs
+ ***********************************************************/ 
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -28,10 +32,10 @@ namespace LORICAVariables
             //updateVariables();
         }
 
-        public delegate void DelUpdateAllFields(); //Pushes Variables to GUI
-        public delegate void DelUpdateStatusPannel(); //Updates GUI Status Pannel
-        public delegate void DelUpdateTimePannel(); //Updates GUI Status Pannel
-        public delegate void DelUpdateVariables(); //Pulls Values from GUI
+        public delegate void DelUpdateAllFields(); // Pushes Variables to GUI
+        public delegate void DelUpdateStatusPannel(); // Updates GUI Status Pannel
+        public delegate void DelUpdateTimePannel(); // Updates GUI Status Pannel
+        public delegate void DelUpdateVariables(); // Pulls Values from GUI
 
         DelUpdateAllFields updateAllFields;
         DelUpdateStatusPannel updateStatusPannel;
@@ -68,8 +72,10 @@ namespace LORICAVariables
         //Ex: updateAllFields becomes UpdateAllFields
 
 
-
-
+        #region TimeSeries Class
+        /****************************************************
+         * Class to hold TimeSeries-related variables
+         ****************************************************/
         public class output_timeseries
         {
             static DelUpdateTimeSeries updateTimeSeries;
@@ -82,6 +88,7 @@ namespace LORICAVariables
                 updateTimeSeries = uts;
             }
 
+            // Get/Set methods for Total_chem_weath_checkbox
             ReaderWriterLock Total_chem_weath_checkboxRWL = new ReaderWriterLock();
             protected bool total_chem_weath_checkbox = false;
             public bool Total_chem_weath_checkbox
@@ -103,6 +110,8 @@ namespace LORICAVariables
                     UpdateTimeSeries();
                 }
             }
+
+            // Get/Set methods for Timeseries_number_soil_thicker_checkbox
             ReaderWriterLock Timeseries_number_soil_thicker_checkboxRWL = new ReaderWriterLock();
             protected bool timeseries_number_soil_thicker_checkbox = false;
             public bool Timeseries_number_soil_thicker_checkbox
@@ -125,6 +134,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_soil_thicker_textbox
             ReaderWriterLock Timeseries_soil_thicker_textboxRWL = new ReaderWriterLock();
             protected string timeseries_soil_thicker_textbox = "";
             public string Timeseries_soil_thicker_textbox
@@ -147,6 +157,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Total_average_soilthickness_checkbox
             ReaderWriterLock Total_average_soilthickness_checkboxRWL = new ReaderWriterLock();
             protected bool total_average_soilthickness_checkbox = false;
             public bool Total_average_soilthickness_checkbox
@@ -169,6 +180,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_soil_depth_checkbox
             ReaderWriterLock Timeseries_soil_depth_checkboxRWL = new ReaderWriterLock();
             protected bool timeseries_soil_depth_checkbox = false;
             public bool Timeseries_soil_depth_checkbox
@@ -191,6 +203,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_soil_cell_row
             ReaderWriterLock Timeseries_soil_cell_rowRWL = new ReaderWriterLock();
             protected string timeseries_soil_cell_row = "";
             public string Timeseries_soil_cell_row
@@ -213,6 +226,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_soil_cell_col
             ReaderWriterLock Timeseries_soil_cell_colRWL = new ReaderWriterLock();
             protected string timeseries_soil_cell_col = "";
             public string Timeseries_soil_cell_col
@@ -235,6 +249,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_cell_waterflow_check
             ReaderWriterLock Timeseries_cell_waterflow_checkRWL = new ReaderWriterLock();
             protected bool timeseries_cell_waterflow_check = false;
             public bool Timeseries_cell_waterflow_check
@@ -257,6 +272,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Total_fine_formed_checkbox
             ReaderWriterLock Total_fine_formed_checkboxRWL = new ReaderWriterLock();
             protected bool total_fine_formed_checkbox = false;
             public bool Total_fine_formed_checkbox
@@ -279,6 +295,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Total_mass_bioturbed_checkbox
             ReaderWriterLock Total_mass_bioturbed_checkboxRWL = new ReaderWriterLock();
             protected bool total_mass_bioturbed_checkbox = false;
             public bool Total_mass_bioturbed_checkbox
@@ -301,6 +318,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Total_OM_input_checkbox
             ReaderWriterLock Total_OM_input_checkboxRWL = new ReaderWriterLock();
             protected bool total_OM_input_checkbox = false;
             public bool Total_OM_input_checkbox
@@ -323,6 +341,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Total_fine_eluviated_checkbox
             ReaderWriterLock Total_fine_eluviated_checkboxRWL = new ReaderWriterLock();
             protected bool total_fine_eluviated_checkbox = false;
             public bool Total_fine_eluviated_checkbox
@@ -345,6 +364,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_erosion_threshold
             ReaderWriterLock Timeseries_erosion_thresholdRWL = new ReaderWriterLock();
             protected double timeseries_erosion_threshold = 0;
             public double Timeseries_erosion_threshold
@@ -367,6 +387,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_deposition_threshold
             ReaderWriterLock Timeseries_deposition_thresholdRWL = new ReaderWriterLock();
             protected double timeseries_deposition_threshold = 0;
             public double Timeseries_deposition_threshold
@@ -389,6 +410,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_waterflow_threshold
             ReaderWriterLock Timeseries_waterflow_thresholdRWL = new ReaderWriterLock();
             protected double timeseries_waterflow_threshold = 0;
             public double Timeseries_waterflow_threshold
@@ -411,6 +433,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_net_ero_check
             ReaderWriterLock Timeseries_net_ero_checkRWL = new ReaderWriterLock();
             protected bool timeseries_net_ero_check = false;
             public bool Timeseries_net_ero_check
@@ -433,6 +456,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_textbox_cell_row
             ReaderWriterLock Timeseries_textbox_cell_rowRWL = new ReaderWriterLock();
             protected string timeseries_textbox_cell_row = "";
             public string Timeseries_textbox_cell_row
@@ -455,6 +479,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_textbox_cell_col
             ReaderWriterLock Timeseries_textbox_cell_colRWL = new ReaderWriterLock();
             protected string timeseries_textbox_cell_col = "";
             public string Timeseries_textbox_cell_col
@@ -477,6 +502,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_number_dep_check
             ReaderWriterLock Timeseries_number_dep_checkRWL = new ReaderWriterLock();
             protected bool timeseries_number_dep_check = false;
             public bool Timeseries_number_dep_check
@@ -499,6 +525,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_cell_altitude_check
             ReaderWriterLock Timeseries_cell_altitude_checkRWL = new ReaderWriterLock();
             protected bool timeseries_cell_altitude_check = false;
             public bool Timeseries_cell_altitude_check
@@ -521,6 +548,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_number_erosion_check
             ReaderWriterLock Timeseries_number_erosion_checkRWL = new ReaderWriterLock();
             protected bool timeseries_number_erosion_check = false;
             public bool Timeseries_number_erosion_check
@@ -543,6 +571,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_number_waterflow_check
             ReaderWriterLock Timeseries_number_waterflow_checkRWL = new ReaderWriterLock();
             protected bool timeseries_number_waterflow_check = false;
             public bool Timeseries_number_waterflow_check
@@ -565,6 +594,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_SDR_check
             ReaderWriterLock Timeseries_SDR_checkRWL = new ReaderWriterLock();
             protected bool timeseries_SDR_check = false;
             public bool Timeseries_SDR_check
@@ -587,6 +617,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_total_average_alt_check
             ReaderWriterLock Timeseries_total_average_alt_checkRWL = new ReaderWriterLock();
             protected bool timeseries_total_average_alt_check = false;
             public bool Timeseries_total_average_alt_check
@@ -609,6 +640,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_total_dep_check
             ReaderWriterLock Timeseries_total_dep_checkRWL = new ReaderWriterLock();
             protected bool timeseries_total_dep_check = false;
             public bool Timeseries_total_dep_check
@@ -631,6 +663,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_total_ero_check
             ReaderWriterLock Timeseries_total_ero_checkRWL = new ReaderWriterLock();
             protected bool timeseries_total_ero_check = false;
             public bool Timeseries_total_ero_check
@@ -653,6 +686,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_total_evap_check
             ReaderWriterLock Timeseries_total_evap_checkRWL = new ReaderWriterLock();
             protected bool timeseries_total_evap_check = false;
             public bool Timeseries_total_evap_check
@@ -675,6 +709,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_total_infil_check
             ReaderWriterLock Timeseries_total_infil_checkRWL = new ReaderWriterLock();
             protected bool timeseries_total_infil_check = false;
             public bool Timeseries_total_infil_check
@@ -697,6 +732,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_total_outflow_check
             ReaderWriterLock Timeseries_total_outflow_checkRWL = new ReaderWriterLock();
             protected bool timeseries_total_outflow_check = false;
             public bool Timeseries_total_outflow_check
@@ -719,6 +755,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_total_rain_check
             ReaderWriterLock Timeseries_total_rain_checkRWL = new ReaderWriterLock();
             protected bool timeseries_total_rain_check = false;
             public bool Timeseries_total_rain_check
@@ -741,6 +778,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Total_phys_weath_checkbox
             ReaderWriterLock Total_phys_weath_checkboxRWL = new ReaderWriterLock();
             protected bool total_phys_weath_checkbox = false;
             public bool Total_phys_weath_checkbox
@@ -763,6 +801,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_coarser_checkbox
             ReaderWriterLock Timeseries_coarser_checkboxRWL = new ReaderWriterLock();
             protected bool timeseries_coarser_checkbox = false;
             public bool Timeseries_coarser_checkbox
@@ -785,6 +824,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_soil_mass_checkbox
             ReaderWriterLock Timeseries_soil_mass_checkboxRWL = new ReaderWriterLock();
             protected bool timeseries_soil_mass_checkbox = false;
             public bool Timeseries_soil_mass_checkbox
@@ -807,6 +847,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Timeseries_soil_coarser_fraction_textbox
             ReaderWriterLock Timeseries_soil_coarser_fraction_textboxRWL = new ReaderWriterLock();
             protected string timeseries_soil_coarser_fraction_textbox = "";
             public string Timeseries_soil_coarser_fraction_textbox
@@ -828,8 +869,14 @@ namespace LORICAVariables
                     UpdateTimeSeries();
                 }
             }
-
         }
+
+        #endregion
+
+        #region Profile Class
+        /****************************************************
+         * Class to hold Profile-related variables
+         ****************************************************/
         public class output_profile
         {
             static DelUpdateProfile updateProfile;
@@ -842,6 +889,7 @@ namespace LORICAVariables
                 updateProfile = up;
             }
 
+            // Get/Set methods for Radio_pro1_col
             ReaderWriterLock Radio_pro1_colRWL = new ReaderWriterLock();
             protected bool radio_pro1_col = false;
             public bool Radio_pro1_col
@@ -864,6 +912,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Check_altitude_profile1
             ReaderWriterLock Check_altitude_profile1RWL = new ReaderWriterLock();
             protected bool check_altitude_profile1 = false;
             public bool Check_altitude_profile1
@@ -886,6 +935,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Check_waterflow_profile1
             ReaderWriterLock Check_waterflow_profile1RWL = new ReaderWriterLock();
             protected bool check_waterflow_profile1 = false;
             public bool Check_waterflow_profile1
@@ -908,6 +958,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Radio_pro1_row
             ReaderWriterLock Radio_pro1_rowRWL = new ReaderWriterLock();
             protected bool radio_pro1_row = false;
             public bool Radio_pro1_row
@@ -930,6 +981,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Radio_pro2_col
             ReaderWriterLock Radio_pro2_colRWL = new ReaderWriterLock();
             protected bool radio_pro2_col = false;
             public bool Radio_pro2_col
@@ -952,6 +1004,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Radio_pro2_row
             ReaderWriterLock Radio_pro2_rowRWL = new ReaderWriterLock();
             protected bool radio_pro2_row = false;
             public bool Radio_pro2_row
@@ -974,6 +1027,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Radio_pro3_col
             ReaderWriterLock Radio_pro3_colRWL = new ReaderWriterLock();
             protected bool radio_pro3_col = false;
             public bool Radio_pro3_col
@@ -996,6 +1050,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Radio_pro3_row
             ReaderWriterLock Radio_pro3_rowRWL = new ReaderWriterLock();
             protected bool radio_pro3_row = false;
             public bool Radio_pro3_row
@@ -1018,6 +1073,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for P1_row_col_box
             ReaderWriterLock P1_row_col_boxRWL = new ReaderWriterLock();
             protected string p1_row_col_box = "";
             public string P1_row_col_box
@@ -1040,6 +1096,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for P2_row_col_box
             ReaderWriterLock P2_row_col_boxRWL = new ReaderWriterLock();
             protected string p2_row_col_box = "";
             public string P2_row_col_box
@@ -1062,6 +1119,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for P3_row_col_box
             ReaderWriterLock P3_row_col_boxRWL = new ReaderWriterLock();
             protected string p3_row_col_box = "";
             public string P3_row_col_box
@@ -1085,6 +1143,13 @@ namespace LORICAVariables
             }
 
         }
+
+        #endregion
+
+        #region Landuse_Determinator Class
+        /***************************************************************
+         * Class to hold Landuse_Determinator-related variables
+         ***************************************************************/
         public class landuse_determinator
         {
             static DelUpdateLanduse_determinator updateLanduse_determinator;
@@ -1098,6 +1163,8 @@ namespace LORICAVariables
             }
 
             #region LU1
+
+            // Get/Set methods for LU1_Inf_textbox
             ReaderWriterLock LU1_Inf_textboxRWL = new ReaderWriterLock();
             protected string lU1_Inf_textbox;
             public string LU1_Inf_textbox
@@ -1119,6 +1186,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU1_Evap_textbox
             ReaderWriterLock LU1_Evap_textboxRWL = new ReaderWriterLock();
             protected string lU1_Evap_textbox;
             public string LU1_Evap_textbox
@@ -1140,6 +1209,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU1_Ero_textbox
             ReaderWriterLock LU1_Ero_textboxRWL = new ReaderWriterLock();
             protected string lU1_Ero_textbox;
             public string LU1_Ero_textbox
@@ -1161,6 +1232,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU1_Dep_textbox
             ReaderWriterLock LU1_Dep_textboxRWL = new ReaderWriterLock();
             protected string lU1_Dep_textbox;
             public string LU1_Dep_textbox
@@ -1186,6 +1259,8 @@ namespace LORICAVariables
             #endregion
 
             #region LU2
+
+            // Get/Set methods for LU2_Inf_textbox
             ReaderWriterLock LU2_Inf_textboxRWL = new ReaderWriterLock();
             protected string lU2_Inf_textbox;
             public string LU2_Inf_textbox
@@ -1207,6 +1282,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU2_Evap_textbox
             ReaderWriterLock LU2_Evap_textboxRWL = new ReaderWriterLock();
             protected string lU2_Evap_textbox;
             public string LU2_Evap_textbox
@@ -1228,6 +1305,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU2_Ero_textbox
             ReaderWriterLock LU2_Ero_textboxRWL = new ReaderWriterLock();
             protected string lU2_Ero_textbox;
             public string LU2_Ero_textbox
@@ -1249,6 +1328,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU2_Dep_textbox
             ReaderWriterLock LU2_Dep_textboxRWL = new ReaderWriterLock();
             protected string lU2_Dep_textbox;
             public string LU2_Dep_textbox
@@ -1274,6 +1355,8 @@ namespace LORICAVariables
             #endregion
 
             #region LU3
+
+            // Get/Set methods for LU3_Inf_textbox
             ReaderWriterLock LU3_Inf_textboxRWL = new ReaderWriterLock();
             protected string lU3_Inf_textbox;
             public string LU3_Inf_textbox
@@ -1295,6 +1378,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU3_Evap_textbox
             ReaderWriterLock LU3_Evap_textboxRWL = new ReaderWriterLock();
             protected string lU3_Evap_textbox;
             public string LU3_Evap_textbox
@@ -1316,6 +1401,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU3_Ero_textbox
             ReaderWriterLock LU3_Ero_textboxRWL = new ReaderWriterLock();
             protected string lU3_Ero_textbox;
             public string LU3_Ero_textbox
@@ -1337,6 +1424,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU3_Dep_textbox
             ReaderWriterLock LU3_Dep_textboxRWL = new ReaderWriterLock();
             protected string lU3_Dep_textbox;
             public string LU3_Dep_textbox
@@ -1362,6 +1451,8 @@ namespace LORICAVariables
             #endregion
 
             #region LU4
+
+            // Get/Set methods for LU4_Inf_textbox
             ReaderWriterLock LU4_Inf_textboxRWL = new ReaderWriterLock();
             protected string lU4_Inf_textbox;
             public string LU4_Inf_textbox
@@ -1383,6 +1474,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU4_Evap_textbox
             ReaderWriterLock LU4_Evap_textboxRWL = new ReaderWriterLock();
             protected string lU4_Evap_textbox;
             public string LU4_Evap_textbox
@@ -1404,6 +1497,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU4_Ero_textbox
             ReaderWriterLock LU4_Ero_textboxRWL = new ReaderWriterLock();
             protected string lU4_Ero_textbox;
             public string LU4_Ero_textbox
@@ -1425,6 +1520,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU4_Dep_textbox
             ReaderWriterLock LU4_Dep_textboxRWL = new ReaderWriterLock();
             protected string lU4_Dep_textbox;
             public string LU4_Dep_textbox
@@ -1450,6 +1547,8 @@ namespace LORICAVariables
             #endregion
 
             #region LU5
+
+            // Get/Set methods for LU5_Inf_textbox
             ReaderWriterLock LU5_Inf_textboxRWL = new ReaderWriterLock();
             protected string lU5_Inf_textbox;
             public string LU5_Inf_textbox
@@ -1471,6 +1570,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU5_Evap_textbox
             ReaderWriterLock LU5_Evap_textboxRWL = new ReaderWriterLock();
             protected string lU5_Evap_textbox;
             public string LU5_Evap_textbox
@@ -1492,6 +1593,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU5_Ero_textbox
             ReaderWriterLock LU5_Ero_textboxRWL = new ReaderWriterLock();
             protected string lU5_Ero_textbox;
             public string LU5_Ero_textbox
@@ -1513,6 +1616,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU5_Dep_textbox
             ReaderWriterLock LU5_Dep_textboxRWL = new ReaderWriterLock();
             protected string lU5_Dep_textbox;
             public string LU5_Dep_textbox
@@ -1538,6 +1643,8 @@ namespace LORICAVariables
             #endregion
 
             #region LU6
+
+            // Get/Set methods for LU6_Inf_textbox
             ReaderWriterLock LU6_Inf_textboxRWL = new ReaderWriterLock();
             protected string lU6_Inf_textbox;
             public string LU6_Inf_textbox
@@ -1559,6 +1666,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU6_Evap_textbox
             ReaderWriterLock LU6_Evap_textboxRWL = new ReaderWriterLock();
             protected string lU6_Evap_textbox;
             public string LU6_Evap_textbox
@@ -1580,6 +1689,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU6_Ero_textbox
             ReaderWriterLock LU6_Ero_textboxRWL = new ReaderWriterLock();
             protected string lU6_Ero_textbox;
             public string LU6_Ero_textbox
@@ -1601,6 +1712,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU6_Dep_textbox
             ReaderWriterLock LU6_Dep_textboxRWL = new ReaderWriterLock();
             protected string lU6_Dep_textbox;
             public string LU6_Dep_textbox
@@ -1626,6 +1739,8 @@ namespace LORICAVariables
             #endregion
 
             #region LU7
+
+            // Get/Set methods for LU7_Inf_textbox
             ReaderWriterLock LU7_Inf_textboxRWL = new ReaderWriterLock();
             protected string lU7_Inf_textbox;
             public string LU7_Inf_textbox
@@ -1647,6 +1762,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU7_Evap_textbox
             ReaderWriterLock LU7_Evap_textboxRWL = new ReaderWriterLock();
             protected string lU7_Evap_textbox;
             public string LU7_Evap_textbox
@@ -1668,6 +1785,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU7_Ero_textbox
             ReaderWriterLock LU7_Ero_textboxRWL = new ReaderWriterLock();
             protected string lU7_Ero_textbox;
             public string LU7_Ero_textbox
@@ -1689,6 +1808,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU7_Dep_textbox
             ReaderWriterLock LU7_Dep_textboxRWL = new ReaderWriterLock();
             protected string lU7_Dep_textbox;
             public string LU7_Dep_textbox
@@ -1714,6 +1835,8 @@ namespace LORICAVariables
             #endregion
 
             #region LU8
+
+            // Get/Set methods for LU8_Inf_textbox
             ReaderWriterLock LU8_Inf_textboxRWL = new ReaderWriterLock();
             protected string lU8_Inf_textbox;
             public string LU8_Inf_textbox
@@ -1735,6 +1858,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU8_Evap_textbox
             ReaderWriterLock LU8_Evap_textboxRWL = new ReaderWriterLock();
             protected string lU8_Evap_textbox;
             public string LU8_Evap_textbox
@@ -1756,6 +1881,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU8_Ero_textbox
             ReaderWriterLock LU8_Ero_textboxRWL = new ReaderWriterLock();
             protected string lU8_Ero_textbox;
             public string LU8_Ero_textbox
@@ -1777,6 +1904,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU8_Dep_textbox
             ReaderWriterLock LU8_Dep_textboxRWL = new ReaderWriterLock();
             protected string lU8_Dep_textbox;
             public string LU8_Dep_textbox
@@ -1802,6 +1931,8 @@ namespace LORICAVariables
             #endregion
 
             #region LU9
+
+            // Get/Set methods for LU9_Inf_textbox
             ReaderWriterLock LU9_Inf_textboxRWL = new ReaderWriterLock();
             protected string lU9_Inf_textbox;
             public string LU9_Inf_textbox
@@ -1823,6 +1954,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU9_Evap_textbox
             ReaderWriterLock LU9_Evap_textboxRWL = new ReaderWriterLock();
             protected string lU9_Evap_textbox;
             public string LU9_Evap_textbox
@@ -1844,6 +1977,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU9_Ero_textbox
             ReaderWriterLock LU9_Ero_textboxRWL = new ReaderWriterLock();
             protected string lU9_Ero_textbox;
             public string LU9_Ero_textbox
@@ -1865,6 +2000,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU9_Dep_textbox
             ReaderWriterLock LU9_Dep_textboxRWL = new ReaderWriterLock();
             protected string lU9_Dep_textbox;
             public string LU9_Dep_textbox
@@ -1890,6 +2027,8 @@ namespace LORICAVariables
             #endregion
 
             #region LU10
+
+            // Get/Set methods for LU10_Inf_textbox
             ReaderWriterLock LU10_Inf_textboxRWL = new ReaderWriterLock();
             protected string lU10_Inf_textbox;
             public string LU10_Inf_textbox
@@ -1911,6 +2050,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU10_Evap_textbox
             ReaderWriterLock LU10_Evap_textboxRWL = new ReaderWriterLock();
             protected string lU10_Evap_textbox;
             public string LU10_Evap_textbox
@@ -1932,6 +2073,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU10_Ero_textbox
             ReaderWriterLock LU10_Ero_textboxRWL = new ReaderWriterLock();
             protected string lU10_Ero_textbox;
             public string LU10_Ero_textbox
@@ -1953,6 +2096,8 @@ namespace LORICAVariables
                     UpdateLanduse_determinator();
                 }
             }
+
+            // Get/Set methods for LU10_Dep_textbox
             ReaderWriterLock LU10_Dep_textboxRWL = new ReaderWriterLock();
             protected string lU10_Dep_textbox;
             public string LU10_Dep_textbox
@@ -1977,9 +2122,14 @@ namespace LORICAVariables
 
             #endregion
 
-
-
         }
+
+        #endregion
+
+        #region Soil_Specifier Class
+        /****************************************************
+         * Class to hold Soil_Specifier-related variables
+         ****************************************************/
         public class soil_specifier
         {
             static DelUpdateSoildata updateSoildata;
@@ -1992,6 +2142,7 @@ namespace LORICAVariables
                 updateSoildata = usd;
             }
 
+            // Get/Set methods for Coarsebox
             ReaderWriterLock CoarseboxRWL = new ReaderWriterLock();
             protected string coarsebox;
             public string Coarsebox
@@ -2013,6 +2164,8 @@ namespace LORICAVariables
                     UpdateSoildata();
                 }
             }
+
+            // Get/Set methods for Sandbox
             ReaderWriterLock SandboxRWL = new ReaderWriterLock();
             protected string sandbox;
             public string Sandbox
@@ -2034,6 +2187,8 @@ namespace LORICAVariables
                     UpdateSoildata();
                 }
             }
+
+            // Get/Set methods for Siltbox
             ReaderWriterLock SiltboxRWL = new ReaderWriterLock();
             protected string siltbox;
             public string Siltbox
@@ -2055,6 +2210,8 @@ namespace LORICAVariables
                     UpdateSoildata();
                 }
             }
+
+            // Get/Set methods for Claybox
             ReaderWriterLock ClayboxRWL = new ReaderWriterLock();
             protected string claybox;
             public string Claybox
@@ -2076,6 +2233,8 @@ namespace LORICAVariables
                     UpdateSoildata();
                 }
             }
+
+            // Get/Set methods for Fineclaybox
             ReaderWriterLock FineclayboxRWL = new ReaderWriterLock();
             protected string fineclaybox;
             public string Fineclaybox
@@ -2100,94 +2259,17 @@ namespace LORICAVariables
 
         }
 
+        #endregion
 
-
-
-        ReaderWriterLock TimeseriesRWL = new ReaderWriterLock();
-        protected output_timeseries timeseries;
-        public output_timeseries Timeseries
-        {
-            get
-            {
-                TimeseriesRWL.AcquireReaderLock(Timeout.Infinite);
-                output_timeseries temp = timeseries;
-                TimeseriesRWL.ReleaseReaderLock();
-
-                return temp;
-            }
-            set
-            {
-                TimeseriesRWL.AcquireWriterLock(Timeout.Infinite);
-                timeseries = value;
-                TimeseriesRWL.ReleaseWriterLock();
-            }
-        }
-
-        ReaderWriterLock ProfileRWL = new ReaderWriterLock();
-        protected output_profile profile;
-        public output_profile Profile
-        {
-            get
-            {
-                ProfileRWL.AcquireReaderLock(Timeout.Infinite);
-                output_profile temp = profile;
-                ProfileRWL.ReleaseReaderLock();
-
-                return temp;
-            }
-            set
-            {
-                ProfileRWL.AcquireWriterLock(Timeout.Infinite);
-                profile = value;
-                ProfileRWL.ReleaseWriterLock();
-            }
-        }
-
-        ReaderWriterLock Landuse_determinatorRWL = new ReaderWriterLock();
-        protected landuse_determinator landuse;
-        public landuse_determinator Landuse_determinator
-        {
-            get
-            {
-                Landuse_determinatorRWL.AcquireReaderLock(Timeout.Infinite);
-                landuse_determinator temp = landuse;
-                Landuse_determinatorRWL.ReleaseReaderLock();
-
-                return temp;
-            }
-            set
-            {
-                Landuse_determinatorRWL.AcquireWriterLock(Timeout.Infinite);
-                landuse = value;
-                Landuse_determinatorRWL.ReleaseWriterLock();
-            }
-        }
-
-        ReaderWriterLock SoildataRWL = new ReaderWriterLock();
-        protected soil_specifier soildata;
-        public soil_specifier Soildata
-        {
-            get
-            {
-                SoildataRWL.AcquireReaderLock(Timeout.Infinite);
-                soil_specifier temp = soildata;
-                SoildataRWL.ReleaseReaderLock();
-
-                return temp;
-            }
-            set
-            {
-                SoildataRWL.AcquireWriterLock(Timeout.Infinite);
-                soildata = value;
-                SoildataRWL.ReleaseWriterLock();
-            }
-        }
-
-
+        #region MapWindow Class
+        /****************************************************
+         * Class to hold MapWindow-related variables
+         ****************************************************/
         public class mapwindow
         {
             public class size
             {
+                // Get/Set methods for Width
                 ReaderWriterLock WidthRWL = new ReaderWriterLock();
                 protected int width;
                 public int Width
@@ -2207,6 +2289,8 @@ namespace LORICAVariables
                         WidthRWL.ReleaseWriterLock();
                     }
                 }
+
+                // Get/Set methods for Height
                 ReaderWriterLock HeightRWL = new ReaderWriterLock();
                 protected int height;
                 public int Height
@@ -2229,6 +2313,7 @@ namespace LORICAVariables
             }
             public class location
             {
+                // Get/Set methods for X
                 ReaderWriterLock XRWL = new ReaderWriterLock();
                 protected int x;
                 public int X
@@ -2248,6 +2333,8 @@ namespace LORICAVariables
                         XRWL.ReleaseWriterLock();
                     }
                 }
+
+                // Get/Set methods for Y
                 ReaderWriterLock YRWL = new ReaderWriterLock();
                 protected int y;
                 public int Y
@@ -2269,6 +2356,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Size
             ReaderWriterLock SizeRWL = new ReaderWriterLock();
             protected size s = new size();
             public size Size
@@ -2289,6 +2377,7 @@ namespace LORICAVariables
                 }
             }
 
+            // Get/Set methods for Location
             ReaderWriterLock LocationRWL = new ReaderWriterLock();
             protected location l = new location();
             public location Location
@@ -2312,6 +2401,98 @@ namespace LORICAVariables
 
         }
 
+        #endregion
+
+        #region Get/Set Methods for Classes
+        /*************************************************************
+         * Get/Set Methods for Classes
+         *************************************************************/
+
+        // Get/Set methods for Timeseries
+        ReaderWriterLock TimeseriesRWL = new ReaderWriterLock();
+        protected output_timeseries timeseries;
+        public output_timeseries Timeseries
+        {
+            get
+            {
+                TimeseriesRWL.AcquireReaderLock(Timeout.Infinite);
+                output_timeseries temp = timeseries;
+                TimeseriesRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                TimeseriesRWL.AcquireWriterLock(Timeout.Infinite);
+                timeseries = value;
+                TimeseriesRWL.ReleaseWriterLock();
+            }
+        }
+
+        // Get/Set methods for Profile
+        ReaderWriterLock ProfileRWL = new ReaderWriterLock();
+        protected output_profile profile;
+        public output_profile Profile
+        {
+            get
+            {
+                ProfileRWL.AcquireReaderLock(Timeout.Infinite);
+                output_profile temp = profile;
+                ProfileRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                ProfileRWL.AcquireWriterLock(Timeout.Infinite);
+                profile = value;
+                ProfileRWL.ReleaseWriterLock();
+            }
+        }
+
+        // Get/Set methods for Landuse_determinator
+        ReaderWriterLock Landuse_determinatorRWL = new ReaderWriterLock();
+        protected landuse_determinator landuse;
+        public landuse_determinator Landuse_determinator
+        {
+            get
+            {
+                Landuse_determinatorRWL.AcquireReaderLock(Timeout.Infinite);
+                landuse_determinator temp = landuse;
+                Landuse_determinatorRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                Landuse_determinatorRWL.AcquireWriterLock(Timeout.Infinite);
+                landuse = value;
+                Landuse_determinatorRWL.ReleaseWriterLock();
+            }
+        }
+
+        // Get/Set methods for Soildata
+        ReaderWriterLock SoildataRWL = new ReaderWriterLock();
+        protected soil_specifier soildata;
+        public soil_specifier Soildata
+        {
+            get
+            {
+                SoildataRWL.AcquireReaderLock(Timeout.Infinite);
+                soil_specifier temp = soildata;
+                SoildataRWL.ReleaseReaderLock();
+
+                return temp;
+            }
+            set
+            {
+                SoildataRWL.AcquireWriterLock(Timeout.Infinite);
+                soildata = value;
+                SoildataRWL.ReleaseWriterLock();
+            }
+        }
+
+        // Get/Set methods for Mapwindow
         ReaderWriterLock MapwindowRWL = new ReaderWriterLock();
         protected mapwindow mp = new mapwindow();
         public mapwindow Mapwindow
@@ -2332,6 +2513,12 @@ namespace LORICAVariables
             }
         }
 
+        #endregion
+
+        #region Non-Class Get/Set Methods
+        /*************************************************************
+         * Non-Class Get/Set Methods
+         *************************************************************/
 
         public delegate void DelDrawMap(Graphics graphics); //Pulls Values from GUI
         DelDrawMap drawMap;
@@ -2343,11 +2530,7 @@ namespace LORICAVariables
             updateVariables();
         }
 
-
-
-
-
-
+        // Get/Set methods for End_time
         ReaderWriterLock End_timeRWL = new ReaderWriterLock();
         protected double end_time;
         public double End_time
@@ -2368,6 +2551,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for DX
         ReaderWriterLock DXRWL = new ReaderWriterLock();
         protected double dx;
         public double DX
@@ -2388,11 +2572,7 @@ namespace LORICAVariables
             }
         }
 
-
-
-
-
-
+        // Get/Set methods for P_all
         ReaderWriterLock P_allRWL = new ReaderWriterLock();
         protected int[] p_all;
         public int[] P_all
@@ -2413,6 +2593,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for ET0_all
         ReaderWriterLock ET0_allRWL = new ReaderWriterLock();
         protected int[] eT0_all;
         public int[] ET0_all
@@ -2433,6 +2614,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for D_all
         ReaderWriterLock D_allRWL = new ReaderWriterLock();
         protected int[] d_all;
         public int[] D_all
@@ -2453,6 +2635,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Tavg_all
         ReaderWriterLock Tavg_allRWL = new ReaderWriterLock();
         protected int[] tavg_all;
         public int[] Tavg_all
@@ -2473,6 +2656,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Tmin_all
         ReaderWriterLock Tmin_allRWL = new ReaderWriterLock();
         protected int[] tmin_all;
         public int[] Tmin_all
@@ -2493,6 +2677,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Tmax_all
         ReaderWriterLock Tmax_allRWL = new ReaderWriterLock();
         protected int[] tmax_all;
         public int[] Tmax_all
@@ -2513,6 +2698,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for OFy_m
         ReaderWriterLock OFy_mRWL = new ReaderWriterLock();
         protected double[,,] oFy_m;
         public double[,,] OFy_m
@@ -2533,6 +2719,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for CO3_kg
         ReaderWriterLock CO3_kgRWL = new ReaderWriterLock();
         protected double[,,] cO3_kg;
         public double[,,] CO3_kg
@@ -2553,6 +2740,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Rockweath_method
         ReaderWriterLock Rockweath_methodRWL = new ReaderWriterLock();
         protected int rockweath_method;
         public int Rockweath_method
@@ -2573,31 +2761,15 @@ namespace LORICAVariables
             }
         }
 
+        #endregion
 
-        
-
-
-
-
-
-
+        #region Text Property for Textboxes - Get/Set Methods
+        /*************************************************************
+         * Text Property for Textboxes - Get/Set Methods
+         *************************************************************/
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-        //String Text Boxes
-
-
+        // Get/Set methods for InfoStatusPanel
         ReaderWriterLock InfoStatusPanelRWL = new ReaderWriterLock();
         protected string infoStatusPanel = "";
         public string InfoStatusPanel
@@ -2619,6 +2791,8 @@ namespace LORICAVariables
                 UpdateStatusPannel();
             }
         }
+
+        // Get/Set methods for TimeStatusPanel
         ReaderWriterLock TimeStatusPanelRWL = new ReaderWriterLock();
         protected string timeStatusPanel = "";
         public string TimeStatusPanel
@@ -2641,6 +2815,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Out_sed_statuspanel
         ReaderWriterLock Out_sed_statuspanelRWL = new ReaderWriterLock();
         protected string out_sed_statuspanel = "";
         public string Out_sed_statuspanel
@@ -2663,6 +2838,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for DTM_input_filename_textbox
         ReaderWriterLock DTM_input_filename_textboxRWL = new ReaderWriterLock();
         protected string dtm_input_filename_textbox = "";
         public string DTM_input_filename_textbox
@@ -2683,6 +2859,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Number_runs_textbox
         ReaderWriterLock Number_runs_textboxRWL = new ReaderWriterLock();
         protected string number_runs_textbox = "";
         public string Number_runs_textbox
@@ -2703,6 +2880,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for ProcessStatusPanel
         ReaderWriterLock ProcessStatusPanelRWL = new ReaderWriterLock();
         protected string processStatusPanel = "";
         public string ProcessStatusPanel
@@ -2723,6 +2901,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Calibration_ratios_textbox
         ReaderWriterLock Calibration_ratios_textboxRWL = new ReaderWriterLock();
         protected string calibration_ratios_textbox = "";
         public string Calibration_ratios_textbox
@@ -2743,6 +2922,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for GoogAnimationSaveInternal
         ReaderWriterLock GoogAnimationSaveIntervalRWL = new ReaderWriterLock();
         protected string googAnimationSaveInterval = "";
         public string GoogAnimationSaveInterval
@@ -2763,6 +2943,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for UTMzonebox
         ReaderWriterLock UTMzoneboxRWL = new ReaderWriterLock();
         protected string uTMzonebox = "";
         public string UTMzonebox
@@ -2783,6 +2964,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Saveinternalbox
         ReaderWriterLock SaveintervalboxRWL = new ReaderWriterLock();
         protected string saveintervalbox = "";
         public string Saveintervalbox
@@ -2803,6 +2985,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Parameter_m_textbox
         ReaderWriterLock Parameter_m_textboxRWL = new ReaderWriterLock();
         protected string parameter_m_textbox = "";
         public string Parameter_m_textbox
@@ -2823,6 +3006,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Parameter_n_textbox
         ReaderWriterLock Parameter_n_textboxRWL = new ReaderWriterLock();
         protected string parameter_n_textbox = "";
         public string Parameter_n_textbox
@@ -2843,6 +3027,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Parameter_K_textbox
         ReaderWriterLock Parameter_K_textboxRWL = new ReaderWriterLock();
         protected string parameter_K_textbox = "";
         public string Parameter_K_textbox
@@ -2863,6 +3048,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Bio_protection_constant_textbox
         ReaderWriterLock Bio_protection_constant_textboxRWL = new ReaderWriterLock();
         protected string bio_protection_constant_textbox = "";
         public string Bio_protection_constant_textbox
@@ -2883,6 +3069,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Rock_protection_constant_textbox
         ReaderWriterLock Rock_protection_constant_textboxRWL = new ReaderWriterLock();
         protected string rock_protection_constant_textbox = "";
         public string Rock_protection_constant_textbox
@@ -2903,6 +3090,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Selectivity_constant_textbox
         ReaderWriterLock Selectivity_constant_textboxRWL = new ReaderWriterLock();
         protected string selectivity_constant_textbox = "";
         public string Selectivity_constant_textbox
@@ -2923,6 +3111,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Erosion_threshold_textbox
         ReaderWriterLock Erosion_threshold_textboxRWL = new ReaderWriterLock();
         protected string erosion_threshold_textbox = "";
         public string Erosion_threshold_textbox
@@ -2943,6 +3132,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Parameter_ploughing_depth_textbox
         ReaderWriterLock Parameter_ploughing_depth_textboxRWL = new ReaderWriterLock();
         protected string parameter_ploughing_depth_textbox = "";
         public string Parameter_ploughing_depth_textbox
@@ -2963,6 +3153,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Parameter_tillage_constant_textbox
         ReaderWriterLock Parameter_tillage_constant_textboxRWL = new ReaderWriterLock();
         protected string parameter_tillage_constant_textbox = "";
         public string Parameter_tillage_constant_textbox
@@ -2983,6 +3174,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Parameter_diffusivity_textbox
         ReaderWriterLock Parameter_diffusivity_textboxRWL = new ReaderWriterLock();
         protected string parameter_diffusivity_textbox = "";
         public string Parameter_diffusivity_textbox
@@ -3003,6 +3195,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Parameter_P0_textbox
         ReaderWriterLock Parameter_P0_textboxRWL = new ReaderWriterLock();
         protected string parameter_P0_textbox = "";
         public string Parameter_P0_textbox
@@ -3023,6 +3216,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Parameter_k1_textbox
         ReaderWriterLock Parameter_k1_textboxRWL = new ReaderWriterLock();
         protected string parameter_k1_textbox = "";
         public string Parameter_k1_textbox
@@ -3043,6 +3237,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Parameter_k2_textbox
         ReaderWriterLock Parameter_k2_textboxRWL = new ReaderWriterLock();
         protected string parameter_k2_textbox = "";
         public string Parameter_k2_textbox
@@ -3063,6 +3258,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Parameter_Pa_textbox
         ReaderWriterLock Parameter_Pa_textboxRWL = new ReaderWriterLock();
         protected string parameter_Pa_textbox = "";
         public string Parameter_Pa_textbox
@@ -3083,6 +3279,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Tilting_rate_textbox
         ReaderWriterLock Tilting_rate_textboxRWL = new ReaderWriterLock();
         protected string tilting_rate_textbox = "";
         public string Tilting_rate_textbox
@@ -3103,6 +3300,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Text_lift_row_less
         ReaderWriterLock Text_lift_row_lessRWL = new ReaderWriterLock();
         protected string text_lift_row_less = "";
         public string Text_lift_row_less
@@ -3123,6 +3321,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Text_lift_row_more
         ReaderWriterLock Text_lift_row_moreRWL = new ReaderWriterLock();
         protected string text_lift_row_more = "";
         public string Text_lift_row_more
@@ -3143,6 +3342,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Text_lift_col_less
         ReaderWriterLock Text_lift_col_lessRWL = new ReaderWriterLock();
         protected string text_lift_col_less = "";
         public string Text_lift_col_less
@@ -3163,6 +3363,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Text_list_col_more
         ReaderWriterLock Text_lift_col_moreRWL = new ReaderWriterLock();
         protected string text_lift_col_more = "";
         public string Text_lift_col_more
@@ -3183,6 +3384,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Uplift_rate_textbox
         ReaderWriterLock Uplift_rate_textboxRWL = new ReaderWriterLock();
         protected string uplift_rate_textbox = "";
         public string Uplift_rate_textbox
@@ -3203,6 +3405,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Tf_W
         ReaderWriterLock Tf_WRWL = new ReaderWriterLock();
         protected string tf_W = "";
         public string Tf_W
@@ -3223,6 +3426,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Tf_D
         ReaderWriterLock Tf_DRWL = new ReaderWriterLock();
         protected string tf_D = "";
         public string Tf_D
@@ -3243,6 +3447,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Tf_growth
         ReaderWriterLock Tf_growthRWL = new ReaderWriterLock();
         protected string tf_growth = "";
         public string Tf_growth
@@ -3263,6 +3468,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Tf_age
         ReaderWriterLock Tf_ageRWL = new ReaderWriterLock();
         protected string tf_age = "";
         public string Tf_age
@@ -3283,6 +3489,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Tf_freq
         ReaderWriterLock Tf_freqRWL = new ReaderWriterLock();
         protected string tf_freq = "";
         public string Tf_freq
@@ -3303,6 +3510,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Physical_weath_C1_textbox
         ReaderWriterLock Physical_weath_C1_textboxRWL = new ReaderWriterLock();
         protected string physical_weath_C1_textbox = "";
         public string Physical_weath_C1_textbox
@@ -3323,6 +3531,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Physical_weath_constant1
         ReaderWriterLock Physical_weath_constant1RWL = new ReaderWriterLock();
         protected string physical_weath_constant1 = "";
         public string Physical_weath_constant1
@@ -3343,6 +3552,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Physical_weath_constant2
         ReaderWriterLock Physical_weath_constant2RWL = new ReaderWriterLock();
         protected string physical_weath_constant2 = "";
         public string Physical_weath_constant2
@@ -3363,6 +3573,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Chem_weath_rate_constant_textbox
         ReaderWriterLock Chem_weath_rate_constant_textboxRWL = new ReaderWriterLock();
         protected string chem_weath_rate_constant_textbox = "";
         public string Chem_weath_rate_constant_textbox
@@ -3383,7 +3594,7 @@ namespace LORICAVariables
             }
         }
 
-
+        // Get/Set methods for Chem_weath_depth_constant_textbox
         ReaderWriterLock Chem_weath_depth_constant_textboxRWL = new ReaderWriterLock();
         protected string chem_weath_depth_constant_textbox = "";
         public string Chem_weath_depth_constant_textbox
@@ -3404,6 +3615,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Chem_weath_specific_coefficient_textbox
         ReaderWriterLock Chem_weath_specific_coefficient_textboxRWL = new ReaderWriterLock();
         protected string chem_weath_specific_coefficient_textbox = "";
         public string Chem_weath_specific_coefficient_textbox
@@ -3424,6 +3636,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Specific_area_coarse_textbox
         ReaderWriterLock Specific_area_coarse_textboxRWL = new ReaderWriterLock();
         protected string specific_area_coarse_textbox = "";
         public string Specific_area_coarse_textbox
@@ -3444,6 +3657,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Specific_area_sand_textbox
         ReaderWriterLock Specific_area_sand_textboxRWL = new ReaderWriterLock();
         protected string specific_area_sand_textbox = "";
         public string Specific_area_sand_textbox
@@ -3464,6 +3678,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Specific_area_silt_textbox
         ReaderWriterLock Specific_area_silt_textboxRWL = new ReaderWriterLock();
         protected string specific_area_silt_textbox = "";
         public string Specific_area_silt_textbox
@@ -3484,6 +3699,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Specific_area_clay_textbox
         ReaderWriterLock Specific_area_clay_textboxRWL = new ReaderWriterLock();
         protected string specific_area_clay_textbox = "";
         public string Specific_area_clay_textbox
@@ -3504,6 +3720,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Specific_area_fine_clay_textbox
         ReaderWriterLock Specific_area_fine_clay_textboxRWL = new ReaderWriterLock();
         protected string specific_area_fine_clay_textbox = "";
         public string Specific_area_fine_clay_textbox
@@ -3524,6 +3741,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Clay_neoform_constant_textbox
         ReaderWriterLock Clay_neoform_constant_textboxRWL = new ReaderWriterLock();
         protected string clay_neoform_constant_textbox = "";
         public string Clay_neoform_constant_textbox
@@ -3544,6 +3762,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Clay_neoform_C1_textbox
         ReaderWriterLock Clay_neoform_C1_textboxRWL = new ReaderWriterLock();
         protected string clay_neoform_C1_textbox = "";
         public string Clay_neoform_C1_textbox
@@ -3564,6 +3783,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Clay_neoform_C2_textbox
         ReaderWriterLock Clay_neoform_C2_textboxRWL = new ReaderWriterLock();
         protected string clay_neoform_C2_textbox = "";
         public string Clay_neoform_C2_textbox
@@ -3584,6 +3804,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Maximum_eluviation_textbox
         ReaderWriterLock Maximum_eluviation_textboxRWL = new ReaderWriterLock();
         protected string maximum_eluviation_textbox = "";
         public string Maximum_eluviation_textbox
@@ -3604,6 +3825,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Eluviation_coefficient_textbox
         ReaderWriterLock Eluviation_coefficient_textboxRWL = new ReaderWriterLock();
         protected string eluviation_coefficient_textbox = "";
         public string Eluviation_coefficient_textbox
@@ -3624,6 +3846,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Ct_depth_decay
         ReaderWriterLock Ct_depth_decayRWL = new ReaderWriterLock();
         protected string ct_depth_decay = "";
         public string Ct_depth_decay
@@ -3644,6 +3867,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Potential_bioturbation_textbox
         ReaderWriterLock Potential_bioturbation_textboxRWL = new ReaderWriterLock();
         protected string potential_bioturbation_textbox = "";
         public string Potential_bioturbation_textbox
@@ -3664,6 +3888,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Bioturbation_depth_decay_textbox
         ReaderWriterLock Bioturbation_depth_decay_textboxRWL = new ReaderWriterLock();
         protected string bioturbation_depth_decay_textbox = "";
         public string Bioturbation_depth_decay_textbox
@@ -3684,6 +3909,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Carbon_input_textbox
         ReaderWriterLock Carbon_input_textboxRWL = new ReaderWriterLock();
         protected string carbon_input_textbox = "";
         public string Carbon_input_textbox
@@ -3704,6 +3930,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Carbon_depth_decay_textbox
         ReaderWriterLock Carbon_depth_decay_textboxRWL = new ReaderWriterLock();
         protected string carbon_depth_decay_textbox = "";
         public string Carbon_depth_decay_textbox
@@ -3724,6 +3951,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Carbon_humification_fraction_textbox
         ReaderWriterLock Carbon_humification_fraction_textboxRWL = new ReaderWriterLock();
         protected string carbon_humification_fraction_textbox = "";
         public string Carbon_humification_fraction_textbox
@@ -3744,6 +3972,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Carbon_y_decomp_rate_textbox
         ReaderWriterLock Carbon_y_decomp_rate_textboxRWL = new ReaderWriterLock();
         protected string carbon_y_decomp_rate_textbox = "";
         public string Carbon_y_decomp_rate_textbox
@@ -3764,6 +3993,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Carbon_o_decomp_rate_textbox
         ReaderWriterLock Carbon_o_decomp_rate_textboxRWL = new ReaderWriterLock();
         protected string carbon_o_decomp_rate_textbox = "";
         public string Carbon_o_decomp_rate_textbox
@@ -3784,6 +4014,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Carbon_y_depth_decay_textbox
         ReaderWriterLock Carbon_y_depth_decay_textboxRWL = new ReaderWriterLock();
         protected string carbon_y_depth_decay_textbox = "";
         public string Carbon_y_depth_decay_textbox
@@ -3804,6 +4035,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Carbon_o_twi_decay_textbox
         ReaderWriterLock Carbon_o_twi_decay_textboxRWL = new ReaderWriterLock();
         protected string carbon_o_twi_decay_textbox = "";
         public string Carbon_o_twi_decay_textbox
@@ -3824,6 +4056,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Carbon_o_depth_decay_textbox
         ReaderWriterLock Carbon_o_depth_decay_textboxRWL = new ReaderWriterLock();
         protected string carbon_o_depth_decay_textbox = "";
         public string Carbon_o_depth_decay_textbox
@@ -3844,6 +4077,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Carbon_y_twi_decay_textbox
         ReaderWriterLock Carbon_y_twi_decay_textboxRWL = new ReaderWriterLock();
         protected string carbon_y_twi_decay_textbox = "";
         public string Carbon_y_twi_decay_textbox
@@ -3864,6 +4098,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Landuse_constant_value_box
         ReaderWriterLock Landuse_constant_value_boxRWL = new ReaderWriterLock();
         protected string landuse_constant_value_box = "";
         public string Landuse_constant_value_box
@@ -3884,6 +4119,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Evap_constant_value_box
         ReaderWriterLock Evap_constant_value_boxRWL = new ReaderWriterLock();
         protected string evap_constant_value_box = "";
         public string Evap_constant_value_box
@@ -3904,6 +4140,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Infil_constant_value_box
         ReaderWriterLock Infil_constant_value_boxRWL = new ReaderWriterLock();
         protected string infil_constant_value_box = "";
         public string Infil_constant_value_box
@@ -3924,6 +4161,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Rainfall_constant_value_box
         ReaderWriterLock Rainfall_constant_value_boxRWL = new ReaderWriterLock();
         protected string rainfall_constant_value_box = "";
         public string Rainfall_constant_value_box
@@ -3944,6 +4182,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Temp_constant_value_box
         ReaderWriterLock Temp_constant_value_boxRWL = new ReaderWriterLock();
         protected string temp_constant_value_box = "";
         public string Temp_constant_value_box
@@ -3964,6 +4203,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Calibration_ratio_reduction_parameter_textbox
         ReaderWriterLock Calibration_ratio_reduction_parameter_textboxRWL = new ReaderWriterLock();
         protected string calibration_ratio_reduction_parameter_textbox = "";
         public string Calibration_ratio_reduction_parameter_textbox
@@ -3984,6 +4224,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Soildepth_constant_value_box
         ReaderWriterLock Soildepth_constant_value_boxRWL = new ReaderWriterLock();
         protected string soildepth_constant_value_box = "";
         public string Soildepth_constant_value_box
@@ -4004,6 +4245,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Box_years_output
         ReaderWriterLock Box_years_outputRWL = new ReaderWriterLock();
         protected string box_years_output = "";
         public string Box_years_output
@@ -4024,6 +4266,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Ct_v0_Jagercikova
         ReaderWriterLock Ct_v0_JagercikovaRWL = new ReaderWriterLock();
         protected string ct_v0_Jagercikova = "";
         public string Ct_v0_Jagercikova
@@ -4044,6 +4287,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Ct_dd_Jagercikova
         ReaderWriterLock Ct_dd_JagercikovaRWL = new ReaderWriterLock();
         protected string ct_dd_Jagercikova = "";
         public string Ct_dd_Jagercikova
@@ -4064,6 +4308,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Upper_particle_coarse_textbox
         ReaderWriterLock Upper_particle_coarse_textboxRWL = new ReaderWriterLock();
         protected string upper_particle_coarse_textbox = "";
         public string Upper_particle_coarse_textbox
@@ -4084,6 +4329,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Upper_particle_sand_textbox
         ReaderWriterLock Upper_particle_sand_textboxRWL = new ReaderWriterLock();
         protected string upper_particle_sand_textbox = "";
         public string Upper_particle_sand_textbox
@@ -4104,6 +4350,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Upper_particle_silt_textbox
         ReaderWriterLock Upper_particle_silt_textboxRWL = new ReaderWriterLock();
         protected string upper_particle_silt_textbox = "";
         public string Upper_particle_silt_textbox
@@ -4124,6 +4371,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Upper_particle_clay_textbox
         ReaderWriterLock Upper_particle_clay_textboxRWL = new ReaderWriterLock();
         protected string upper_particle_clay_textbox = "";
         public string Upper_particle_clay_textbox
@@ -4144,6 +4392,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Upper_particle_fine_clay_textbox
         ReaderWriterLock Upper_particle_fine_clay_textboxRWL = new ReaderWriterLock();
         protected string upper_particle_fine_clay_textbox = "";
         public string Upper_particle_fine_clay_textbox
@@ -4164,6 +4413,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Soildepth_input_filename_textbox
         ReaderWriterLock Soildepth_input_filename_textboxRWL = new ReaderWriterLock();
         protected string soildepth_input_filename_textbox = "";
         public string Soildepth_input_filename_textbox
@@ -4184,6 +4434,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Snowmelt_factor_textbox
         ReaderWriterLock Snowmelt_factor_textboxRWL = new ReaderWriterLock();
         protected string snowmelt_factor_textbox = "";
         public string Snowmelt_factor_textbox
@@ -4204,6 +4455,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Snow_threshold_textbox
         ReaderWriterLock Snow_threshold_textboxRWL = new ReaderWriterLock();
         protected string snow_threshold_textbox = "";
         public string Snow_threshold_textbox
@@ -4224,6 +4476,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Tillfields_input_filename_textbox
         ReaderWriterLock Tillfields_input_filename_textboxRWL = new ReaderWriterLock();
         protected string tillfields_input_filename_textbox = "";
         public string Tillfields_input_filename_textbox
@@ -4244,6 +4497,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Landuse_input_filename_textbox
         ReaderWriterLock Landuse_input_filename_textboxRWL = new ReaderWriterLock();
         protected string landuse_input_filename_textbox = "";
         public string Landuse_input_filename_textbox
@@ -4263,6 +4517,8 @@ namespace LORICAVariables
                 Landuse_input_filename_textboxRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for Evap_input_filename_textbox
         ReaderWriterLock Evap_input_filename_textboxRWL = new ReaderWriterLock();
         protected string evap_input_filename_textbox = "";
         public string Evap_input_filename_textbox
@@ -4283,6 +4539,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Infil_input_filename_textbox
         ReaderWriterLock Infil_input_filename_textboxRWL = new ReaderWriterLock();
         protected string infil_input_filename_textbox = "";
         public string Infil_input_filename_textbox
@@ -4303,6 +4560,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Rain_input_filename_textbox
         ReaderWriterLock Rain_input_filename_textboxRWL = new ReaderWriterLock();
         protected string rain_input_filename_textbox = "";
         public string Rain_input_filename_textbox
@@ -4323,6 +4581,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Temp_input_filename_textbox
         ReaderWriterLock Temp_input_filename_textboxRWL = new ReaderWriterLock();
         protected string temp_input_filename_textbox = "";
         public string Temp_input_filename_textbox
@@ -4342,6 +4601,8 @@ namespace LORICAVariables
                 Temp_input_filename_textboxRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for TextBox_ls_trans
         ReaderWriterLock TextBox_ls_transRWL = new ReaderWriterLock();
         protected string textBox_ls_trans = "";
         public string TextBox_ls_trans
@@ -4361,6 +4622,8 @@ namespace LORICAVariables
                 TextBox_ls_transRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for TextBox_ls_coh
         ReaderWriterLock TextBox_ls_cohRWL = new ReaderWriterLock();
         protected string textBox_ls_coh = "";
         public string TextBox_ls_coh
@@ -4380,6 +4643,8 @@ namespace LORICAVariables
                 TextBox_ls_cohRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for TextBox_ls_bd
         ReaderWriterLock TextBox_ls_bdRWL = new ReaderWriterLock();
         protected string textBox_ls_bd = "";
         public string TextBox_ls_bd
@@ -4399,6 +4664,8 @@ namespace LORICAVariables
                 TextBox_ls_bdRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for TextBox_ls_ifr
         ReaderWriterLock TextBox_ls_ifrRWL = new ReaderWriterLock();
         protected string textBox_ls_ifr = "";
         public string TextBox_ls_ifr
@@ -4418,6 +4685,8 @@ namespace LORICAVariables
                 TextBox_ls_ifrRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for Total_tillage_statuspanel
         ReaderWriterLock Total_tillage_statuspanelRWL = new ReaderWriterLock();
         protected string total_tillage_statuspanel = "";
         public string Total_tillage_statuspanel
@@ -4437,6 +4706,8 @@ namespace LORICAVariables
                 Total_tillage_statuspanelRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for DailyP
         ReaderWriterLock DailyPRWL = new ReaderWriterLock();
         protected string dailyP = "";
         public string DailyP
@@ -4456,6 +4727,8 @@ namespace LORICAVariables
                 DailyPRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for DailyD
         ReaderWriterLock DailyDRWL = new ReaderWriterLock();
         protected string dailyD = "";
         public string DailyD
@@ -4475,6 +4748,8 @@ namespace LORICAVariables
                 DailyDRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for DailyT_avg
         ReaderWriterLock DailyT_avgRWL = new ReaderWriterLock();
         protected string dailyT_avg = "";
         public string DailyT_avg
@@ -4494,6 +4769,8 @@ namespace LORICAVariables
                 DailyT_avgRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for DailyT_min
         ReaderWriterLock DailyT_minRWL = new ReaderWriterLock();
         protected string dailyT_min = "";
         public string DailyT_min
@@ -4513,6 +4790,8 @@ namespace LORICAVariables
                 DailyT_minRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for DailyT_max
         ReaderWriterLock DailyT_maxRWL = new ReaderWriterLock();
         protected string dailyT_max = "";
         public string DailyT_max
@@ -4532,6 +4811,8 @@ namespace LORICAVariables
                 DailyT_maxRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for GoogleBeginDate
         ReaderWriterLock GoogleBeginDateRWL = new ReaderWriterLock();
         protected string googleBeginDate = "";
         public string GoogleBeginDate
@@ -4551,6 +4832,8 @@ namespace LORICAVariables
                 GoogleBeginDateRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for TextBoxAVIFile
         ReaderWriterLock TextBoxAVIFileRWL = new ReaderWriterLock();
         protected string textBoxAVIFile = "";
         public string TextBoxAVIFile
@@ -4570,6 +4853,8 @@ namespace LORICAVariables
                 TextBoxAVIFileRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for Ini_CaCO3_content
         ReaderWriterLock Ini_CaCO3_contentRWL = new ReaderWriterLock();
         protected string ini_CaCO3_content = "";
         public string Ini_CaCO3_content
@@ -4589,6 +4874,8 @@ namespace LORICAVariables
                 Ini_CaCO3_contentRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for Calibration_levels_textbox
         ReaderWriterLock Calibration_levels_textboxRWL = new ReaderWriterLock();
         protected string calibration_levels_textbox = "";
         public string Calibration_levels_textbox
@@ -4608,6 +4895,8 @@ namespace LORICAVariables
                 Calibration_levels_textboxRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for Daily_n
         ReaderWriterLock Daily_nRWL = new ReaderWriterLock();
         protected string daily_n = "";
         public string Daily_n
@@ -4627,6 +4916,8 @@ namespace LORICAVariables
                 Daily_nRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for Latitude_deg
         ReaderWriterLock Latitude_degRWL = new ReaderWriterLock();
         protected string latitude_deg = "";
         public string Latitude_deg
@@ -4646,6 +4937,8 @@ namespace LORICAVariables
                 Latitude_degRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for Latitude_min
         ReaderWriterLock Latitude_minRWL = new ReaderWriterLock();
         protected string latitude_min = "";
         public string Latitude_min
@@ -4666,47 +4959,15 @@ namespace LORICAVariables
             }
         }
 
+        #endregion
+
+        #region Checked Property for Checkboxes - Get/Set Methods
+        /*************************************************************
+         * Checked Property for Checkboxes - Get/Set Methods
+         *************************************************************/
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //CheckBoxes
-
+        // Get/Set methods for Water_ero_checkbox
         ReaderWriterLock Water_ero_checkboxRWL = new ReaderWriterLock();
         protected bool water_ero_checkbox = false;
         public bool Water_ero_checkbox
@@ -4727,6 +4988,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Tillage_checkbox
         ReaderWriterLock Tillage_checkboxRWL = new ReaderWriterLock();
         protected bool tillage_checkbox = false;
         public bool Tillage_checkbox
@@ -4747,6 +5009,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Landslide_checkbox
         ReaderWriterLock Landslide_checkboxRWL = new ReaderWriterLock();
         protected bool landslide_checkbox = false;
         public bool Landslide_checkbox
@@ -4767,6 +5030,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Creep_active_checkbox
         ReaderWriterLock Creep_active_checkboxRWL = new ReaderWriterLock();
         protected bool creep_active_checkbox = false;
         public bool Creep_active_checkbox
@@ -4787,6 +5051,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Biological_weathering_checkbox
         ReaderWriterLock Biological_weathering_checkboxRWL = new ReaderWriterLock();
         protected bool biological_weathering_checkbox = false;
         public bool Biological_weathering_checkbox
@@ -4807,6 +5072,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Frost_weathering_checkbox
         ReaderWriterLock Frost_weathering_checkboxRWL = new ReaderWriterLock();
         protected bool frost_weathering_checkbox = false;
         public bool Frost_weathering_checkbox
@@ -4827,6 +5093,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Tilting_active_checkbox
         ReaderWriterLock Tilting_active_checkboxRWL = new ReaderWriterLock();
         protected bool tilting_active_checkbox = false;
         public bool Tilting_active_checkbox
@@ -4847,6 +5114,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Uplift_active_checkbox
         ReaderWriterLock Uplift_active_checkboxRWL = new ReaderWriterLock();
         protected bool uplift_active_checkbox = false;
         public bool Uplift_active_checkbox
@@ -4867,6 +5135,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Soil_phys_weath_checkbox
         ReaderWriterLock Soil_phys_weath_checkboxRWL = new ReaderWriterLock();
         protected bool soil_phys_weath_checkbox = false;
         public bool Soil_phys_weath_checkbox
@@ -4887,6 +5156,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Soil_chem_weath_checkbox
         ReaderWriterLock Soil_chem_weath_checkboxRWL = new ReaderWriterLock();
         protected bool soil_chem_weath_checkbox = false;
         public bool Soil_chem_weath_checkbox
@@ -4907,6 +5177,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Soil_bioturb_checkbox
         ReaderWriterLock Soil_bioturb_checkboxRWL = new ReaderWriterLock();
         protected bool soil_bioturb_checkbox = false;
         public bool Soil_bioturb_checkbox
@@ -4927,6 +5198,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Soil_clay_transloc_checkbox
         ReaderWriterLock Soil_clay_transloc_checkboxRWL = new ReaderWriterLock();
         protected bool soil_clay_transloc_checkbox = false;
         public bool Soil_clay_transloc_checkbox
@@ -4947,6 +5219,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Soil_carbon_cycle_checkbox
         ReaderWriterLock Soil_carbon_cycle_checkboxRWL = new ReaderWriterLock();
         protected bool soil_carbon_cycle_checkbox = false;
         public bool Soil_carbon_cycle_checkbox
@@ -4967,6 +5240,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Calibration_button
         ReaderWriterLock Calibration_buttonRWL = new ReaderWriterLock();
         protected bool calibration_button = false;
         public bool Calibration_button
@@ -4987,6 +5261,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Sensitivity_button
         ReaderWriterLock Sensitivity_buttonRWL = new ReaderWriterLock();
         protected bool sensitivity_button = false;
         public bool Sensitivity_button
@@ -5007,6 +5282,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for UTMgridcheckbox
         ReaderWriterLock UTMgridcheckboxRWL = new ReaderWriterLock();
         protected bool uTMgridcheckbox = false;
         public bool UTMgridcheckbox
@@ -5027,6 +5303,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for GoogleAnimationCheckbox
         ReaderWriterLock GoogleAnimationCheckboxRWL = new ReaderWriterLock();
         protected bool googleAnimationCheckbox = false;
         public bool GoogleAnimationCheckbox
@@ -5047,6 +5324,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for CheckBoxGenerateAVIFile
         ReaderWriterLock CheckBoxGenerateAVIFileRWL = new ReaderWriterLock();
         protected bool checkBoxGenerateAVIFile = false;
         public bool CheckBoxGenerateAVIFile
@@ -5067,6 +5345,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Radio_tilt_col_zero
         ReaderWriterLock Radio_tilt_col_zeroRWL = new ReaderWriterLock();
         protected bool radio_tilt_col_zero = false;
         public bool Radio_tilt_col_zero
@@ -5087,6 +5366,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Radio_tilt_row_zero
         ReaderWriterLock Radio_tilt_row_zeroRWL = new ReaderWriterLock();
         protected bool radio_tilt_row_zero = false;
         public bool Radio_tilt_row_zero
@@ -5107,6 +5387,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Radio_tilt_col_max
         ReaderWriterLock Radio_tilt_col_maxRWL = new ReaderWriterLock();
         protected bool radio_tilt_col_max = false;
         public bool Radio_tilt_col_max
@@ -5127,6 +5408,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Radio_tilt_row_max
         ReaderWriterLock Radio_tilt_row_maxRWL = new ReaderWriterLock();
         protected bool radio_tilt_row_max = false;
         public bool Radio_tilt_row_max
@@ -5147,6 +5429,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Radio_lift_row_less_than
         ReaderWriterLock Radio_lift_row_less_thanRWL = new ReaderWriterLock();
         protected bool radio_lift_row_less_than = false;
         public bool Radio_lift_row_less_than
@@ -5167,6 +5450,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Radio_lift_row_more_than
         ReaderWriterLock Radio_lift_row_more_thanRWL = new ReaderWriterLock();
         protected bool radio_lift_row_more_than = false;
         public bool Radio_lift_row_more_than
@@ -5187,6 +5471,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Radio_lift_col_less_than
         ReaderWriterLock Radio_lift_col_less_thanRWL = new ReaderWriterLock();
         protected bool radio_lift_col_less_than = false;
         public bool Radio_lift_col_less_than
@@ -5207,6 +5492,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Radio_lift_col_more_than
         ReaderWriterLock Radio_lift_col_more_thanRWL = new ReaderWriterLock();
         protected bool radio_lift_col_more_than = false;
         public bool Radio_lift_col_more_than
@@ -5227,6 +5513,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Treefall_checkbox
         ReaderWriterLock Treefall_checkboxRWL = new ReaderWriterLock();
         protected bool treefall_checkbox = false;
         public bool Treefall_checkbox
@@ -5247,6 +5534,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for CT_depth_decay_checkbox
         ReaderWriterLock CT_depth_decay_checkboxRWL = new ReaderWriterLock();
         protected bool cT_depth_decay_checkbox = false;
         public bool CT_depth_decay_checkbox
@@ -5267,6 +5555,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Check_space_soildepth
         ReaderWriterLock Check_space_soildepthRWL = new ReaderWriterLock();
         protected bool check_space_soildepth = false;
         public bool Check_space_soildepth
@@ -5287,6 +5576,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Check_space_landuse
         ReaderWriterLock Check_space_landuseRWL = new ReaderWriterLock();
         protected bool check_space_landuse = false;
         public bool Check_space_landuse
@@ -5307,6 +5597,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Check_time_landuse
         ReaderWriterLock Check_time_landuseRWL = new ReaderWriterLock();
         protected bool check_time_landuse = false;
         public bool Check_time_landuse
@@ -5327,6 +5618,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Check_space_evap
         ReaderWriterLock Check_space_evapRWL = new ReaderWriterLock();
         protected bool check_space_evap = false;
         public bool Check_space_evap
@@ -5347,6 +5639,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Check_time_evap
         ReaderWriterLock Check_time_evapRWL = new ReaderWriterLock();
         protected bool check_time_evap = false;
         public bool Check_time_evap
@@ -5367,6 +5660,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Check_space_infil
         ReaderWriterLock Check_space_infilRWL = new ReaderWriterLock();
         protected bool check_space_infil = false;
         public bool Check_space_infil
@@ -5387,6 +5681,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Check_time_infil
         ReaderWriterLock Check_time_infilRWL = new ReaderWriterLock();
         protected bool check_time_infil = false;
         public bool Check_time_infil
@@ -5407,6 +5702,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Check_space_rain
         ReaderWriterLock Check_space_rainRWL = new ReaderWriterLock();
         protected bool check_space_rain = false;
         public bool Check_space_rain
@@ -5427,6 +5723,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Check_time_rain
         ReaderWriterLock Check_time_rainRWL = new ReaderWriterLock();
         protected bool check_time_rain = false;
         public bool Check_time_rain
@@ -5447,6 +5744,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Check_time_T
         ReaderWriterLock Check_time_TRWL = new ReaderWriterLock();
         protected bool check_time_T = false;
         public bool Check_time_T
@@ -5467,6 +5765,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Only_waterflow_checkbox
         ReaderWriterLock Only_waterflow_checkboxRWL = new ReaderWriterLock();
         protected bool only_waterflow_checkbox = false;
         public bool Only_waterflow_checkbox
@@ -5487,7 +5786,7 @@ namespace LORICAVariables
             }
         }
 
-
+        // Get/Set methods for Version_lux_checkbox
         ReaderWriterLock Version_lux_checkboxRWL = new ReaderWriterLock();
         protected bool version_lux_checkbox = false;
         public bool Version_lux_checkbox
@@ -5508,6 +5807,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Solifluction_checkbox
         ReaderWriterLock Solifluction_checkboxRWL = new ReaderWriterLock();
         protected bool solifluction_checkbox = false;
         public bool Solifluction_checkbox
@@ -5528,6 +5828,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Decalcification_checkbox
         ReaderWriterLock Decalcification_checkboxRWL = new ReaderWriterLock();
         protected bool decalcification_checkbox = false;
         public bool Decalcification_checkbox
@@ -5548,6 +5849,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Daily_water
         ReaderWriterLock Daily_waterRWL = new ReaderWriterLock();
         protected bool daily_water = false;
         public bool Daily_water
@@ -5568,6 +5870,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Ct_Jagercikova
         ReaderWriterLock Ct_JagercikovaRWL = new ReaderWriterLock();
         protected bool ct_Jagercikova = false;
         public bool Ct_Jagercikova
@@ -5588,6 +5891,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for View_maps_checkbox
         ReaderWriterLock View_maps_checkboxRWL = new ReaderWriterLock();
         protected bool view_maps_checkbox = false;
         public bool View_maps_checkbox
@@ -5608,6 +5912,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Final_output_checkbox
         ReaderWriterLock Final_output_checkboxRWL = new ReaderWriterLock();
         protected bool final_output_checkbox = false;
         public bool Final_output_checkbox
@@ -5628,6 +5933,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Regular_output_checkbox
         ReaderWriterLock Regular_output_checkboxRWL = new ReaderWriterLock();
         protected bool regular_output_checkbox = false;
         public bool Regular_output_checkbox
@@ -5648,6 +5954,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Altitude_output_checkbox
         ReaderWriterLock Altitude_output_checkboxRWL = new ReaderWriterLock();
         protected bool altitude_output_checkbox = false;
         public bool Altitude_output_checkbox
@@ -5668,6 +5975,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Creep_Checkbox
         ReaderWriterLock Creep_CheckboxRWL = new ReaderWriterLock();
         protected bool creep_Checkbox = false;
         public bool Creep_Checkbox
@@ -5688,6 +5996,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Ulift_active_checkbox
         ReaderWriterLock Ulift_active_checkboxRWL = new ReaderWriterLock();
         protected bool ulift_active_checkbox = false;
         public bool Ulift_active_checkbox
@@ -5708,6 +6017,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Check_space_till_fields
         ReaderWriterLock Check_space_till_fieldsRWL = new ReaderWriterLock();
         protected bool check_space_till_fields = false;
         public bool Check_space_till_fields
@@ -5728,6 +6038,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Fill_sinks_before_checkbox
         ReaderWriterLock Fill_sinks_before_checkboxRWL = new ReaderWriterLock();
         protected bool fill_sinks_before_checkbox = false;
         public bool Fill_sinks_before_checkbox
@@ -5748,6 +6059,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Creep_testing
         ReaderWriterLock Creep_testingRWL = new ReaderWriterLock();
         protected bool creep_testing = false;
         public bool Creep_testing
@@ -5768,6 +6080,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Soildepth_output_checkbox
         ReaderWriterLock Soildepth_output_checkboxRWL = new ReaderWriterLock();
         protected bool soildepth_output_checkbox = false;
         public bool Soildepth_output_checkbox
@@ -5788,6 +6101,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Alt_change_output_checkbox
         ReaderWriterLock Alt_change_output_checkboxRWL = new ReaderWriterLock();
         protected bool alt_change_output_checkbox = false;
         public bool Alt_change_output_checkbox
@@ -5808,6 +6122,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Water_output_checkbox
         ReaderWriterLock Water_output_checkboxRWL = new ReaderWriterLock();
         protected bool water_output_checkbox = false;
         public bool Water_output_checkbox
@@ -5828,6 +6143,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Depressions_output_checkbox
         ReaderWriterLock Depressions_output_checkboxRWL = new ReaderWriterLock();
         protected bool depressions_output_checkbox = false;
         public bool Depressions_output_checkbox
@@ -5848,6 +6164,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Diagnostic_output_checkbox
         ReaderWriterLock Diagnostic_output_checkboxRWL = new ReaderWriterLock();
         protected bool diagnostic_output_checkbox = false;
         public bool Diagnostic_output_checkbox
@@ -5868,6 +6185,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for All_process_output_checkbox
         ReaderWriterLock All_process_output_checkboxRWL = new ReaderWriterLock();
         protected bool all_process_output_checkbox = false;
         public bool All_process_output_checkbox
@@ -5888,6 +6206,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Annual_output_checkbox
         ReaderWriterLock Annual_output_checkboxRWL = new ReaderWriterLock();
         protected bool annual_output_checkbox = false;
         public bool Annual_output_checkbox
@@ -5908,6 +6227,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Fill_sinks_during_checkbox
         ReaderWriterLock Fill_sinks_during_checkboxRWL = new ReaderWriterLock();
         protected bool fill_sinks_during_checkbox = false;
         public bool Fill_sinks_during_checkbox
@@ -5928,6 +6248,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for UTMsouthcheck
         ReaderWriterLock UTMsouthcheckRWL = new ReaderWriterLock();
         protected bool uTMsouthcheck = false;
         public bool UTMsouthcheck
@@ -5948,6 +6269,7 @@ namespace LORICAVariables
             }
         }
 
+        // Get/Set methods for Check_time_till_fields
         ReaderWriterLock Check_time_till_fieldsRWL = new ReaderWriterLock();
         protected bool check_time_till_fields = false;
         public bool Check_time_till_fields
@@ -5967,6 +6289,8 @@ namespace LORICAVariables
                 Check_time_till_fieldsRWL.ReleaseWriterLock();
             }
         }
+
+        // Get/Set methods for Check_scaling_daily_weather
         ReaderWriterLock Check_scaling_daily_weatherRWL = new ReaderWriterLock();
         protected bool check_scaling_daily_weather = false;
         public bool Check_scaling_daily_weather
@@ -5987,8 +6311,6 @@ namespace LORICAVariables
             }
         }
 
-
-
-        
+        #endregion
     }
 }
