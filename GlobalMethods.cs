@@ -173,6 +173,7 @@ namespace LORICA4
             }
         }
 
+        #region Global Method Declaration
 
         public static void setUp(bool Ik, int T, int T_intervene, GUIVariables gv)
         {
@@ -1491,6 +1492,8 @@ namespace LORICA4
                 }
             }
         } // end update_slope_and_aspect()
+
+        #endregion
 
     }
 }

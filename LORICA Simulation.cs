@@ -1,4 +1,8 @@
-﻿using System;
+﻿/***********************************************************
+ * LORICA Simulation.cs
+ ***********************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -378,7 +382,6 @@ namespace LORICA4
         public Simulation(GUIVariables gv)
         {
             guiVariables = gv;
-
 
             depressionsum_texture_kg = new double[GlobalMethods.n_texture_classes];
         }
@@ -940,7 +943,6 @@ namespace LORICA4
 
         //start of running code
 
-
         private void calculate_overwater_landscape_Spitsbergen()
         {
             //to account for a landscape that is isostaically rebounding from below sealevel to above sealevel. 
@@ -967,7 +969,7 @@ namespace LORICA4
                     }
                 }
             }
-        }
+        } // end calculate_overwater_landscape_Spitsbergen()
 
         private void every_timestep()    //performs actions in every timestep
         {
@@ -1737,7 +1739,7 @@ namespace LORICA4
             }
             #endregion
 
-        }
+        } // end every_timestep()
 
         private void Google_Earth_Output()
         {
@@ -1821,7 +1823,7 @@ namespace LORICA4
             kmlsr.Close();
             imageCount2 = imageCount2 + 1;
 
-        }
+        } // end Google_Earth_Output()
 
         private void AVI_Output()
         {
@@ -1881,7 +1883,7 @@ namespace LORICA4
                     Debug.WriteLine("AVI Exception in: " + ex.ToString());
                 }
             }
-        }
+        } // end AVI_Output()
 
         private void read_soil_elevation_distance_from_output(int time, string dir)
         {
@@ -1975,8 +1977,7 @@ namespace LORICA4
 
                 }
             }
-        }
-
+        } // end read_soil_elevation_distance_from_output()
 
         private void timeseries_output()
         {
@@ -2043,8 +2044,7 @@ namespace LORICA4
                     sw.Write("\r\n");
                 }
             }
-        }
-
+        } // end timeseries_output()
 
         #region Hydrology code
 
@@ -2104,7 +2104,7 @@ namespace LORICA4
                 Debug.WriteLine("err_lsr1");
             }
             return (R4_Ra * 0.408 / 1000); // convert to m/d
-        }
+        } // end local_solar_radiation()
 
         void update_solar_radiation()
         {
@@ -2130,7 +2130,7 @@ namespace LORICA4
                     }
                 }
             }
-        }
+        } // end update_solar_radiation()
 
         double total_snow_melt, total_water_flow;
         void water_balance()
@@ -2278,7 +2278,7 @@ namespace LORICA4
             }
             //if (GlobalMethods.t % 10 == 0) { Debugger.Break(); }
             // Debug.WriteLine("wb6");
-        }
+        } // end water_balance()
 
         void print_water_balance()
         {
@@ -2314,7 +2314,7 @@ namespace LORICA4
             {
                 Debug.WriteLine("err_pwb2");
             }
-        }
+        } // end print_water_balance()
 
         void print_spatial_water_balance()
         {
@@ -2326,7 +2326,7 @@ namespace LORICA4
                     // snowfall_m is part of Py.Sum(), therefore, this should not be accounted for in the balance. Important terms are P, ETa, I and outflow. They close the balance. 
                 }
             }
-        }
+        } // end print_spatial_water_balance()
 
         void print_P_ET0()
         {
@@ -2342,7 +2342,7 @@ namespace LORICA4
                 }
             }
             Debug.WriteLine("P {0} ET0 {1}", Py.Sum(), ET_out / count);
-        }
+        } // end print_P_ET0()
 
         void update_potential_ET()
         {
@@ -2353,7 +2353,7 @@ namespace LORICA4
 
                 }
             }
-        }
+        } // end update_potential_ET()
 
         void update_Ks() // both Ks matrix as Ks for topsoil
         {
@@ -2427,7 +2427,7 @@ namespace LORICA4
                 }
             }
             ;
-        }
+        } // end update_Ks()
 
         void create_daily_weather()
         {
@@ -2497,7 +2497,7 @@ namespace LORICA4
 
 
             //Debug.WriteLine("dw.end"); 
-        }
+        } // end create_daily_weather()
 
         void dailyflow(double P_total, double D_total, int qday, int qmonth, double snowmelt)
         {
@@ -2769,7 +2769,7 @@ namespace LORICA4
                 }
             }
             // Debug.WriteLine("df6");
-        } // end dailyflow
+        } // end dailyflow()
 
         double Ks_wosten(double silt, double clay, double OM, double BD, int topsoil)
         {
@@ -2782,7 +2782,7 @@ namespace LORICA4
             // Debug.WriteLine("KsW3");
             return (KsW); // m day-1
 
-        }
+        } // end Ks_wosten()
 
         List<double> ponding(int row1, int col1, double inflow_m, int pday, int pmonth)
         {
@@ -2932,7 +2932,7 @@ namespace LORICA4
 
             return (output);
 
-        }
+        } // end ponding()
 
         bool stagnation(double I_d)
         {
@@ -2961,7 +2961,7 @@ namespace LORICA4
                 }
             }
             return (stag_total);
-        }
+        } // end stagnation()
 
         void lateral_flow()
         {
@@ -2985,7 +2985,7 @@ namespace LORICA4
                     }
                 }
             }
-        }
+        } // end lateral_flow()
 
         #endregion
 
@@ -2999,7 +2999,7 @@ namespace LORICA4
                 GlobalMethods.layerthickness_m[row_update, col_update, layer_update] = thickness_calc(row_update, col_update, layer_update);
             }
 
-        }
+        } // end update_all_soil_thickness()
 
         void remove_empty_layers(int row2, int col2)
         {
@@ -3073,7 +3073,7 @@ namespace LORICA4
                 Debug.WriteLine("Error in removing empty layers");
             }
             if (diagnostic_mode == 1) { Debug.WriteLine(" at end of remove_empty_layers: "); displaysoil(row2, col2); }
-        }
+        } // end remove_empty_layers()
 
         /*void soil_update_split_and_combine_layers()
         {
@@ -3623,7 +3623,7 @@ namespace LORICA4
             //if (Math.Round(mass_before, 3) != Math.Round(mass_after, 3)) { Debugger.Break(); }
 
 
-        }
+        } // end soil_update_split_and_combine_layers_standard()
 
         void soil_update_split_and_combine_layers()
         {
@@ -3887,8 +3887,7 @@ namespace LORICA4
             }
             double mass_after = total_catchment_mass();
 
-        } // aangepast voor constante diktes
-
+        } // end soil_update_split_and_combine_layers()
 
         private void find_negative_texture()
         {
@@ -3908,7 +3907,7 @@ namespace LORICA4
                     }
                 }
             }
-        }
+        } // end find_negative_texture()
 
         double layer_difference(int rowwer, int coller, int lay1, int lay2)   //calculates a simple measure of difference between two soil layers based on the sum of relative differences in a set of properties
         {
@@ -4025,7 +4024,7 @@ namespace LORICA4
             if (double.IsNaN(bd) | double.IsInfinity(bd)) { Debugger.Break(); }
             return bd;
             // return 1500;
-        }
+        } // end bulk_density_calc()
 
         double thickness_calc(int rowwer, int coller, int lay1)
         {
@@ -4079,7 +4078,7 @@ namespace LORICA4
             }
             if (double.IsNaN(thickness)) { thickness = 0.00000000001; }
             return thickness;
-        }
+        } // end thickness_calc()
 
         double total_soil_mass(int rowmass, int colmass)
         {
@@ -4094,7 +4093,7 @@ namespace LORICA4
                 tot_mass += GlobalMethods.young_SOM_kg[rowmass, colmass, lay];
             }
             return (tot_mass);
-        }
+        } // end total_soil_mass()
 
         double total_layer_mass(int rowmass, int colmass, int laymass)
         {
@@ -4108,7 +4107,7 @@ namespace LORICA4
             tot_mass += GlobalMethods.young_SOM_kg[rowmass, colmass, laymass];
 
             return (tot_mass);
-        }
+        } // end total_layer_mass()
 
         double total_layer_fine_earth_mass(int rowmass, int colmass, int laymass)
         {
@@ -4122,7 +4121,7 @@ namespace LORICA4
             tot_mass += GlobalMethods.young_SOM_kg[rowmass, colmass, laymass];
 
             return (tot_mass);
-        }
+        } // end total_layer_fine_earth_mass()
 
         bool findnegativetexture()
         {
@@ -4151,7 +4150,7 @@ namespace LORICA4
             }
 
             return neg;
-        }
+        } // end findnegativetexture()
 
         double total_mass_in_transport()
         {
@@ -4170,7 +4169,7 @@ namespace LORICA4
                 }
             }
             return (tot_mass);
-        }
+        } // end total_mass_in_transport()
 
         double mass_in_transport_row_col(int row1, int col1)
         {
@@ -4184,7 +4183,7 @@ namespace LORICA4
             tot_mass += GlobalMethods.young_SOM_in_transport_kg[row1, col1];
 
             return (tot_mass);
-        }
+        } // end mass_in_transport_row_col()
 
         double total_catchment_mass()
         {
@@ -4207,7 +4206,7 @@ namespace LORICA4
 
 
             return (tot_mass);
-        }
+        } // end total_catchment_mass()
 
         double total_catchment_elevation()
         {
@@ -4226,7 +4225,7 @@ namespace LORICA4
 
 
             return (tot_elev);
-        }
+        } // end total_catchment_elevation()
 
         double total_soil_thickness(int rowthick, int colthick)
         {
@@ -4236,7 +4235,7 @@ namespace LORICA4
                 tot_thick += GlobalMethods.layerthickness_m[rowthick, colthick, lay];
             }
             return (tot_thick);
-        }
+        } // end total_soil_thickness()
 
         void split_layer(int rowwer, int coller, int lay1, double currentdepth) // splits layers 
         {
@@ -4347,7 +4346,7 @@ namespace LORICA4
             {
                 Debug.WriteLine("Failed at splitting layer at row {0}, col {1} at time {2}", rowwer, coller, GlobalMethods.t);
             }
-        }
+        } // end split_layer()
 
         void split_layer_till(int rowwer, int coller, int lay1, double currentdepth) // splits layers 
         {
@@ -4404,7 +4403,7 @@ namespace LORICA4
             GlobalMethods.old_SOM_kg[rowwer, coller, lay1 + 1] = GlobalMethods.old_SOM_kg[rowwer, coller, lay1] / 2; GlobalMethods.old_SOM_kg[rowwer, coller, lay1] /= 2;
             GlobalMethods.young_SOM_kg[rowwer, coller, lay1 + 1] = GlobalMethods.young_SOM_kg[rowwer, coller, lay1] / 2; GlobalMethods.young_SOM_kg[rowwer, coller, lay1] /= 2;
             //Debug.WriteLine(" successfully split layer ");
-        }
+        } // end split_layer_till()
 
         bool search_nodataneighbour(int row, int col)
         {
@@ -4420,7 +4419,7 @@ namespace LORICA4
                 }
             }
             return (ndn);
-        }
+        } // end search_nodataneighbour()
 
         void soil_physical_weathering()  //calculate physical weathering
         {
@@ -4485,7 +4484,7 @@ namespace LORICA4
             {
                 Debug.WriteLine("err_spw1");
             }
-        }
+        } // end soil_physical_weathering()
 
         void SPITS_soil_physical_weathering()  //calculate sedimentary rock (siltstone, limestoneF physical weathering
         {
@@ -4529,7 +4528,7 @@ namespace LORICA4
             }
             catch { Debug.WriteLine(" Soil physical weathering calculation threw an exception"); }
 
-        }
+        } // end SPITS_soil_physical_weathering()
 
         void SPITS_aeolian_deposition()
         {
@@ -4550,7 +4549,7 @@ namespace LORICA4
 
             }
             catch { }
-        }
+        } // end SPITS_aeolian_deposition()
 
         void soil_chemical_weathering()
 
@@ -4655,7 +4654,7 @@ namespace LORICA4
                 timeseries_matrix[GlobalMethods.t, timeseries_order[17]] = total_fine_neoformed_mass_kg;
             }
 
-        }
+        } // end soil_chemical_weathering()
 
         void soil_bioturbation()
         {
@@ -5138,7 +5137,7 @@ namespace LORICA4
             }
             catch { Debug.WriteLine(" No valid text in textbox bioturbation "); }
 
-        } // nieuwe code van Arnaud
+        } // end soil_bioturbation()
 
         void soil_litter_cycle()
         {
@@ -5175,10 +5174,9 @@ namespace LORICA4
                 }
             }
             catch { Debug.WriteLine(" Crash in litter cycle "); }
-        }
+        } // end soil_litter_cycle()
 
-
-        void soil_carbon_cycle()
+=        void soil_carbon_cycle()
         {
             try
             {
@@ -5292,7 +5290,7 @@ namespace LORICA4
             }
             catch { Debug.WriteLine(" Crash in soil carbon cycle "); }
 
-        }
+        } // end soil_carbon_cycle()
 
         void soil_clay_translocation()
         {
@@ -5370,7 +5368,7 @@ namespace LORICA4
                 }
             }
             catch { Debug.WriteLine(" Problem occurred in translocation calculation"); }
-        }
+        } // end soil_clay_translocation()
 
         void soil_clay_translocation_Jagercikova()
         {
@@ -5488,7 +5486,7 @@ namespace LORICA4
 
             }
             catch { Debug.WriteLine(" Problem occurred in translocation calculation"); }
-        }
+        } // end soil_clay_translocation_Jagercikova()
 
         void soil_silt_translocation()
         {
@@ -5523,7 +5521,7 @@ namespace LORICA4
                 }
             }
             catch { Debug.WriteLine(" Problem occurred in translocation calculation"); }
-        }
+        } // end soil_silt_translocation()
 
         void soil_decalcification()
         {
@@ -5584,7 +5582,7 @@ namespace LORICA4
             {
                 MessageBox.Show("error in decalcification");
             }
-        }
+        } // end soil_decalcification()
 
         void lessivage_calibration(int row, int col, int cal)
         {
@@ -5633,7 +5631,7 @@ namespace LORICA4
             lessivage_errors[cal, 2] = ct_depthdec;
             lessivage_errors[cal, 3] = rmse_ct;
             lessivage_errors[cal, 4] = me_ct;
-        }
+        } // end lessivage_calibration()
 
         #endregion
 
@@ -5664,7 +5662,7 @@ namespace LORICA4
 
             }
             return (NA_count);
-        }
+        } // end NA_in_map()
 
         bool NA_in_soil(int rowNA, int colNA)
         {
@@ -5694,7 +5692,7 @@ namespace LORICA4
             }
 
             return (boolNA);
-        }
+        } // end NA_in_soil()
 
         bool NA_anywhere_in_soil()
         {
@@ -5717,7 +5715,7 @@ namespace LORICA4
 
             }
             return (boolNA);
-        }
+        } // end NA_anywhere_in_soil()
 
         int NA_in_location(double[,] map, int rowNA, int colNA)
         {
@@ -5736,8 +5734,7 @@ namespace LORICA4
 
             }
             return (NA_count);
-        }
-
+        } // end NA_in_location()
 
         void calculate_water_ero_sed_daily()
         {
@@ -6312,8 +6309,7 @@ namespace LORICA4
                 Debug.WriteLine("err_we5");
             }
 
-        }
-
+        } // end calculate_water_ero_sed_daily()
 
         void calculate_water_ero_sed()    //where the water starts flowing, eroding and transporting
         {
@@ -6971,7 +6967,7 @@ namespace LORICA4
                 timeseries_matrix[GlobalMethods.t, timeseries_order[14]] = total_rain;
             }
 
-        }
+        } // end calculate_water_ero_sed()
 
         void ini_slope()   //Initialise LS parameters   
         {
@@ -7017,7 +7013,7 @@ namespace LORICA4
                      }   */
                 } //for
             } //for
-        }
+        } // end ini_slope()
 
         void calculate_critical_rain()    //Calculates Critical Steady State Rainfall for Landsliding    
         {
@@ -7160,7 +7156,7 @@ namespace LORICA4
                 } // end for
             } // end for 
             GlobalMethods.out_double("critrain.asc", GlobalMethods.crrain);
-        }
+        } // end calculate_critical_rain()
 
         void steepdesc(int rowst, int colst)
         {
@@ -7225,7 +7221,7 @@ namespace LORICA4
                     }//end if borders
                 }//end for j
             }//end for i
-        }
+        } // end steepdesc()
 
         void calculate_slide()
         {
@@ -7461,7 +7457,7 @@ namespace LORICA4
                 Debug.WriteLine("err_sli1");
             }
 
-        } // end calc_slide()      
+        } // end calculate_slide()      
 
         private void calculate_tillage()
         {
@@ -7769,7 +7765,7 @@ namespace LORICA4
                 Debug.WriteLine("err_ti4");
 
             }
-        }
+        } // end calculate_tillage()
 
         /*
         private void calculate_creep()
@@ -8305,7 +8301,7 @@ namespace LORICA4
 
             }
             // Debug.WriteLine("end of GlobalMethods.creep");
-        }
+        } // end calculate_creep()
 
         private void calc_creep_layers(int row1, int col1, int iiii, int jjjj, double mass_export_soil_kg)
         {
@@ -8499,7 +8495,7 @@ namespace LORICA4
                 Debug.WriteLine("err_cr12");
 
             }
-        } // end calc_creep_layers
+        } // end calc_creep_layers()
 
         private void creep_transport(int fromrow, int fromcol, int fromlay, int torow, int tocol, int tolay, double mass_export, double fraction_overlap)
         {
@@ -8539,7 +8535,7 @@ namespace LORICA4
             }
 
 
-        }
+        } // end creep_transport()
 
         private void calculate_tree_fall()
         {
@@ -8907,7 +8903,7 @@ namespace LORICA4
 
             }
 
-        }
+        } // end calculate_tree_fall()
 
         private void calculate_bedrock_weathering()
         {
@@ -8973,7 +8969,7 @@ namespace LORICA4
                     }
                 }
             }
-        }
+        } // end calculate_bedrock_weathering()
 
         private void calculate_tilting()
         {
@@ -8990,7 +8986,7 @@ namespace LORICA4
                     if (tilt_location == 3) { GlobalMethods.dtm[row, col] += tilt_intensity * ((GlobalMethods.nr - row) / GlobalMethods.nr); }
                 }
             }
-        } //back to the game_clock
+        } // end calculate_tilting()
 
         private void calculate_uplift()
         {
@@ -9008,7 +9004,7 @@ namespace LORICA4
                     if (lift_location == 3 && row > lift_location) { GlobalMethods.dtm[row, col] += lift_intensity; }
                 }
             }
-        } //back to the game_clock
+        } // end calculate_uplift()
 
         private void calculate_collapse(double max_slope)
         {
@@ -9044,7 +9040,7 @@ namespace LORICA4
                     } // end col visit
                 } // end row visit visit
             } // end while loop
-        } // end void collapse ()
+        } // end calculate_collapse()
 
         //void update_OSL_age()
         //{
@@ -9113,8 +9109,7 @@ namespace LORICA4
                     }
                 }
             }
-        }
-
+        } // end determine_vegetation_type()
 
         double[,] veg_correction_factor;
         void change_vegetation_parameters()
@@ -9145,9 +9140,7 @@ namespace LORICA4
 
 
 
-        }
-
-
+        } // end change_vegetation_parameters()
 
         void calculate_TPI(int windowsize)
         {
@@ -9194,7 +9187,7 @@ namespace LORICA4
             {
                 Debug.WriteLine("Error in calculating TPI");
             }
-        }
+        } // end calculate_TPI()
 
         #endregion
 
@@ -9244,7 +9237,7 @@ namespace LORICA4
                 series[iterator] = temp_series[iterator];
             }
 
-        }
+        } // end filter_timeseries()
 
         void calc_write_fourier_transform(double[] timeseries_signal)
         {
@@ -9258,7 +9251,7 @@ namespace LORICA4
             {
                 Debug.WriteLine(signal[i]);
             }
-        }
+        } // end calc_write_fourier_transform()
 
         #endregion
 
@@ -9384,12 +9377,12 @@ namespace LORICA4
 
 
 
-        }
+        } // end minimaps()
 
         private void display_thick(int row, int col)
         {
 
-        }
+        } // end display_thick()
 
         private void displaysoil(int row, int col)
         {
@@ -9429,7 +9422,7 @@ namespace LORICA4
                 }
             }*/
             //Debug.WriteLine("");
-        }
+        } // end displaysoil()
 
         bool check_negative_weight(int row, int col)
         {
@@ -9445,7 +9438,8 @@ namespace LORICA4
                 }
             }
             return (check);
-        }
+        } // end check_negative_weight()
+
         double calc_thickness_from_mass(double[] textures_kg, double yom_kg, double oom_kg)
         {
             //pdf goes here
@@ -9465,7 +9459,7 @@ namespace LORICA4
             thickness_m = (soil_mass_kg + textures_kg[0]) / (GlobalMethods.dx * GlobalMethods.dx * bulk_density);  // thickness in m per unit area
 
             return thickness_m;
-        }
+        } // end calc_thickness_from_mass()
 
         #endregion
 
@@ -9544,7 +9538,7 @@ namespace LORICA4
             //.WriteLine(" numberofweirdoutlets: " + numberofweirdoutlets + "\n\n"); 
             // 
 
-        }
+        } // end findsinks()
 
         void searchdepressions()
         {
@@ -9942,7 +9936,7 @@ namespace LORICA4
             //out_integer("status.asc", GlobalMethods.status_map);
             // 
             // * */
-        }
+        } // end searchdepressions()
 
         void define_fillheight_new()  //calculates where depressions must be filled how high
         {
@@ -10031,7 +10025,7 @@ namespace LORICA4
 
             Debug.WriteLine("\n--dtmfill determination finished--");
 
-        }
+        } // end define_fillheight_new()
 
         void cleardelta(int iloradius, int iupradius, int jloradius, int jupradius, int clear_row, int clear_col)   //clears a delta
         {
@@ -10053,7 +10047,7 @@ namespace LORICA4
             } // end for epsilon
             //Debug.WriteLine("cleared delta\n");
 
-        }
+        } // end cleardelta()
 
         void update_depression(int number)   //updates depressions when the erosion/deposition process has reached them to include cells that have been eroded to below lakelevel
         {
@@ -10196,7 +10190,7 @@ namespace LORICA4
             } // end while
             if (diagnostic_mode == 1) { Debug.WriteLine(" Updated depression " + depressionnumber + ". Now size " + depressionsize[depressionnumber] + ", sum_water " + depressionsum_water_m + " sum_sed " + depressionsum_sediment_m + " Needed: " + needed_to_fill_depression_m); }
 
-        }
+        } // end update_depression()
 
         void fill_depression(int number)  // completely fills updated depressions (because enough sediment was available)
         {
@@ -10240,7 +10234,7 @@ namespace LORICA4
                 }
             }
             //Debug.WriteLine(" Filled depression " + this_depression);
-        }
+        } // end fill_depression()
 
         void leave_depression_alone(int number)  // only updates counters and sentinels
         {
@@ -10273,7 +10267,7 @@ namespace LORICA4
                 considered[GlobalMethods.drainingoutlet_col[this_depression, i], GlobalMethods.drainingoutlet_col[this_depression, i]] = 0;
             }
             //Debug.WriteLine(" Left depression " + this_depression + " alone"); */
-        }
+        } // end leave_depression_alone()
 
         void delta_depression(int number)  // builds deltas in an updated depression (because not enough sed)
         {
@@ -10408,7 +10402,7 @@ namespace LORICA4
                 GlobalMethods.waterflow_m3[GlobalMethods.drainingoutlet_col[active_depression, i], GlobalMethods.drainingoutlet_col[active_depression, i]] += GlobalMethods.dx * GlobalMethods.dx * (depressionsum_sediment_m) / outletcounter;
             }
             diagnostic_mode = 1;
-        }
+        } // end delta_depression()
 
         void find_lowest_oblique_neighbour(int this_depression) // to determine where to start or continue with current delta 
         {
@@ -10471,7 +10465,7 @@ namespace LORICA4
                 } // end if
             } // end while readysearching = 0
             if (diagnostic_mode == 1) { Debug.WriteLine(" ready searching - dhobliquemax1: " + dhobliquemax1 + ", GlobalMethods.dx: " + GlobalMethods.dx + ", row " + rowlowestobnb + ", col " + collowestobnb); }
-        }
+        } // end find_lowest_oblique_neighbour()
 
         void find_lowest_higher_oblique_neighbour(int here_depression) // to determine to which level (and cell) the current delta can be raised 
         {
@@ -10535,7 +10529,7 @@ namespace LORICA4
                     }
                 }
             } //end while readysearching == 1
-        }
+        } // end find_lowest_higher_oblique_neighbour()
 
         void raise_delta_completely(int this_depression) // raise delta completely (and then go on raising it to higher obl heights)  
         {
@@ -10598,7 +10592,7 @@ namespace LORICA4
             if (II == iupradius3) { iupradius3++; }
             if (JJ == -jloradius3) { jloradius3++; }
             if (JJ == jupradius3) { jupradius3++; }
-        }
+        } // end raise_delta_completely()
 
         void raise_delta_partly(int this_depression) // raise partly (and then go to new cells on border of lake)  
         {
@@ -10688,7 +10682,7 @@ namespace LORICA4
             }
             if (diagnostic_mode == 1) { Debug.WriteLine(" sed_for_delta is now " + available_for_delta_m + " and deltasize = " + deltasize); }
             //diagnostic_mode = 0;
-        }
+        } // end raise_delta_partly()
 
         #endregion
 
@@ -11082,7 +11076,7 @@ namespace LORICA4
 
             //if ((Final_output_checkbox.Checked && GlobalMethods.t == guiVariables.End_time) || (Regular_output_checkbox.Checked && (GlobalMethods.t % (int.Parse(guiVariables.Box_years_output)) == 0)))
             //Debug.WriteLine(" successfully ended initialisations  ");
-        }
+        } // end initialise_once()
 
         void initialise_soil_standard()
         {
@@ -11244,7 +11238,7 @@ namespace LORICA4
             } // end row
               // Debug.WriteLine("initialised soil");
 
-        }
+        } // end initialise_soil_standard()
 
         void initialise_soil()
         {
@@ -11359,8 +11353,7 @@ namespace LORICA4
             } // end row
             //Debug.WriteLine("initialised soil");
 
-        } // anngepast voor standaard diktes
-
+        } // end initialise_soil()
 
         void initialise_every_till()
         {
@@ -11375,7 +11368,7 @@ namespace LORICA4
                 }
 
             }
-        }
+        } // end initialise_every_till()
 
         void initialise_every()                         //fills the inputgrids with values
         {
@@ -11457,7 +11450,7 @@ namespace LORICA4
                 }
             }
             //Debug.WriteLine("initialised every");
-        }
+        } // end initialise_every()
 
         #endregion
 
@@ -11493,7 +11486,7 @@ namespace LORICA4
             if (guiVariables.Check_time_till_fields) { till_record = new int[recordsize]; }
 
             memory_records = true;
-        }
+        } // end makerecords()
 
         void makedailyrecords(string filename)
         {
@@ -11529,7 +11522,7 @@ namespace LORICA4
 
 
             memory_records_d = true;
-        }
+        } // end makedailyrecords()
 
         private void calib_calculate_maxruns(int calibparacount)
         {
@@ -11551,7 +11544,7 @@ namespace LORICA4
             catch { GlobalMethods.input_data_error = true; MessageBox.Show("Calibration iterations must be an integer"); }
             maxruns = calib_levels * Convert.ToInt32(Math.Pow(ratiowords.Length, calibparacount));
             Debug.WriteLine(" the number of runs for calibration will be " + maxruns);
-        }
+        } // end calib_calculate_maxruns()
 
         private void calib_shift_and_zoom(int para_number, double zoom_factor, double orig_par_value)
         {
@@ -11589,7 +11582,7 @@ namespace LORICA4
                 }
             }
             catch { Debug.WriteLine(" problem adapting parameters and ratios "); }
-        }
+        } // end calib_shift_and_zoom()
 
         private void calib_prepare_report()
         {
@@ -11608,7 +11601,7 @@ namespace LORICA4
                 catch { Debug.WriteLine(" issue with writing the header of the calibration log file"); }
             }
             Debug.WriteLine(" calib tst - calib_prepare_rep - added first line to file");
-        }
+        } // end calib_prepare_report()
 
         private void calib_update_report(double objective_fnct_result)
         {
@@ -11625,7 +11618,7 @@ namespace LORICA4
                 catch { Debug.WriteLine(" issue with writing a line in the calibration log file"); }
             }
             Debug.WriteLine(" calib tst - calib_update_rep - added line to file");
-        }
+        } // end calib_update_report()
 
         private void calib_finish_report()
         {
@@ -11646,7 +11639,7 @@ namespace LORICA4
             {
                 Debug.WriteLine(" calib tst - calib_finish_rep - FAILED to write file");
             }
-        }
+        } // end calib_finish_report()
 
         private double calib_objective_function()
         {
@@ -11678,7 +11671,7 @@ namespace LORICA4
             ;
             Debug.WriteLine(" calib tst - calib_objective_function - error is " + Math.Abs(known_ero_kg_m2_y - simulated_ero_kg_m2_y) + "kg per m2 per year");
             return Math.Abs(known_ero_kg_m2_y - simulated_ero_kg_m2_y);
-        }
+        } // end calib_objective_function()
 
         private void calib_update_best_paras()
         {
@@ -11690,7 +11683,7 @@ namespace LORICA4
             //best_parameters[1] = conv_fac;
             Debug.WriteLine(" best erodib " + best_parameters[0]);
             //Debug.WriteLine(" best conv_fac " + best_parameters[1]);
-        }
+        } // end calib_update_best_paras()
 
         #endregion
     }

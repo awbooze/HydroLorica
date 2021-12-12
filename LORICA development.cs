@@ -1,5 +1,3 @@
-
-
 // HydroLorica v1.0 by W.M. van der Meij and A.J.A.M. Temme, 2020
 // Based on Lorica by Vanwalleghem and Temme 2016
 // Based on MILESD 2011 by Vanwalleghem et al and on LAPSUS by Temme, Schoorl and colleagues (2006-2011)
