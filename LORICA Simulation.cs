@@ -4033,10 +4033,21 @@ namespace LORICA4
 
             // calculate current depth of layer, for bulk density calculations, using current thickness. 
             double depth_m = 0;
+            //https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/how-to-write-a-parallel-for-loop-with-thread-local-variables
+            //for 
+            Parallel.For(0, lay1, () => 0, (lay_temp, loop, subtotal) =>
+            {
+                subtotal += GlobalMethods.layerthickness_m[rowwer, coller, lay_temp];
+                depth_m += subtotal;
+            });
+
+            /* //OLD FOR LOOP
             for (int lay_temp = 0; lay_temp < lay1; lay_temp++)
             {
                 depth_m += GlobalMethods.layerthickness_m[rowwer, coller, lay_temp];
             }
+            */
+
             depth_m += GlobalMethods.layerthickness_m[rowwer, coller, lay1] / 2;
 
             int i;
@@ -6336,6 +6347,7 @@ namespace LORICA4
 
             for (alpha = 1; alpha <= maxdepressionnumber; alpha++)  // zeroing all waterflow at outlets of depressions
             {
+                alpha comments only // comment for where parallelization needs to start
                 depressionconsidered[alpha] = 0;
                 for (int outletcounter = 0; outletcounter < 5; outletcounter++)
                 {

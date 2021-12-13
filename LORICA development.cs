@@ -7316,7 +7316,7 @@ Example: rainfall.asc can look like:
 
             //guiVariables.bulk_density_calc = MainSimulation.bulk_density_calc;
 
-
+            //sets off 2nd thread to do calculation
             StartThread = Task.Factory.StartNew(() => {
                 MainSimulation.main_loop(sender, e);
             });
@@ -7326,6 +7326,9 @@ Example: rainfall.asc can look like:
             
         }
 
+        /// <summary>
+        /// Updates the fields inside the GUI to hold updated Variables
+        /// </summary>
         private void UpdateAllFields()
         {
             this.Invoke(new MethodInvoker(() => {
@@ -7453,6 +7456,10 @@ Example: rainfall.asc can look like:
             }
             ));
         }
+
+        /// <summary>
+        /// Updates the Status Pannel inside the GUI
+        /// </summary>
         private void UpdateStatusPannel()
         {
             this.Invoke(new MethodInvoker(() => {
@@ -7461,6 +7468,9 @@ Example: rainfall.asc can look like:
             }
             ));
         }
+        /// <summary>
+        /// Updates the Time Pannel inside the GUI
+        /// </summary>
         private void UpdateTimePannel()
         {
             this.Invoke(new MethodInvoker(() => {
@@ -7468,6 +7478,10 @@ Example: rainfall.asc can look like:
             }
             ));
         }
+
+        /// <summary>
+        /// Updates the Variables inside GUIVariables with the values in the GUI
+        /// </summary>
         private void DelUpdateVariables()
         {
             this.Invoke(new MethodInvoker(() => {
@@ -7722,6 +7736,9 @@ Example: rainfall.asc can look like:
 
         }
 
+        /// <summary>
+        /// Updates the timeseries gui With the variables stored in GUIVariables.timeseries
+        /// </summary>
         private void UpdateTimeSeries()
         {
             timeseries.timeseries_soil_thicker_textbox.Text = guiVariables.Timeseries.Timeseries_soil_thicker_textbox;
@@ -7759,6 +7776,10 @@ Example: rainfall.asc can look like:
             timeseries.timeseries_coarser_checkbox.Checked = guiVariables.Timeseries.Timeseries_coarser_checkbox;
             timeseries.timeseries_soil_mass_checkbox.Checked = guiVariables.Timeseries.Timeseries_soil_mass_checkbox;
         }
+
+        /// <summary>
+        /// Updates the Profile gui With the variables stored in GUIVariables.profile
+        /// </summary>
         private void UpdateProfile()
         {
             profile.p1_row_col_box.Text = guiVariables.Profile.P1_row_col_box;
@@ -7774,6 +7795,10 @@ Example: rainfall.asc can look like:
             profile.radio_pro3_col.Checked = guiVariables.Profile.Radio_pro3_col;
             profile.radio_pro3_row.Checked = guiVariables.Profile.Radio_pro3_row;
         }
+
+        /// <summary>
+        /// Updates the Landuse_determinator gui With the variables stored in GUIVariables.Landuse_determinator
+        /// </summary>
         private void UpdateLanduse_determinator()
         {
             landuse_determinator.LU1_Inf_textbox.Text = guiVariables.Landuse_determinator.LU1_Inf_textbox;
@@ -7826,6 +7851,10 @@ Example: rainfall.asc can look like:
             landuse_determinator.LU10_Ero_textbox.Text = guiVariables.Landuse_determinator.LU10_Ero_textbox;
             landuse_determinator.LU10_Dep_textbox.Text = guiVariables.Landuse_determinator.LU10_Dep_textbox;
         }
+
+        /// <summary>
+        /// Updates the soildata gui With the variables stored in GUIVariables.Soildata
+        /// </summary>
         private void UpdateSoildata()
         {
             soildata.coarsebox.Text = guiVariables.Soildata.Coarsebox;
@@ -7834,6 +7863,11 @@ Example: rainfall.asc can look like:
             soildata.claybox.Text = guiVariables.Soildata.Claybox;
             soildata.fineclaybox.Text = guiVariables.Soildata.Fineclaybox;
         }
+
+        /// <summary>
+        /// Gets the name of the File wanted to open
+        /// </summary>
+        /// <returns>string of FileName</returns>
         private string GetDialogFileName()
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -7855,6 +7889,12 @@ Example: rainfall.asc can look like:
 
             return FileName;
         }
+
+        /// <summary>
+        /// Gets the name of the File wanted to open <<OVERLOAD>>
+        /// Takes in existing FileDialog
+        /// </summary>
+        /// <returns>string of FileName</returns>
         private string GetDialogFileName(OpenFileDialog openFileDialog1)
         {
             string FileName = "";
