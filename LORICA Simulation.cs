@@ -491,7 +491,7 @@ namespace LORICA4
                 //INPUTS
                 //GENERAL INPUTS
                 //Entry point for consecutive runs for sensitivity analyses or calibration 
-                maxruns = 5;
+                maxruns = 1;
                 int currentlevel = 0;
 
                 if (guiVariables.Calibration_button)
@@ -11526,7 +11526,7 @@ namespace LORICA4
 
         private void calib_calculate_maxruns(int calibparacount)
         {
-            int GUcalib_levels;
+            int calib_levels = 0;
             //this code calculates the total number of runs needed when calibrating
             string calibration_ratio_string = guiVariables.Calibration_ratios_textbox;
             string[] ratiowords = calibration_ratio_string.Split(';');
@@ -11540,7 +11540,7 @@ namespace LORICA4
                     }
                     catch { GlobalMethods.input_data_error = true; MessageBox.Show("Calibration ratio input error"); }
                 }
-            try { GUcalib_levels = Convert.ToInt32(guiVariables.Calibration_levels_textbox); }
+            try { calib_levels = Convert.ToInt32(guiVariables.Calibration_levels_textbox); }
             catch { GlobalMethods.input_data_error = true; MessageBox.Show("Calibration iterations must be an integer"); }
             maxruns = calib_levels * Convert.ToInt32(Math.Pow(ratiowords.Length, calibparacount));
             Debug.WriteLine(" the number of runs for calibration will be " + maxruns);

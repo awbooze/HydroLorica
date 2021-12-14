@@ -7314,14 +7314,14 @@ Example: rainfall.asc can look like:
 
             //guiVariables.bulk_density_calc = MainSimulation.bulk_density_calc;
 
-            initializing = false; 
-
-            StartThread = Task.Factory.StartNew(() => {
-                MainSimulation.main_loop(sender, e);
-            });
+            initializing = false;
 
             End_button.Enabled = true;
             start_button.Enabled = false;
+
+            //StartThread = Task.Factory.StartNew(() => {
+            MainSimulation.main_loop(sender, e);
+            //});
             
         }
 
