@@ -4967,6 +4967,15 @@ namespace LORICAVariables
             }
         }
 
+
+
+
+
+
+
+
+
+
         ReaderWriterLock Calibration_buttonRWL = new ReaderWriterLock();
         protected bool calibration_button = false;
         public bool Calibration_button
@@ -5688,25 +5697,6 @@ namespace LORICAVariables
             }
         }
 
-        ReaderWriterLock Ulift_active_checkboxRWL = new ReaderWriterLock();
-        protected bool ulift_active_checkbox = false;
-        public bool Ulift_active_checkbox
-        {
-            get
-            {
-                Ulift_active_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
-                bool temp = ulift_active_checkbox;
-                Ulift_active_checkboxRWL.ReleaseReaderLock();
-
-                return temp;
-            }
-            set
-            {
-                Ulift_active_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
-                ulift_active_checkbox = value;
-                Ulift_active_checkboxRWL.ReleaseWriterLock();
-            }
-        }
 
         ReaderWriterLock Check_space_till_fieldsRWL = new ReaderWriterLock();
         protected bool check_space_till_fields = false;
@@ -5928,6 +5918,12 @@ namespace LORICAVariables
             }
         }
 
+
+
+
+
+
+
         ReaderWriterLock UTMsouthcheckRWL = new ReaderWriterLock();
         protected bool uTMsouthcheck = false;
         public bool UTMsouthcheck
@@ -5967,6 +5963,7 @@ namespace LORICAVariables
                 Check_time_till_fieldsRWL.ReleaseWriterLock();
             }
         }
+
         ReaderWriterLock Check_scaling_daily_weatherRWL = new ReaderWriterLock();
         protected bool check_scaling_daily_weather = false;
         public bool Check_scaling_daily_weather

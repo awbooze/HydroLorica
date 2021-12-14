@@ -10889,7 +10889,7 @@ namespace LORICA4
                         if (guiVariables.Tillage_checkbox) { GlobalMethods.sum_tillage[row, col] = 0; total_sum_tillage = 0; GlobalMethods.dz_till_bd[row, col] = 0; }
                         if (guiVariables.Landslide_checkbox) { GlobalMethods.sum_landsliding[row, col] = 0; total_sum_tillage = 0; }
                         if (GlobalMethods.soildepth_m[row, col] < 0.0 && GlobalMethods.soildepth_m[row, col] != -9999) { soildepth_error += GlobalMethods.soildepth_m[row, col]; GlobalMethods.soildepth_m[row, col] = 0; }
-                        if (guiVariables.Ulift_active_checkbox) { GlobalMethods.sum_uplift[row, col] = 0; total_sum_uplift = 0; } //total_GlobalMethods.sum_uplift
+                        if (guiVariables.Uplift_active_checkbox) { GlobalMethods.sum_uplift[row, col] = 0; total_sum_uplift = 0; } //total_GlobalMethods.sum_uplift
                         if (guiVariables.Tilting_active_checkbox) { GlobalMethods.sum_tilting[row, col] = 0; total_sum_tilting = 0; }
                         if (guiVariables.Check_space_soildepth != true) { GlobalMethods.soildepth_m[row, col] = soildepth_value; }
                         if (guiVariables.Check_space_till_fields != true && guiVariables.Tillage_checkbox)

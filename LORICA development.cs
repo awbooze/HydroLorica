@@ -683,11 +683,6 @@ namespace LORICA4
         /// </summary>
         private void InitializeComponent()
         {
-            guiVariables = new GUIVariables(UpdateAllFields, UpdateStatusPannel, UpdateTimePannel, DelUpdateVariables, UpdateTimeSeries, UpdateProfile, UpdateLanduse_determinator, UpdateSoildata, draw_map);
-
-
-            GlobalMethods.Workdir = "D:\\PhD\\projects\\2g_clorpt effects on soil landscape diversity\\";
-
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.Label label6;
             System.Windows.Forms.TabPage Landsliding;
@@ -7337,6 +7332,7 @@ Example: rainfall.asc can look like:
                 GlobalMethods.dx = guiVariables.DX;
                 rockweath_method.SelectedIndex = guiVariables.Rockweath_method;
 
+                #region textboxes
                 InfoStatusPanel.Text = guiVariables.InfoStatusPanel;
                 dtm_input_filename_textbox.Text = guiVariables.DTM_input_filename_textbox;
                 Number_runs_textbox.Text = guiVariables.Number_runs_textbox;
@@ -7431,9 +7427,10 @@ Example: rainfall.asc can look like:
                 calibration_levels_textbox.Text = guiVariables.Calibration_levels_textbox;
                 daily_n.Text = guiVariables.Daily_n;
                 latitude_deg.Text = guiVariables.Latitude_deg;
-                latitude_min.Text = guiVariables.Latitude_min; 
+                latitude_min.Text = guiVariables.Latitude_min;
+                #endregion
 
-
+                #region checkboxes
                 Water_ero_checkbox.Checked = guiVariables.Water_ero_checkbox;
                 Tillage_checkbox.Checked = guiVariables.Tillage_checkbox;
                 Landslide_checkbox.Checked = guiVariables.Landslide_checkbox;
@@ -7447,9 +7444,58 @@ Example: rainfall.asc can look like:
                 soil_bioturb_checkbox.Checked = guiVariables.Soil_bioturb_checkbox;
                 soil_clay_transloc_checkbox.Checked = guiVariables.Soil_clay_transloc_checkbox;
                 soil_carbon_cycle_checkbox.Checked = guiVariables.Soil_carbon_cycle_checkbox;
+                Calibration_button.Checked = guiVariables.Calibration_button;
+                Sensitivity_button.Checked = guiVariables.Sensitivity_button; 
+                UTMgridcheckbox.Checked = guiVariables.UTMgridcheckbox; 
+                googleAnimationCheckbox.Checked = guiVariables.GoogleAnimationCheckbox;
+                checkBoxGenerateAVIFile.Checked = guiVariables.CheckBoxGenerateAVIFile;
+                radio_tilt_col_zero.Checked = guiVariables.Radio_tilt_col_zero;
+                radio_tilt_row_zero.Checked = guiVariables.Radio_tilt_row_zero;
+                radio_tilt_col_max.Checked = guiVariables.Radio_tilt_col_max;
+                radio_tilt_row_max.Checked = guiVariables.Radio_tilt_row_max;
+                radio_lift_row_less_than.Checked = guiVariables.Radio_lift_row_less_than;
+                radio_lift_row_more_than.Checked = guiVariables.Radio_lift_row_more_than;
+                radio_lift_col_less_than.Checked = guiVariables.Radio_lift_col_less_than;
+                radio_lift_col_more_than.Checked = guiVariables.Radio_lift_col_more_than;
+                treefall_checkbox.Checked = guiVariables.Treefall_checkbox; 
+                CT_depth_decay_checkbox.Checked = guiVariables.CT_depth_decay_checkbox;
+                check_space_soildepth.Checked = guiVariables.Check_space_soildepth;
+                check_space_landuse.Checked = guiVariables.Check_space_landuse;
+                check_time_landuse.Checked = guiVariables.Check_time_landuse;
+                check_space_evap.Checked = guiVariables.Check_space_evap;
+                check_time_evap.Checked = guiVariables.Check_time_evap;
+                check_space_infil.Checked = guiVariables.Check_space_infil;
+                check_time_infil.Checked = guiVariables.Check_time_infil;
+                check_space_rain.Checked = guiVariables.Check_space_rain;
+                check_time_rain.Checked = guiVariables.Check_time_rain;
+                check_time_T.Checked = guiVariables.Check_time_T;
+                only_waterflow_checkbox.Checked = guiVariables.Only_waterflow_checkbox;
+                version_lux_checkbox.Checked = guiVariables.Version_lux_checkbox;
+                Solifluction_checkbox.Checked = guiVariables.Solifluction_checkbox;
+                decalcification_checkbox.Checked = guiVariables.Decalcification_checkbox;
+                daily_water.Checked = guiVariables.Daily_water;
+                ct_Jagercikova.Checked = guiVariables.Ct_Jagercikova;
+                view_maps_checkbox.Checked = guiVariables.View_maps_checkbox;
+                Final_output_checkbox.Checked = guiVariables.Final_output_checkbox;
+                Regular_output_checkbox.Checked = guiVariables.Regular_output_checkbox;
+                Altitude_output_checkbox.Checked = guiVariables.Altitude_output_checkbox;
+                Creep_Checkbox.Checked = guiVariables.Creep_Checkbox;
+                check_space_till_fields.Checked = guiVariables.Check_space_till_fields;
+                fill_sinks_before_checkbox.Checked = guiVariables.Fill_sinks_before_checkbox;
+                creep_testing.Checked = guiVariables.Creep_testing;
+                Soildepth_output_checkbox.Checked = guiVariables.Soildepth_output_checkbox;
+                Alt_change_output_checkbox.Checked = guiVariables.Alt_change_output_checkbox;
+                water_output_checkbox.Checked = guiVariables.Water_output_checkbox;
+                depressions_output_checkbox.Checked = guiVariables.Depressions_output_checkbox;
+                diagnostic_output_checkbox.Checked = guiVariables.Diagnostic_output_checkbox;
+                all_process_output_checkbox.Checked = guiVariables.All_process_output_checkbox;
+                annual_output_checkbox.Checked = guiVariables.Annual_output_checkbox;
+                fill_sinks_during_checkbox.Checked = guiVariables.Fill_sinks_during_checkbox; 
                 UTMsouthcheck.Checked = guiVariables.UTMsouthcheck;
                 check_time_till_fields.Checked = guiVariables.Check_time_till_fields;
                 check_scaling_daily_weather.Checked = guiVariables.Check_scaling_daily_weather;
+
+                #endregion
 
                 UpdateTimeSeries();
                 this.Refresh(); // tjc to enable graphics to be drawn before sending to AVI
@@ -7612,6 +7658,53 @@ Example: rainfall.asc can look like:
                 guiVariables.Soil_bioturb_checkbox = soil_bioturb_checkbox.Checked;
                 guiVariables.Soil_clay_transloc_checkbox = soil_clay_transloc_checkbox.Checked;
                 guiVariables.Soil_carbon_cycle_checkbox = soil_carbon_cycle_checkbox.Checked;
+                Calibration_button.Checked = guiVariables.Calibration_button;
+                guiVariables.Sensitivity_button = Sensitivity_button.Checked;
+                guiVariables.UTMgridcheckbox = UTMgridcheckbox.Checked;
+                guiVariables.GoogleAnimationCheckbox = googleAnimationCheckbox.Checked;
+                guiVariables.CheckBoxGenerateAVIFile = checkBoxGenerateAVIFile.Checked;
+                guiVariables.Radio_tilt_col_zero = radio_tilt_col_zero.Checked;
+                guiVariables.Radio_tilt_row_zero = radio_tilt_row_zero.Checked;
+                guiVariables.Radio_tilt_col_max = radio_tilt_col_max.Checked;
+                guiVariables.Radio_tilt_row_max = radio_tilt_row_max.Checked;
+                guiVariables.Radio_lift_row_less_than = radio_lift_row_less_than.Checked;
+                guiVariables.Radio_lift_row_more_than = radio_lift_row_more_than.Checked;
+                guiVariables.Radio_lift_col_less_than = radio_lift_col_less_than.Checked;
+                guiVariables.Radio_lift_col_more_than = radio_lift_col_more_than.Checked;
+                guiVariables.Treefall_checkbox = treefall_checkbox.Checked;
+                guiVariables.CT_depth_decay_checkbox = CT_depth_decay_checkbox.Checked;
+                guiVariables.Check_space_soildepth = check_space_soildepth.Checked;
+                guiVariables.Check_space_landuse = check_space_landuse.Checked;
+                guiVariables.Check_time_landuse = check_time_landuse.Checked;
+                guiVariables.Check_space_evap = check_space_evap.Checked;
+                guiVariables.Check_time_evap = check_time_evap.Checked;
+                guiVariables.Check_space_infil = check_space_infil.Checked;
+                guiVariables.Check_time_infil = check_time_infil.Checked;
+                guiVariables.Check_space_rain = check_space_rain.Checked;
+                guiVariables.Check_time_rain = check_time_rain.Checked;
+                guiVariables.Check_time_T = check_time_T.Checked;
+                guiVariables.Only_waterflow_checkbox = only_waterflow_checkbox.Checked;
+                guiVariables.Version_lux_checkbox = version_lux_checkbox.Checked;
+                guiVariables.Solifluction_checkbox = Solifluction_checkbox.Checked;
+                guiVariables.Decalcification_checkbox = decalcification_checkbox.Checked;
+                guiVariables.Daily_water = daily_water.Checked;
+                guiVariables.Ct_Jagercikova = ct_Jagercikova.Checked;
+                guiVariables.View_maps_checkbox = view_maps_checkbox.Checked;
+                guiVariables.Final_output_checkbox = Final_output_checkbox.Checked;
+                guiVariables.Regular_output_checkbox = Regular_output_checkbox.Checked;
+                guiVariables.Altitude_output_checkbox = Altitude_output_checkbox.Checked;
+                guiVariables.Creep_Checkbox = Creep_Checkbox.Checked;
+                guiVariables.Check_space_till_fields = check_space_till_fields.Checked;
+                guiVariables.Fill_sinks_before_checkbox = fill_sinks_before_checkbox.Checked;
+                guiVariables.Creep_testing = creep_testing.Checked;
+                guiVariables.Soildepth_output_checkbox = Soildepth_output_checkbox.Checked;
+                guiVariables.Alt_change_output_checkbox = Alt_change_output_checkbox.Checked;
+                guiVariables.Water_output_checkbox = water_output_checkbox.Checked;
+                guiVariables.Depressions_output_checkbox = depressions_output_checkbox.Checked;
+                guiVariables.Diagnostic_output_checkbox = diagnostic_output_checkbox.Checked;
+                guiVariables.All_process_output_checkbox = all_process_output_checkbox.Checked;
+                guiVariables.Annual_output_checkbox = annual_output_checkbox.Checked;
+                guiVariables.Fill_sinks_during_checkbox = fill_sinks_during_checkbox.Checked;
                 guiVariables.UTMsouthcheck = UTMsouthcheck.Checked;
                 guiVariables.Check_time_till_fields = check_time_till_fields.Checked;
                 guiVariables.Check_scaling_daily_weather = check_scaling_daily_weather.Checked;
