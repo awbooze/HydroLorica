@@ -5176,7 +5176,7 @@ namespace LORICA4
             catch { Debug.WriteLine(" Crash in litter cycle "); }
         } // end soil_litter_cycle()
 
-=        void soil_carbon_cycle()
+        void soil_carbon_cycle()
         {
             try
             {
