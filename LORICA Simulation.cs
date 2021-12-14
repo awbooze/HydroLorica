@@ -9994,6 +9994,19 @@ namespace LORICA4
                     notyetdone = 1; done = 0;
                     while (notyetdone > 0)
                     {
+                        for (int i = 0; i < GlobalMethods.depression.GetLength(0); i++)
+                        {
+                            for (int j = 0; j < GlobalMethods.depression.GetLength(1); j++)
+                            {
+                                if(GlobalMethods.depression[i, j] != 0)
+                                {
+                                    Console.WriteLine(GlobalMethods.depression[i, j] + " " + GlobalMethods.dtmfill_A[i, j] + " " + notyetdone + "[i, j] = [" + i + "," + j + "]");
+                                }
+                            }
+                            //Console.WriteLine();
+                        }
+                        Console.WriteLine();
+
                         notyetdone = 0;
                         //if (diagnostic_mode == 1) { Debug.WriteLine("depressioncells depression " + depressiontt + " size " + depressionsize[depressiontt] + " " +GlobalMethods.drainingoutlet_col[depressiontt]+ " " + GlobalMethods.drainingoutlet_col[depressiontt]); }
                         //diagnostic_mode = 0;
