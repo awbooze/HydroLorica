@@ -7304,14 +7304,15 @@ Example: rainfall.asc can look like:
 
             //guiVariables.bulk_density_calc = MainSimulation.bulk_density_calc;
             initializing = false;
-            //sets off 2nd thread to do calculation
-            StartThread = Task.Factory.StartNew(() =>
-            {
-                MainSimulation.main_loop(sender, e);
-            });
 
             End_button.Enabled = true;
             start_button.Enabled = false;
+
+            //sets off 2nd thread to do calculation
+            //StartThread = Task.Factory.StartNew(() =>
+            //{
+            MainSimulation.main_loop(sender, e);
+            //});
 
         }
 
