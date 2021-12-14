@@ -2332,7 +2332,7 @@ namespace LORICAVariables
             }
         }
 
-
+        //draw_map
         public delegate void DelDrawMap(Graphics graphics); //Pulls Values from GUI
         DelDrawMap drawMap;
 
@@ -4079,7 +4079,7 @@ namespace LORICAVariables
             set
             {
                 Upper_particle_coarse_textboxRWL.AcquireWriterLock(Timeout.Infinite);
-                Upper_particle_coarse_textbox = value;
+                upper_particle_coarse_textbox = value;
                 Upper_particle_coarse_textboxRWL.ReleaseWriterLock();
             }
         }
