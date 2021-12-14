@@ -5996,27 +5996,6 @@ namespace LORICAVariables
             }
         }
 
-        // Get/Set methods for Ulift_active_checkbox
-        ReaderWriterLock Ulift_active_checkboxRWL = new ReaderWriterLock();
-        protected bool ulift_active_checkbox = false;
-        public bool Ulift_active_checkbox
-        {
-            get
-            {
-                Ulift_active_checkboxRWL.AcquireReaderLock(Timeout.Infinite);
-                bool temp = ulift_active_checkbox;
-                Ulift_active_checkboxRWL.ReleaseReaderLock();
-
-                return temp;
-            }
-            set
-            {
-                Ulift_active_checkboxRWL.AcquireWriterLock(Timeout.Infinite);
-                ulift_active_checkbox = value;
-                Ulift_active_checkboxRWL.ReleaseWriterLock();
-            }
-        }
-
         // Get/Set methods for Check_space_till_fields
         ReaderWriterLock Check_space_till_fieldsRWL = new ReaderWriterLock();
         protected bool check_space_till_fields = false;
