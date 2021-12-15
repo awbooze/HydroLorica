@@ -672,9 +672,6 @@ namespace LORICA4
         /// </summary>
         private void InitializeComponent()
         {
-            guiVariables = new GUIVariables(UpdateAllFields, UpdateStatusPannel, UpdateTimePannel, DelUpdateVariables, 
-                                            UpdateTimeSeries, UpdateProfile, UpdateLanduse_determinator, UpdateSoildata,
-                                            draw_map);
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.Label label6;
             System.Windows.Forms.TabPage Landsliding;
@@ -4246,8 +4243,8 @@ namespace LORICA4
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.Processes);
             this.tabControl1.Controls.Add(this.tabPage1);
@@ -5860,10 +5857,7 @@ namespace LORICA4
                 saveFileDialog1.FilterIndex = 1;
                 saveFileDialog1.RestoreDirectory = false;
 
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    cfgname = saveFileDialog1.FileName;
-                }
+                cfgname = SaveDialogFileName(saveFileDialog1);
             }
             if (cfgname != null)
             {
@@ -7309,10 +7303,10 @@ Example: rainfall.asc can look like:
             start_button.Enabled = false;
 
             //sets off 2nd thread to do calculation
-            //StartThread = Task.Factory.StartNew(() =>
-            //{
+            StartThread = Task.Factory.StartNew(() =>
+            {
             MainSimulation.main_loop(sender, e);
-            //});
+            });
 
         }
 
@@ -8009,6 +8003,28 @@ Example: rainfall.asc can look like:
 
             return FileName;
         }
+        private string SaveDialogFileName()
+        {
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+            string FileName = null;
+            var t = new Thread((ThreadStart)(() =>
+            {
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    FileName = saveFileDialog1.FileName;
+                    //return FileName;
+                }
+                else return;
+
+            }));
+
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+
+            return FileName;
+        }
 
         /// <summary>
         /// Gets the name of the File wanted to open <<OVERLOAD>>
@@ -8024,6 +8040,27 @@ Example: rainfall.asc can look like:
                 if (openFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     FileName = openFileDialog1.FileName;
+                    //return FileName;
+                }
+                else return;
+
+            }));
+
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+
+            return FileName;
+        }
+        private string SaveDialogFileName(SaveFileDialog saveFileDialog1)
+        {
+            string FileName = null;
+
+            var t = new Thread((ThreadStart)(() =>
+            {
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    FileName = saveFileDialog1.FileName;
                     //return FileName;
                 }
                 else return;
