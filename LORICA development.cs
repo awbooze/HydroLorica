@@ -644,6 +644,10 @@ namespace LORICA4
             // Required for Windows Form Designer support
             //
             InitializeComponent();
+            guiVariables = new GUIVariables(UpdateAllFields, UpdateStatusPannel, UpdateTimePannel, DelUpdateVariables,
+                                            UpdateTimeSeries, UpdateProfile, UpdateLanduse_determinator, UpdateSoildata,
+                                            draw_map);
+            GlobalMethods.Workdir = "D:\\PhD\\projects\\2g_clorpt effects on soil landscape diversity\\";
 
             //
             // TODO: Add any constructor code after InitializeComponent call
